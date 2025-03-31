@@ -49,6 +49,27 @@ namespace Duo.Services
             }
 
         }
+
+        public bool IsImageClickedByUser(int moduleId, int userId = 0)
+        {
+            return moduleRepository.IsImageClicked(moduleId, userId).Result;
+        }
+
+        public int UserClickImage(int moduleId, int userId = 0)
+        {
+            if(!moduleRepository.IsImageClicked(moduleId, userId).Result)
+            {
+                moduleRepository.AddModuleImageClicked(moduleId, userId);
+                coinRepository.SetUserCoinBalanceAsync(userId, coinRepository.GetCoinsByUserIdAsync(userId).Result + 5); //amount of coins received for clicking an image
+                return 5; //return the amount of coins received so modelview can display it
+            }
+            else
+            {
+                throw new Exception("This user already clicked this image.");
+            }
+        }
+
+
     }
 
 }

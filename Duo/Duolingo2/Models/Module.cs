@@ -10,6 +10,7 @@ namespace Duo.Models
     {
         public int ModuleId { get; }
         public int CourseId { get; }
+        public string ImagePath { get; }
         public bool IsCompleted { get; }
         public string Title { get; }
         public string Description { get; }
@@ -17,10 +18,11 @@ namespace Duo.Models
         public bool IsBonusModule { get; }
         public int UnlockCost { get; }
 
-        public Module(int moduleId, int courseId, bool isCompleted, string title, string description, int position, bool isBonusModule, int unlockCost)
+        public Module(int moduleId, int courseId, string imagePath, bool isCompleted, string title, string description, int position, bool isBonusModule, int unlockCost)
         {
             ModuleId = moduleId;
             CourseId = courseId;
+            ImagePath = imagePath;
             IsCompleted = isCompleted;
             Title = title;
             Description = description;

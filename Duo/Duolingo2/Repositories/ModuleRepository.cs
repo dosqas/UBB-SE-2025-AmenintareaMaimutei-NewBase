@@ -25,7 +25,7 @@ namespace Duo.Repositories
             {
                 await connection.OpenAsync();
 
-                var query = "SELECT ModuleId, CourseId, Title, Description, Position, IsBonusModule, UnlockCost FROM Modules WHERE CourseId = @CourseId ORDER BY Position";
+                var query = "SELECT ModuleId, CourseId, ImagePath, Title, Description, Position, IsBonusModule, UnlockCost FROM Modules WHERE CourseId = @CourseId ORDER BY Position";
 
                 using (var command = new SqlCommand(query, connection))
                 {
@@ -39,6 +39,7 @@ namespace Duo.Repositories
                             (
                                 reader.GetInt32(0),
                                 reader.GetInt32(1),
+                                reader.GetString(2),
                                 this.IsModuleCompletedAsync(courseId, reader.GetInt32(0)).Result,
                                 reader.GetString(2),
                                 reader.GetString(3),
@@ -73,7 +74,7 @@ namespace Duo.Repositories
             using (var connection = _dbConnection.GetConnection())
             {
                 await connection.OpenAsync();
-                var query = "SELECT ModuleId, CourseId, Title, Description, Position, IsBonusModule, UnlockCost FROM Modules WHERE ModuleId = @ModuleId";
+                var query = "SELECT ModuleId, CourseId, ImagePath, Title, Description, Position, IsBonusModule, UnlockCost FROM Modules WHERE ModuleId = @ModuleId";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@ModuleId", moduleId);
@@ -85,6 +86,7 @@ namespace Duo.Repositories
                             (
                                 reader.GetInt32(0),
                                 reader.GetInt32(1),
+                                reader.GetString(2),
                                 this.IsModuleCompletedAsync(reader.GetInt32(1), reader.GetInt32(0)).Result,
                                 reader.GetString(2),
                                 reader.GetString(3),
@@ -136,7 +138,7 @@ namespace Duo.Repositories
             {
                 await connection.OpenAsync();
 
-                var query = "SELECT 1 FROM UserProgress WHERE UserId = @UserId AND CourseId = @CourseId AND ModuleId = @ModuleId AND ProgressPercentage = 100";
+                var query = "SELECT 1 FROM UserProgress WHERE UserId = @UserId AND CourseId = @CourseId AND ModuleId = @ModuleId AND ProgressPercentage = 100"; //change this
 
                 using (var command = new SqlCommand(query, connection))
                 {
@@ -162,6 +164,38 @@ namespace Duo.Repositories
                     command.Parameters.AddWithValue("@ModuleId", moduleId);
                     command.Parameters.AddWithValue("@Now", DateTime.UtcNow);
                     await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async void AddModuleImageClicked(int moduleId, int coinsReceived, int userId = 0)
+        {
+            using (var connection = _dbConnection.GetConnection())
+            {
+                await connection.OpenAsync();
+                var query = @"INSERT INTO PictureCoins (UserId, ModuleId, CoinsReceived) VALUES (@UserId, @ModuleId, @Coins)";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.Parameters.AddWithValue("@ModuleId", moduleId);
+                    command.Parameters.AddWithValue("@Coins", coinsReceived);
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async Task<bool> IsImageClicked(int moduleId, int userId = 0)
+        {
+            using (var connection = _dbConnection.GetConnection())
+            {
+                await connection.OpenAsync();
+                var query = "SELECT 1 FROM PictureCoins WHERE UserId = @UserId AND ModuleId = @ModuleId";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.Parameters.AddWithValue("@ModuleId", moduleId);
+                    var result = await command.ExecuteScalarAsync();
+                    return result != null;
                 }
             }
         }
