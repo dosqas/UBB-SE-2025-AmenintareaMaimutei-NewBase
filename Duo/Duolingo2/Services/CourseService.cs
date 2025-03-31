@@ -111,6 +111,28 @@ namespace Duo.Services
                 }
             }
             return false;
+        }//TODO May God have mercy on you if you got this
+
+        public Pair GetCompletionStatus(int courseId, int userId = 0)
+        {
+            Course course = _courseRepository.GetCourseByIdAsync(courseId).Result;
+            nrOfModules = course.Modules.Count;
+            Pair pair = new Pair();
+            int completedModules = 0;
+            foreach (var module in course.Modules)
+            {
+                if (_moduleRepository.IsModuleCompletedAsync(userId, courseId, module.ModuleId).Result && !module.IsBonusModule)
+                {
+                    completedModules++;
+                }
+                if(module.IsBonusModule)
+                {
+                    nrOfModules--;
+                }
+            }
+            pair.First = completedModules;
+            pair.Second = nrOfModules;
+            return pair;
         }
 
         public bool IsCourseCompleted(int courseId)

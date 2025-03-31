@@ -115,7 +115,7 @@ namespace Duo
 
         public string GetCourseProgress()
         {
-            var progressList = moduleService.GetUserModuleProgress(course.CourseId);
+            var progressList = moduleService.GetUserModuleProgress(course.CourseId);//todo exclude bonus modules and send to service
             int completed = progressList.Count(p => p.Status == "Completed" && !p.IsBonus);
             int total = modules.Count(m => !m.IsBonus);
             return $"{completed}/{total} modules completed";
