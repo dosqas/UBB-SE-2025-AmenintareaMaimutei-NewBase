@@ -24,7 +24,9 @@ namespace Duo.Repositories
             {
                 await connection.OpenAsync();
 
-                var query = @"SELECT c.CourseId, c.Title, c.Description, c.TypeId, ct.TypeName, ct.Price, c.CreatedAt, c.ImagePath, c.DifficultyLevel, c.TimerDurationMinutes, c.TimerCompletionReward, c.CompletionReward
+
+                var query = @"SELECT c.CourseId, c.Title, c.Description, c.TypeId, ct.TypeName, ct.Price, c.CreatedAt, c.ImagePath, c.DifficultyLevel, c.TimerDurationSeconds, c.TimerCompletionReward, c.CompletionReward
+
                              FROM Courses c
                              JOIN CourseTypes ct ON c.TypeId = ct.TypeId";
 
@@ -73,7 +75,9 @@ namespace Duo.Repositories
             {
                 await connection.OpenAsync();
 
-                var query = @"SELECT c.CourseId, c.Title, c.Description, c.TypeId, ct.TypeName, ct.Price, c.CreatedAt, c.ImagePath, c.DifficultyLevel, c.TimerDurationMinutes, c.TimerCompletionReward, c.CompletionReward
+
+                var query = @"SELECT c.CourseId, c.Title, c.Description, c.TypeId, ct.TypeName, ct.Price, c.CreatedAt, c.ImagePath, c.DifficultyLevel, c.TimerDurationSeconds, c.TimerCompletionReward, c.CompletionReward
+
                              FROM Courses c
                              JOIN CourseTypes ct ON c.TypeId = ct.TypeId
                              WHERE c.CourseId = @CourseId";
@@ -183,5 +187,53 @@ namespace Duo.Repositories
                 }
             }
         }
+
+
+        public async Task<int> GetUserCourseTimer(int courseId, int userId = 0)
+        {
+            using (var connection = _dbConnection.GetConnection())
+            {
+                await connection.OpenAsync();
+                var query = @"SELECT ElapsedTimeSeconds FROM CourseTimer WHERE CourseId = @CourseId AND UserId = @UserId";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@CourseId", courseId);
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            return reader.GetInt32(0);
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+
+        public async void SetUserCourseTimer(int courseId, int elapsedTimeSeconds, int userId = 0)
+        {
+            using (var connection = _dbConnection.GetConnection())
+            {
+                await connection.OpenAsync();
+                var query = @"IF EXISTS (SELECT 1 FROM CourseTimer WHERE CourseId = @CourseId AND UserId = @UserId)
+                              BEGIN
+                                UPDATE CourseTimer SET ElapsedTimeSeconds = @ElapsedTimeSeconds AND LastUpdated = @Now WHERE CourseId = @CourseId AND UserId = @UserId
+                              END
+                              ELSE
+                              BEGIN
+                                INSERT INTO CourseTimer (CourseId, UserId, ElapsedTimeSeconds, LastUpdated) VALUES (@CourseId, @UserId, @ElapsedTimeSeconds, @Now)
+                              END";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@CourseId", courseId);
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.Parameters.AddWithValue("@ElapsedTimeSeconds", elapsedTimeSeconds);
+                    command.Parameters.AddWithValue("@Now", System.DateTime.Now);
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
     }
 }

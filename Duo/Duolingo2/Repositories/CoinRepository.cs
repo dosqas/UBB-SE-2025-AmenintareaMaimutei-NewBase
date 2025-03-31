@@ -77,6 +77,42 @@ namespace Duo.Repositories
                 throw new Exception("An unexpected error occurred.", ex);
             }
         }
+
+
+        public async Task<bool> CheckDailyLoginEligibility(int userId = 0)
+        {
+            try
+            {
+                using (var connection = _dbConnection.GetConnection())
+                {
+                    await connection.OpenAsync();
+                    var query = "SELECT TOP 1 RewardDate FROM DailyLoginReward WHERE UserId = @UserId ORDER BY RewardDate DESC";
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.CommandText = query;
+                        command.Parameters.AddWithValue("@UserId", userId);
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                DateTime lastRewardDate = reader.GetDateTime(0);
+                                return lastRewardDate.Date < DateTime.UtcNow.Date;
+                            }
+                        }
+                    }
+                }
+                return true; // No reward found, assume eligible for daily login reward
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("An error occurred while checking the daily login reward.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An unexpected error occurred.", ex);
+            }
+        }
+
     }
 }
 

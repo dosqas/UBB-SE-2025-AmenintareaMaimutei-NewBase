@@ -6,7 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//Still needed(not neccessarily in this class): TimeCompletionReward, DailyLoginReward, get/set Course Timer, 
+
+//Some methods have as parameter userId, do not worry about it, by default it is 0, you do not need to give a value, just call the method without it
+// ex. for method1(int courseId, int userId = 0) you would simply call it by method1(courseId)
+
 
 namespace Duo.Services
 {
@@ -24,6 +27,20 @@ namespace Duo.Services
             _coinRepository = coinRepository;
             this.currentUserId = 0;
         }
+
+
+        // Daily Login Reward method added here in CourseService, move at your own will
+
+        public void GrantUserDailyReward(int userId = 0)
+        {
+            if(_coinRepository.CheckDailyLoginEligibility(userId).Result)
+            {
+                _coinRepository.SetUserCoinBalanceAsync(userId, _coinRepository.GetCoinsByUserIdAsync(userId).Result + 100); //hardcoded value for daily reward system
+            }
+        }
+
+        // Daily Login Reward method added here in CourseService, move at your own will
+
 
         public List<Course> GetAllCourses()
         {
@@ -101,7 +118,9 @@ namespace Duo.Services
             Course course = _courseRepository.GetCourseByIdAsync(courseId).Result;
             foreach (var module in course.Modules)
             {
-                if (!_moduleRepository.IsModuleCompletedAsync(currentUserId, courseId, module.ModuleId).Result)
+
+                if (!_moduleRepository.IsModuleCompletedAsync(currentUserId, courseId, module.ModuleId).Result && !module.IsBonusModule)
+
                 {
                     return false;
                 }
@@ -115,5 +134,35 @@ namespace Duo.Services
             int userCoins = _coinRepository.GetCoinsByUserIdAsync(currentUserId).Result;
             _coinRepository.SetUserCoinBalanceAsync(currentUserId, userCoins + course.CompletionReward);
         }
+
+
+        public int GetUserCourseTimer(int courseId, int userId = 0)
+        {
+            return _courseRepository.GetUserCourseTimer(courseId, userId).Result;
+        }
+
+        public void SetUserCourseTimer(int courseId, int userId, int timer)
+        {
+            _courseRepository.SetUserCourseTimer(courseId, userId, timer);
+        }
+
+        public bool IsUserWithinTimer(int courseId, int userId = 0)
+        {
+            int timer = GetUserCourseTimer(courseId, userId);
+            int courseTimer = _courseRepository.GetCourseByIdAsync(courseId).Result.TimerDurationSeconds;
+            if (timer < courseTimer)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void GiveTimerCompletionReward(int courseId, int userId = 0)
+        {
+            Course course = _courseRepository.GetCourseByIdAsync(courseId).Result;
+            int userCoins = _coinRepository.GetCoinsByUserIdAsync(userId).Result;
+            _coinRepository.SetUserCoinBalanceAsync(currentUserId, userCoins + course.TimerCompletionReward);
+        }
+
     }
 }

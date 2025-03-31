@@ -68,6 +68,37 @@ namespace Duo.Repositories
 
         }
 
+        public async Task<Module> GetModuleByModuleId(int moduleId)
+        {
+            using (var connection = _dbConnection.GetConnection())
+            {
+                await connection.OpenAsync();
+                var query = "SELECT ModuleId, CourseId, Title, Description, Position, IsBonusModule, UnlockCost FROM Modules WHERE ModuleId = @ModuleId";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ModuleId", moduleId);
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            return new Module
+                            (
+                                reader.GetInt32(0),
+                                reader.GetInt32(1),
+                                this.IsModuleCompletedAsync(reader.GetInt32(1), reader.GetInt32(0)).Result,
+                                reader.GetString(2),
+                                reader.GetString(3),
+                                reader.GetInt32(4),
+                                reader.GetBoolean(5),
+                                reader.GetInt32(6)
+                            );
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         public async Task MarkModuleAsCompletedAsync(int courseId, int moduleId, int userId = 0)
         {
             using (var connection = _dbConnection.GetConnection())

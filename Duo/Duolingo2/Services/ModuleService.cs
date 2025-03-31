@@ -42,6 +42,12 @@ namespace Duo.Services
                 coinRepository.SetUserCoinBalanceAsync(currentUserId, userCoins - module.UnlockCost);
                 moduleRepository.UnlockBonusModule(moduleId, currentUserId);
             }
+
+            else
+            {
+                throw new Exception("Not enough coins to unlock module");
+            }
+
         }
     }
 
