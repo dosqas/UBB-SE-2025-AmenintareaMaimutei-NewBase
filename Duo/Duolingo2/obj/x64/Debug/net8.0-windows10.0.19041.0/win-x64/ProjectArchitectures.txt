@@ -1,1 +1,1 @@
-Z:\Facultate_nou\ISS\Duolingo2\Duolingo2\Duolingo2.csproj;x64
+C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\Duo\Duolingo2\Duolingo2.csproj;x64

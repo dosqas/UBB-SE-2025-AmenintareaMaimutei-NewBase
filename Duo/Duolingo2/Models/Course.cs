@@ -1,29 +1,44 @@
-﻿//Aici am facut un model de curs ajutator
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Duolingo2.Models
+namespace Duo.Models
 {
     public class Course
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public bool IsFree { get; set; }
-        public List<Topic> Topics { get; set; }
-        public string ImagePath { get; set; } 
+        public int Id { get; }
 
-        public Course(int id, string name, bool isFree, List<Topic> topics, string imagePath)
+        public List<Module> Modules { get; set; }
+
+        public string Title { get; }
+        public string Description { get; }
+        public List<Tag> Tags { get; }
+        public string ImagePath { get; }
+        public bool IsEnrolled { get; set; }
+        public Type Type { get; }
+        public DateTime CreatedAt { get; }
+        public int DifficultyLevel { get; }
+        public int TimerDurationMinutes { get; }
+        public decimal TimerCompletionReward { get; }
+        public decimal CompletionReward { get; }
+
+        public Course(int id, string title, string description, List<Tag> tags, string imagePath, bool isEnrolled, Type type, DateTime createdAt, int difficultyLevel, int timerDurationMinutes, decimal timerCompletionReward, decimal completionReward, List<Module> modules)
         {
             Id = id;
-            Name = name;
-            IsFree = isFree;
-            Topics = topics;
+            Title = title;
+            Description = description;
+            Tags = tags;
             ImagePath = imagePath;
-        }
-
-        public bool IsUserEnrolled(int userId)
-        {
-            return userId % 2 == Id % 2;
+            IsEnrolled = isEnrolled;
+            Type = type;
+            CreatedAt = createdAt;
+            DifficultyLevel = difficultyLevel;
+            TimerDurationMinutes = timerDurationMinutes;
+            TimerCompletionReward = timerCompletionReward;
+            CompletionReward = completionReward;
+            Modules = modules;
         }
     }
-
 }

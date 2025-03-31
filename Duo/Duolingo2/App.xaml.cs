@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 
-namespace Duolingo2
+namespace Duo
 {
     public partial class App : Application
     {

@@ -1,54 +1,54 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\",
+  "WorkspaceRootPath": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\coursewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\coursewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\models\\coursefortest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\models\\coursefortest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\coursewindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\coursewindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\models\\coursemodelview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\models\\coursemodelview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\models\\topic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\models\\topic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\viewmodels\\mainwindowmodelview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\viewmodels\\mainwindowmodelview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\models\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\models\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\duolingo2.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\duolingo2.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\duolingo2.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\MainWindow.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Duolingo2\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\MainWindow.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|z:\\facultate_nou\\iss\\duolingo3\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\viewmodels\\mainwindowmodelview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\viewmodels\\mainwindowmodelview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\models\\moduleimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\models\\moduleimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\models\\picture.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\models\\picture.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\models\\tag.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\models\\tag.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\models\\module.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\models\\module.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\coursewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\coursewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\duo\\duolingo2\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{C00ADBF9-8DCC-4230-AA84-1E790152334D}|Duolingo2\\Duolingo2.csproj|solutionrelative:duolingo2\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -58,160 +58,163 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 11,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Topic.cs",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Topic.cs",
-              "RelativeDocumentMoniker": "Duolingo2\\Models\\Topic.cs",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Topic.cs",
-              "RelativeToolTip": "Duolingo2\\Models\\Topic.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T18:19:22.645Z",
+              "DocumentIndex": 1,
+              "Title": "Duolingo2",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Duolingo2.csproj",
+              "RelativeDocumentMoniker": "Duolingo2\\Duolingo2.csproj",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Duolingo2.csproj",
+              "RelativeToolTip": "Duolingo2\\Duolingo2.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-03-31T07:37:27.054Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "Duolingo2\\MainWindow.xaml",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\MainWindow.xaml",
-              "RelativeToolTip": "Duolingo2\\MainWindow.xaml",
-              "ViewState": "AgIAAF0AAAAAAAAAAAAAAB8AAABlAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-03-29T15:07:44.661Z",
+              "DocumentIndex": 5,
+              "Title": "Picture.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Picture.cs",
+              "RelativeDocumentMoniker": "Duolingo2\\Models\\Picture.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Picture.cs",
+              "RelativeToolTip": "Duolingo2\\Models\\Picture.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T07:35:01.506Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Module.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Module.cs",
+              "RelativeDocumentMoniker": "Duolingo2\\Models\\Module.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Module.cs",
+              "RelativeToolTip": "Duolingo2\\Models\\Module.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T07:34:58.96Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "CourseModelView.cs",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\CourseModelView.cs",
-              "RelativeDocumentMoniker": "Duolingo2\\Models\\CourseModelView.cs",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\CourseModelView.cs",
-              "RelativeToolTip": "Duolingo2\\Models\\CourseModelView.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAdAAAAAAAAAA==",
+              "Title": "ModuleImage.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\ModuleImage.cs",
+              "RelativeDocumentMoniker": "Duolingo2\\Models\\ModuleImage.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\ModuleImage.cs",
+              "RelativeToolTip": "Duolingo2\\Models\\ModuleImage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T18:19:37.19Z",
+              "WhenOpened": "2025-03-31T07:34:56.188Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CourseWindow.xaml",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\CourseWindow.xaml",
-              "RelativeDocumentMoniker": "Duolingo2\\CourseWindow.xaml",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\CourseWindow.xaml",
-              "RelativeToolTip": "Duolingo2\\CourseWindow.xaml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAmAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "MainWindowModelView.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\ViewModels\\MainWindowModelView.cs",
+              "RelativeDocumentMoniker": "Duolingo2\\ViewModels\\MainWindowModelView.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\ViewModels\\MainWindowModelView.cs*",
+              "RelativeToolTip": "Duolingo2\\ViewModels\\MainWindowModelView.cs*",
+              "ViewState": "AgIAAAsAAAAAAAAAAAA5wBQAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T07:26:40.583Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "App.xaml",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\App.xaml",
+              "RelativeDocumentMoniker": "Duolingo2\\App.xaml",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\App.xaml",
+              "RelativeToolTip": "Duolingo2\\App.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-03-29T19:50:46.394Z",
+              "WhenOpened": "2025-03-31T07:26:26.885Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CourseWindow.xaml.cs",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\CourseWindow.xaml.cs",
-              "RelativeDocumentMoniker": "Duolingo2\\CourseWindow.xaml.cs",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\CourseWindow.xaml.cs",
-              "RelativeToolTip": "Duolingo2\\CourseWindow.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAApAAAAAAAAAA==",
+              "DocumentIndex": 10,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\App.xaml.cs",
+              "RelativeDocumentMoniker": "Duolingo2\\App.xaml.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\App.xaml.cs",
+              "RelativeToolTip": "Duolingo2\\App.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T19:51:30.923Z",
+              "WhenOpened": "2025-03-31T07:26:14.11Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Tag.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Tag.cs",
+              "RelativeDocumentMoniker": "Duolingo2\\Models\\Tag.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Tag.cs",
+              "RelativeToolTip": "Duolingo2\\Models\\Tag.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T07:20:19.282Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "Duolingo2\\MainWindow.xaml.cs",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\MainWindow.xaml.cs",
               "RelativeToolTip": "Duolingo2\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEMAAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIMAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T15:07:58.293Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "MainWindowModelView.cs",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\ViewModels\\MainWindowModelView.cs",
-              "RelativeDocumentMoniker": "Duolingo2\\ViewModels\\MainWindowModelView.cs",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\ViewModels\\MainWindowModelView.cs",
-              "RelativeToolTip": "Duolingo2\\ViewModels\\MainWindowModelView.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T15:59:07.34Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Course.cs",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Course.cs",
-              "RelativeDocumentMoniker": "Duolingo2\\Models\\Course.cs",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\Course.cs",
-              "RelativeToolTip": "Duolingo2\\Models\\Course.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T18:19:08.58Z",
+              "WhenOpened": "2025-03-31T07:12:54.61Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "App.xaml",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\App.xaml",
-              "RelativeDocumentMoniker": "Duolingo2\\App.xaml",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\App.xaml",
-              "RelativeToolTip": "Duolingo2\\App.xaml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "Duolingo2\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\MainWindow.xaml",
+              "RelativeToolTip": "Duolingo2\\MainWindow.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-03-29T15:03:38.116Z",
+              "WhenOpened": "2025-03-31T07:12:41.059Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 9,
-              "Title": "Duolingo2.csproj",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Duolingo2.csproj",
-              "RelativeDocumentMoniker": "Duolingo2\\Duolingo2.csproj",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Duolingo2.csproj",
-              "RelativeToolTip": "Duolingo2\\Duolingo2.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-03-29T19:38:29.944Z"
+              "Title": "CourseWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\CourseWindow.xaml.cs",
+              "RelativeDocumentMoniker": "Duolingo2\\CourseWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\CourseWindow.xaml.cs",
+              "RelativeToolTip": "Duolingo2\\CourseWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T07:21:13.49Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "MainWindow.g.cs",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\MainWindow.g.cs",
-              "RelativeDocumentMoniker": "Duolingo2\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\MainWindow.g.cs",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\MainWindow.g.cs",
-              "RelativeToolTip": "Duolingo2\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\MainWindow.g.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIEAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "CourseForTest.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\CourseForTest.cs",
+              "RelativeDocumentMoniker": "Duolingo2\\Models\\CourseForTest.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\Models\\CourseForTest.cs*",
+              "RelativeToolTip": "Duolingo2\\Models\\CourseForTest.cs*",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAuwBEAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T18:33:21.671Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "App.xaml.cs",
-              "DocumentMoniker": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\App.xaml.cs",
-              "RelativeDocumentMoniker": "Duolingo2\\App.xaml.cs",
-              "ToolTip": "Z:\\Facultate_nou\\ISS\\Duolingo3\\UBB-SEE-2025-OnlyFeatures\\Duo\\Duolingo2\\App.xaml.cs",
-              "RelativeToolTip": "Duolingo2\\App.xaml.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAwBIAAABJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T15:07:28.456Z"
+              "WhenOpened": "2025-03-31T07:13:35.748Z",
+              "EditorCaption": ""
             }
           ]
         }

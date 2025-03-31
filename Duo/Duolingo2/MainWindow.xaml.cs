@@ -7,9 +7,9 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Duolingo2.Models;
+using Duo.Models;
 
-namespace Duolingo2
+namespace Duo
 {
     public sealed partial class MainWindow : Window
     {
@@ -37,7 +37,7 @@ namespace Duolingo2
             {
                 var border = new Border
                 {
-                    Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 242, 233, 228)),
+                    Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 45, 45, 48)),
                     CornerRadius = new CornerRadius(40),
                     Padding = new Thickness(25),
                     Margin = new Thickness(0, 10, 0, 10)
@@ -70,32 +70,32 @@ namespace Duolingo2
 
                 var title = new TextBlock
                 {
-                    Text = courseVM.Course.Name,
+                    Text = courseVM.Course.Title,
                     FontSize = 30,
                     FontWeight = Microsoft.UI.Text.FontWeights.Bold,
-                    Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 28, 27, 58))
+                    Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 255, 255))
                 };
                 contentStack.Children.Add(title);
 
                 var line = new Rectangle
                 {
                     Height = 1,
-                    Fill = new SolidColorBrush(Microsoft.UI.Colors.Black),
+                    Fill = new SolidColorBrush(Microsoft.UI.Colors.Gray),
                     Margin = new Thickness(0, 5, 0, 5)
                 };
                 contentStack.Children.Add(line);
 
-                var topicsStack = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10 };
-                foreach (var topic in courseVM.Topics.Take(5))
+                var TagsStack = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10 };
+                foreach (var Tag in courseVM.Course.Tags.Take(5))
                 {
-                    topicsStack.Children.Add(new TextBlock
+                    TagsStack.Children.Add(new TextBlock
                     {
-                        Text = topic.Name,
+                        Text = Tag.TagName,
                         FontSize = 16,
-                        Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 74, 78, 105))
+                        Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 200, 200))
                     });
                 }
-                contentStack.Children.Add(topicsStack);
+                contentStack.Children.Add(TagsStack);
                 Grid.SetColumn(contentStack, 1);
                 grid.Children.Add(contentStack);
 
@@ -118,7 +118,7 @@ namespace Duolingo2
                 var originalBackground = border.Background;
                 border.PointerEntered += (s, e) =>
                 {
-                    border.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 230, 220, 210));
+                    border.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 63, 63, 70));
                 };
                 border.PointerExited += (s, e) =>
                 {
@@ -128,7 +128,7 @@ namespace Duolingo2
                 //Deschide fereastra cu titlul cursului
                 border.Tapped += (s, e) =>
                 {
-                    var courseWindow = new CourseWindow(courseVM.Course.Name);
+                    var courseWindow = new CourseWindow(courseVM.Course.Title);
                     courseWindow.Activate();
                 };
 
@@ -138,20 +138,12 @@ namespace Duolingo2
 
         private void ApplyCurrentFilters()
         {
-            if (_viewModel == null) return;
-
-            var selectedTopics = TopicsPanel.Children
-                .OfType<CheckBox>()
-                .Where(cb => cb.IsChecked == true)
-                .Select(cb => new Topic(cb.Content.ToString()))
-                .ToList();
 
             bool enrolled = EnrolledCheckBox.IsChecked == true;
             bool notEnrolled = NotEnrolledCheckBox.IsChecked == true;
             bool free = FreeCheckBox.IsChecked == true;
             bool paid = PaidCheckBox.IsChecked == true;
 
-            _viewModel.ApplyFilters(selectedTopics, enrolled, notEnrolled, free, paid, userId: 1);
             LoadCourses();
         }
 
@@ -192,7 +184,7 @@ namespace Duolingo2
         {
             SearchBox.Text = "";
 
-            foreach (var cb in TopicsPanel.Children.OfType<CheckBox>())
+            foreach (var cb in TagsPanel.Children.OfType<CheckBox>())
                 cb.IsChecked = false;
 
             EnrolledCheckBox.IsChecked = false;
