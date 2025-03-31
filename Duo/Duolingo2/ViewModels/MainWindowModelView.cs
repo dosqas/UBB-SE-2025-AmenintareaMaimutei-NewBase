@@ -1,64 +1,85 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Duo.Models;
-using Duo.ViewModels;
 
 namespace Duo
 {
     public class MainWindowModelView
     {
-        private List<CourseModelView> _allCourses;
-
+        private readonly CourseService _courseService;
         public List<CourseModelView> CourseViews { get; private set; }
+        public List<Topic> AllTopics { get; private set; }
+        public List<Topic> AppliedFilters { get; private set; }
+        public bool AppliedEnrolledFilter { get; private set; }
+        public bool AppliedFreeCourseFilter { get; private set; }
+        public int AppliedUserId { get; private set; }
+        public string SearchKeyword { get; private set; }
 
-        private List<Tag> _appliedTags = new();
-        private bool _filterEnrolled = false;
-        private bool _filterFreeOnly = false;
-        private int _userId = 1;
-        private string _search = "";
-        public int UserCoins { get; } = 100;
-
-        public MainWindowModelView()
+        public MainWindowModelView(CourseService courseService)
         {
-            _allCourses = new List<CourseModelView>
-            {
-                new CourseModelView(new CourseForTest(1, "Intro to C#", true, new List<Tag> { new Tag("Programming"), new Tag("C#") }, "Assets/csharp.jpeg")) { IsEnrolled = true },
-                new CourseModelView(new CourseForTest(2, "Advanced C#", false, new List<Tag> { new Tag("Programming"), new Tag("C#") }, "Assets/csharp.jpeg")) { IsEnrolled = false },
-                new CourseModelView(new CourseForTest(3, "Intro to Python", true, new List<Tag> { new Tag("Python") }, "Assets/python.jpg")) { IsEnrolled = true },
-                new CourseModelView(new CourseForTest(4, "Data Structures", false, new List<Tag> { new Tag("Algorithms") }, "Assets/algorithms.jpeg")) { IsEnrolled = false },
-                new CourseModelView(new CourseForTest(5, "Machine Learning", false, new List<Tag> { new Tag("Python"), new Tag("ML") }, "Assets/ml.png")) { IsEnrolled = true },
-            };
+            _courseService = courseService;
+            AllTopics = _courseService.GetAllTopics();
+            AppliedFilters = new List<Topic>();
+            AppliedEnrolledFilter = false;
+            AppliedFreeCourseFilter = false;
+            AppliedUserId = -1;
+            SearchKeyword = "";
+            CourseViews = new List<CourseModelView>();
+            LoadCourses();
+        }
 
-
-            CourseViews = new List<CourseModelView>(_allCourses);
+        public void ApplyFilters(List<Topic> topics, bool enrolled, bool freeCourses, int userId)
+        {
+            AppliedFilters = topics ?? new List<Topic>();
+            AppliedEnrolledFilter = enrolled;
+            AppliedFreeCourseFilter = freeCourses;
+            AppliedUserId = userId;
+            LoadCourses();
         }
 
         public void SetSearchKeyword(string keyword)
         {
-            _search = keyword?.Trim() ?? "";
-            FilterAll();
+            SearchKeyword = keyword?.Length > 100 ? keyword.Substring(0, 100) : keyword ?? "";
+            LoadCourses();
         }
-
-        public void ApplyFilters(List<Tag> Tags, bool enrolled, bool notEnrolled, bool freeOnly, bool paidOnly, int userId)
-        {
-            //logic for filtering in service
-        }
-
-
 
         public void ClearFilters()
         {
-            _appliedTags.Clear();
-            _filterEnrolled = false;
-            _filterFreeOnly = false;
-            _search = "";
-            _userId = 1;
-            //logic for clearing filters in service
+            AppliedFilters.Clear();
+            AppliedEnrolledFilter = false;
+            AppliedFreeCourseFilter = false;
+            AppliedUserId = -1;
+            SearchKeyword = "";
+            LoadCourses();
         }
 
-        private void FilterAll()
+        public void LoadCourses()
         {
-            //logic for filtering in service
+            CourseViews = _courseService.GetCourses(AppliedFilters, SearchKeyword, AppliedUserId, AppliedEnrolledFilter, AppliedFreeCourseFilter);
+            PrintCurrentResults();
+        }
+
+        public void PrintCurrentResults()
+        {
+            Console.WriteLine("\nCurrent Results:");
+            Console.WriteLine($"Filters: Topics=[{string.Join(",", AppliedFilters.Select(t => t.Name))}], " +
+                              $"Enrolled={AppliedEnrolledFilter} (User:{AppliedUserId}), " +
+                              $"FreeOnly={AppliedFreeCourseFilter}, " +
+                              $"Search='{SearchKeyword}'");
+
+            if (!CourseViews.Any())
+            {
+                Console.WriteLine("No courses match the current filters");
+                return;
+            }
+
+            foreach (var course in CourseViews)
+            {
+                Console.WriteLine($"- {course.Course.Name} " +
+                                  $"(Enrolled: {course.IsEnrolled}, " +
+                                  $"Free: {course.Course.IsFree}, " +
+                                  $"Topics: {string.Join(",", course.Topics.Select(t => t.Name))}");
+            }
         }
     }
 }
