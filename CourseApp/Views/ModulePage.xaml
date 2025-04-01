@@ -1,0 +1,17 @@
+<Page
+    x:Class="CourseApp.Views.ModulePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:CourseApp.ViewModels">
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBlock Text="{Binding CurrentModule.Title}" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
+            <TextBlock Text="{Binding CurrentModule.Description}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Back" Click="BackButton_Click" Margin="0,0,10,0"/>
+                <Button Content="Complete Module" Command="{Binding CompleteModuleCommand}"
+                        IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBooleanConverter}}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>
