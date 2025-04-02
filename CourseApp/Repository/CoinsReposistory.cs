@@ -56,11 +56,55 @@ namespace CourseApp.Repository
             using (SqlConnection connection = DataLink.GetConnection())
             {
                 connection.Open();
-                string query = "UPDATE UserWallet SET coinBalance = @newBalance WHERE UserId = @userId";
+                string query = @"IF EXISTS (SELECT 1 FROM UserWallet WHERE UserId = @userId)
+                                BEGIN
+                                    UPDATE UserWallet SET coinBalance = @newBalance WHERE UserId = @userId
+                                END
+                                ELSE
+                                BEGIN
+                                    INSERT INTO UserWallet (UserId, coinBalance, lastLogin)
+                                    VALUES (@userId, @newBalance, GETDATE())
+                                END";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@userId", userId);
                     command.Parameters.AddWithValue("@newBalance", newBalance);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public DateTime GetUserLastLogin(int userId)
+        {
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT lastLogin FROM UserWallet WHERE UserId = @userId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    return (DateTime?)command.ExecuteScalar() ?? DateTime.MinValue;
+                }
+            }
+        }
+
+        public void UpdateLastLogin(int userId)
+        {
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = @"IF EXISTS (SELECT 1 FROM UserWallet WHERE UserId = @userId)
+                                BEGIN
+                                    UPDATE UserWallet SET lastLogin = GETDATE() WHERE UserId = @userId
+                                END
+                                ELSE
+                                BEGIN
+                                    INSERT INTO UserWallet (UserId, coinBalance, lastLogin)
+                                    VALUES (@userId, 0, GETDATE())
+                                END";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
                     command.ExecuteNonQuery();
                 }
             }

@@ -32,6 +32,19 @@ namespace CourseApp.Services
         {
             coinsRepository.AddCoins(userId, amount);
         }
+
+        public bool checkUserDailyLogin(int userId = 0)
+        {
+            DateTime lastLogin = coinsRepository.GetUserLastLogin(userId);
+            DateTime today = DateTime.Now;
+            if (lastLogin.Date < today.Date)
+            {
+                coinsRepository.AddCoins(userId, 100);
+                coinsRepository.UpdateLastLogin(userId);
+                return true;
+            }
+            return false;
+        }
     }
 
 }

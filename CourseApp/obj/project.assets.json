@@ -5863,23 +5863,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Raluca\\.nuget\\packages\\": {},
+    "C:\\Users\\Huni\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Raluca\\Source\\Repos\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\CourseApp.csproj",
+      "projectUniqueName": "C:\\Users\\Huni\\Desktop\\ISS OnlyFeatures\\OnlyFeatures-UBB\\CourseApp\\CourseApp.csproj",
       "projectName": "CourseApp",
-      "projectPath": "C:\\Users\\Raluca\\Source\\Repos\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\CourseApp.csproj",
-      "packagesPath": "C:\\Users\\Raluca\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Raluca\\Source\\Repos\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\obj\\",
+      "projectPath": "C:\\Users\\Huni\\Desktop\\ISS OnlyFeatures\\OnlyFeatures-UBB\\CourseApp\\CourseApp.csproj",
+      "packagesPath": "C:\\Users\\Huni\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Huni\\Desktop\\ISS OnlyFeatures\\OnlyFeatures-UBB\\CourseApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Raluca\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Huni\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

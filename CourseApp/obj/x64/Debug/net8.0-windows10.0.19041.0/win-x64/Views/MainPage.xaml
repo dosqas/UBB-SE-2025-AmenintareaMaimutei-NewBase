@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="#1E1E1E" Margin="20">
+    <Grid x:ConnectionId='2' Background="#1E1E1E" Margin="20" x:Name="RootGrid"                         >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
@@ -93,7 +93,7 @@
         <!-- Course List -->
         <ScrollViewer Grid.Column="1" Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,30,20">
             <Border Background="#252525" CornerRadius="12" Padding="20" BorderBrush="#3A3A3A" BorderThickness="1">
-                <ListView x:ConnectionId='2' ItemsSource="{Binding Courses}" 
+                <ListView x:ConnectionId='3' ItemsSource="{Binding Courses}" 
                           x:Name="CoursesListView" 
                           IsItemClickEnabled="True"
                           Background="Transparent"

@@ -118,6 +118,11 @@ namespace CourseApp.ViewModels
             ClearFiltersCommand = new RelayCommand(ExecuteClearFilters);
         }
 
+        public bool CheckUserDailyLogin()
+        {
+            return coinsService.checkUserDailyLogin();
+        }
+
         private void Tag_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Tag.IsSelected))

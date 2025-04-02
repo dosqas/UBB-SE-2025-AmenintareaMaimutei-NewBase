@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="#1E1E1E" Margin="20">
+    <Grid Background="#1E1E1E" Margin="20" x:Name="RootGrid" Loaded="RootGrid_Loaded">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
