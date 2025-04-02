@@ -8,6 +8,7 @@ namespace CourseApp.ViewModels
     public class ModuleViewModel : BaseViewModel
     {
         private readonly CourseService courseService;
+        private readonly CoinsService coinsService;
         private readonly CourseViewModel courseViewModel;
         public Module CurrentModule { get; set; }
         public bool IsCompleted { get; set; }
@@ -17,6 +18,8 @@ namespace CourseApp.ViewModels
         public ModuleViewModel(Models.Module module , CourseViewModel courseVM)
         {
             courseService = new CourseService();
+            coinsService = new CoinsService();
+            coinsService.GetUserCoins(0);
             CurrentModule = module;
             IsCompleted = courseService.IsModuleCompleted(module.ModuleId);
             CompleteModuleCommand = new RelayCommand(ExecuteCompleteModule, CanCompleteModule);
@@ -36,7 +39,7 @@ namespace CourseApp.ViewModels
 
         public int CoinBalance
         {
-            get => 100;
+            get => coinsService.GetUserCoins(0);
         }
 
         private async void OnModuleImageClick(object? parameter)

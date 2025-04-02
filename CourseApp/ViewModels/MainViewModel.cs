@@ -10,6 +10,7 @@ namespace CourseApp.ViewModels
     public class MainViewModel : BaseViewModel
     {
         private readonly CourseService courseService;
+        private readonly CoinsService coinsService;
         private string searchText = string.Empty;
         private bool isPremium;
         private bool isFree;
@@ -22,8 +23,7 @@ namespace CourseApp.ViewModels
 
         public int CoinBalance
         {
-            //TODO Implement the CoinBalance property
-            get => 10;
+            get => coinsService.GetUserCoins(0);
 
         }
 
@@ -102,6 +102,8 @@ namespace CourseApp.ViewModels
         public MainViewModel()
         {
             courseService = new CourseService();
+            coinsService = new CoinsService();
+            coinsService.GetUserCoins(0);
             // Initially load all courses and tags.
             Courses = new ObservableCollection<Course>(courseService.GetCourses());
             var tagList = courseService.GetTags();
