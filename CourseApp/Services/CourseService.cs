@@ -110,5 +110,16 @@ namespace CourseApp.Services
 
             return courses;
         }
+
+        public void UpdateTimeSpent(int courseId, int seconds)
+        {
+            repository.UpdateTimeSpent(UserId, courseId, seconds);
+        }
+
+        public int GetTimeSpent(int courseId)
+        {
+            return repository.GetTimeSpent(UserId, courseId);
+        }
+
     }
 }

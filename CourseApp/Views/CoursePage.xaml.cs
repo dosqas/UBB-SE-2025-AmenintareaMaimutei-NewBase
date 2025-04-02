@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using CourseApp.Models;
 using CourseApp.ViewModels;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace CourseApp.Views
 {
@@ -15,11 +16,14 @@ namespace CourseApp.Views
 
         protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
         {
-            var course = e.Parameter as Course;
-            viewModel = new CourseViewModel(course);
-            this.DataContext = viewModel;
-            ModulesListView.ItemClick += ModulesListView_ItemClick;
+            if (e.Parameter is CourseViewModel vm)
+            {
+                viewModel = vm;
+                this.DataContext = viewModel;
+                ModulesListView.ItemClick += ModulesListView_ItemClick;
+            }
         }
+
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
@@ -28,16 +32,14 @@ namespace CourseApp.Views
                 this.Frame.GoBack();
         }
 
+
         private void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is Models.Module module)
+            if (e.ClickedItem is Models.Module module && viewModel.IsEnrolled)
             {
-                // Only navigate if the user is enrolled.
-                if (viewModel.IsEnrolled)
-                {
-                    this.Frame.Navigate(typeof(ModulePage), module);
-                }
+                this.Frame.Navigate(typeof(ModulePage), (module, viewModel));
             }
         }
+
     }
 }

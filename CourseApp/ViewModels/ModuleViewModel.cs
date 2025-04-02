@@ -8,28 +8,31 @@ namespace CourseApp.ViewModels
     public class ModuleViewModel : BaseViewModel
     {
         private readonly CourseService courseService;
+        private readonly CourseViewModel courseViewModel;
         public Module CurrentModule { get; set; }
         public bool IsCompleted { get; set; }
         public ICommand CompleteModuleCommand { get; set; }
         public ICommand ModuleImageClick { get; }
 
-        public ModuleViewModel(Models.Module module)
+        public ModuleViewModel(Models.Module module , CourseViewModel courseVM)
         {
             courseService = new CourseService();
             CurrentModule = module;
             IsCompleted = courseService.IsModuleCompleted(module.ModuleId);
             CompleteModuleCommand = new RelayCommand(ExecuteCompleteModule, CanCompleteModule);
             ModuleImageClick = new RelayCommand(OnModuleImageClick);
+            courseViewModel = courseVM;
+            courseViewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(courseViewModel.TimeSpent))
+                {
+                    OnPropertyChanged(nameof(TimeSpent));
+                }
+            };
         }
 
-        public string TimeSpent
-        {
-            get => "24 minutes";
-            set
-            {
-                //TODO Implement the TimeSpent property
-            }
-        }
+        public string TimeSpent => courseViewModel.TimeSpent;
+
 
         public int CoinBalance
         {

@@ -1,6 +1,8 @@
 using Microsoft.UI.Xaml.Controls;
 using CourseApp.Models;
 using CourseApp.ViewModels;
+using Microsoft.UI.Xaml;
+
 
 namespace CourseApp.Views
 {
@@ -17,8 +19,11 @@ namespace CourseApp.Views
         {
             if (e.ClickedItem is Course selectedCourse)
             {
-                this.Frame.Navigate(typeof(CoursePage), selectedCourse);
+                var mainWindow = MainWindow.Instance;
+                var courseVM = mainWindow.GetOrCreateCourseViewModel(selectedCourse);
+                this.Frame.Navigate(typeof(CoursePage), courseVM);
             }
         }
+
     }
 }

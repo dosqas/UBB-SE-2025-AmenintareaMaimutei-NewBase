@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using CourseApp.Models;
 using CourseApp.ViewModels;
+using System;
 
 namespace CourseApp.Views
 {
@@ -15,10 +16,14 @@ namespace CourseApp.Views
 
         protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
         {
-            var module = e.Parameter as Models.Module;
-            viewModel = new ModuleViewModel(module);
-            this.DataContext = viewModel;
+            if (e.Parameter is ValueTuple<Module, CourseViewModel> tuple)
+            {
+                var (module, courseVM) = tuple;
+                viewModel = new ModuleViewModel(module, courseVM);
+                this.DataContext = viewModel;
+            }
         }
+
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {

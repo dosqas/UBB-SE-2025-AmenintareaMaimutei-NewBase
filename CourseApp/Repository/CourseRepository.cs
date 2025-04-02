@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using CourseApp.Data;
 using CourseApp.Models;
+using System;
 
 namespace CourseApp.Repository
 {
@@ -191,5 +192,39 @@ namespace CourseApp.Repository
             }
             return tags;
         }
+
+        public void UpdateTimeSpent(int userId, int courseId, int seconds)
+        {
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "UPDATE Enrollment SET TimeSpent = TimeSpent + @seconds WHERE UserId = @userId AND CourseId = @courseId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@courseId", courseId);
+                    command.Parameters.AddWithValue("@seconds", seconds);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public int GetTimeSpent(int userId, int courseId)
+        {
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT TimeSpent FROM Enrollment WHERE UserId = @userId AND CourseId = @courseId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@courseId", courseId);
+                    var result = command.ExecuteScalar();
+                    return result != null ? Convert.ToInt32(result) : 0;
+                }
+            }
+        }
+
+
     }
 }
