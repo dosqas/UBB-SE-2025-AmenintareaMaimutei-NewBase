@@ -119,3 +119,4 @@ VALUES
 (2, 1), (2, 2),
 (3, 3), (3, 4);
 
+select @@SERVERNAME as ServerName

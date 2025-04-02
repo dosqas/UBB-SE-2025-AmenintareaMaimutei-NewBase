@@ -10,31 +10,31 @@
     <PackageArchitecture>x64</PackageArchitecture>
     <PackageIdentityName>e0b58830-a6fa-40b7-8a56-45239112c975</PackageIdentityName>
     <PackageIdentityPublisher>CN=feket</PackageIdentityPublisher>
-    <IntermediateOutputPath>C:\Users\alex\Downloads\CourseApp\obj\x64\Debug\net8.0-windows10.0.19041.0\win-x64\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\obj\x64\Debug\net8.0-windows10.0.19041.0\win-x64\</IntermediateOutputPath>
     <RemoteDeploymentType>CopyToDevice</RemoteDeploymentType>
     <PackageRegistrationPath></PackageRegistrationPath>
     <RemoveNonLayoutFiles>false</RemoveNonLayoutFiles>
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath></WindowsSdkPath>
-    <LayoutDir>C:\Users\alex\Downloads\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\AppX</LayoutDir>
+    <LayoutDir>C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\AppX</LayoutDir>
   </PropertyGroup>
   <ItemGroup>
-    <AppXManifest Include="C:\Users\alex\Downloads\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\AppxManifest.xml">
+    <AppXManifest Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\resources.pri">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\resources.pri">
       <PackagePath>resources.pri</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\CourseApp.runtimeconfig.json">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\CourseApp.runtimeconfig.json">
       <PackagePath>CourseApp.runtimeconfig.json</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\CourseApp.dll">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\CourseApp.dll">
       <PackagePath>CourseApp.dll</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\obj\x64\Debug\net8.0-windows10.0.19041.0\win-x64\apphost.exe">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\obj\x64\Debug\net8.0-windows10.0.19041.0\win-x64\apphost.exe">
       <PackagePath>CourseApp.exe</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\alex\.nuget\packages\microsoft.netcore.app.runtime.win-x64\8.0.13\runtimes\win-x64\lib\net8.0\Microsoft.CSharp.dll">
@@ -814,28 +814,31 @@
     <AppxPackagedFile Include="C:\Users\alex\.nuget\packages\microsoft.web.webview2\1.0.2903.40\lib_manual\net8.0-windows10.0.17763.0\Microsoft.Web.WebView2.Core.Projection.dll">
       <PackagePath>Microsoft.Web.WebView2.Core.Projection.dll</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\CourseApp.deps.json">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\CourseApp.deps.json">
       <PackagePath>CourseApp.deps.json</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\Assets\LockScreenLogo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\Assets\image.png">
+      <PackagePath>Assets\image.png</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\Assets\SplashScreen.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\Assets\SplashScreen.scale-200.png">
       <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\Assets\Square150x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\Assets\Square150x150Logo.scale-200.png">
       <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\Assets\Square44x44Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\Assets\Square44x44Logo.scale-200.png">
       <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\Assets\StoreLogo.png">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\Assets\StoreLogo.png">
       <PackagePath>Assets\StoreLogo.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\alex\Downloads\CourseApp\Assets\Wide310x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\alex\Desktop\University Alex\University\Sem 4\ISS\UBB-SEE-2025-OnlyFeatures\CourseApp\Assets\Wide310x150Logo.scale-200.png">
       <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
     </AppxPackagedFile>
   </ItemGroup>

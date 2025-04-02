@@ -26,5 +26,6 @@ namespace CourseApp.Views
             if (this.Frame.CanGoBack)
                 this.Frame.GoBack();
         }
+        
     }
 }

@@ -16,8 +16,16 @@ namespace CourseApp.ViewModels
         private bool isEnrolled;
         private bool isNotEnrolled;
 
+
         public ObservableCollection<Course> Courses { get; set; }
         public ObservableCollection<Tag> Tags { get; set; }
+
+        public int CoinBalance
+        {
+            //TODO Implement the CoinBalance property
+            get => 10;
+
+        }
 
         public string SearchText
         {

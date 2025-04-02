@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using CourseApp.Models;
 using CourseApp.Services;
-
+using System.ComponentModel;
 namespace CourseApp.ViewModels
 {
     public class CourseViewModel : BaseViewModel
@@ -12,7 +12,19 @@ namespace CourseApp.ViewModels
         public ObservableCollection<Models.Module> Modules { get; set; }
         public ICommand EnrollCommand { get; set; }
         public bool IsEnrolled { get; set; }
-
+        public int CoinBalance
+        {
+            //TODO Implement the CoinBalance property
+            get => 20;
+        }
+        public string TimeSpent
+        {
+            get => "23 minutes";
+            set
+            {
+                //TODO Implement the TimeSpent property
+            }
+        }
         public CourseViewModel(Course course)
         {
             courseService = new CourseService();

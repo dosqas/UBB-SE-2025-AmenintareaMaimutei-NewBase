@@ -1,0 +1,153 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\courseapp\\views\\modulepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|solutionrelative:views\\modulepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\courseapp\\views\\coursepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|solutionrelative:views\\coursepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\courseapp\\views\\mainpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|solutionrelative:views\\mainpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\courseapp\\viewmodels\\courseviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|solutionrelative:viewmodels\\courseviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\courseapp\\converters\\texttrimmerconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|solutionrelative:converters\\texttrimmerconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\courseapp\\converters\\inversebooleanconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|solutionrelative:converters\\inversebooleanconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|c:\\users\\alex\\desktop\\university alex\\university\\sem 4\\iss\\ubb-see-2025-onlyfeatures\\courseapp\\services\\courseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{16D63593-8820-4D3C-A426-6AC1F17CFB7E}|CourseApp.csproj|solutionrelative:services\\courseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 166,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainPage.xaml",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Views\\MainPage.xaml",
+              "RelativeDocumentMoniker": "Views\\MainPage.xaml",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Views\\MainPage.xaml",
+              "RelativeToolTip": "Views\\MainPage.xaml",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAAAH0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-01T23:40:58.179Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ModulePage.xaml",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Views\\ModulePage.xaml",
+              "RelativeDocumentMoniker": "Views\\ModulePage.xaml",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Views\\ModulePage.xaml",
+              "RelativeToolTip": "Views\\ModulePage.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-01T23:42:45.501Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CourseViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\ViewModels\\CourseViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\CourseViewModel.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\ViewModels\\CourseViewModel.cs",
+              "RelativeToolTip": "ViewModels\\CourseViewModel.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAA1wAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T01:03:54.396Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TextTrimmerConverter.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Converters\\TextTrimmerConverter.cs",
+              "RelativeDocumentMoniker": "Converters\\TextTrimmerConverter.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Converters\\TextTrimmerConverter.cs",
+              "RelativeToolTip": "Converters\\TextTrimmerConverter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T00:39:44.767Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "InverseBooleanConverter.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Converters\\InverseBooleanConverter.cs",
+              "RelativeDocumentMoniker": "Converters\\InverseBooleanConverter.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Converters\\InverseBooleanConverter.cs",
+              "RelativeToolTip": "Converters\\InverseBooleanConverter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T00:41:42.214Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CourseService.cs",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Services\\CourseService.cs",
+              "RelativeDocumentMoniker": "Services\\CourseService.cs",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Services\\CourseService.cs",
+              "RelativeToolTip": "Services\\CourseService.cs",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAuwEEAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-01T23:41:20.792Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 234,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CoursePage.xaml",
+              "DocumentMoniker": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Views\\CoursePage.xaml",
+              "RelativeDocumentMoniker": "Views\\CoursePage.xaml",
+              "ToolTip": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\Views\\CoursePage.xaml",
+              "RelativeToolTip": "Views\\CoursePage.xaml",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAwwDUAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-01T23:51:33.323Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

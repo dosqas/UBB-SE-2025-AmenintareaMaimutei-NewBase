@@ -9,6 +9,9 @@
         public int Position { get; set; }
         public bool IsBonus { get; set; }
         public int Cost { get; set; }
+        public string ShortDescription {
+            get=>Description.Length > 23 ? Description.Substring(0, 23) + "..." : Description;
+        }
         public string ImageUrl { get; set; }
     }
 }
