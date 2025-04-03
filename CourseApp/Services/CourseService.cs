@@ -175,7 +175,6 @@ namespace CourseApp.Services
             bool claimed = repository.ClaimCompletionReward(UserId, courseId);
             if (claimed)
             {
-                // Award 50 coins using existing CoinsService
                 var coinsService = new CoinsService();
                 coinsService.EarnCoins(UserId, 50);
             }

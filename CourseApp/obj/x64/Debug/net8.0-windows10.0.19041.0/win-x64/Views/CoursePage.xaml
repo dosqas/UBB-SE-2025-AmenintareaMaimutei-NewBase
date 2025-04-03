@@ -91,11 +91,14 @@
                             <DataTemplate>
                                 <Border Background="#1E1E1E" BorderBrush="#3F3F3F" BorderThickness="1" 
                                         CornerRadius="8" Padding="15,12" Margin="0,3">
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding Module.Title}" FontWeight="SemiBold" Foreground="#FFFFFF" Margin="0,0,0,5" FontSize="16"/>
-                                        <TextBlock Text="{Binding Module.ShortDescription}" TextWrapping="Wrap" Foreground="#B0B0B0" FontSize="14"/>
-                                    </StackPanel>
-                                </Border>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="🔴" FontSize="16" Foreground="Red" Visibility="{Binding IsUnlocked, Converter={StaticResource InverseBooleanConverter}}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,0,0"/>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding Module.Title}" FontWeight="SemiBold" Foreground="#FFFFFF" Margin="0,0,0,5" FontSize="16"/>
+                                                <TextBlock Text="{Binding Module.ShortDescription}" TextWrapping="Wrap" Foreground="#B0B0B0" FontSize="14"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
 

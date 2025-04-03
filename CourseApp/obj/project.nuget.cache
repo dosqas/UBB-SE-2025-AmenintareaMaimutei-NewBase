@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "eXyrjFSY+DA=",
+  "dgSpecHash": "ky0rBaVssgc=",
   "success": true,
-  "projectFilePath": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\backup\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\CourseApp.csproj",
+  "projectFilePath": "C:\\Users\\alex\\Desktop\\University Alex\\University\\Sem 4\\ISS\\UBB-SEE-2025-OnlyFeatures\\CourseApp\\CourseApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\alex\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\alex\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
