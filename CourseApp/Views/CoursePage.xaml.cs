@@ -21,6 +21,7 @@ namespace CourseApp.Views
                 viewModel = vm;
                 this.DataContext = viewModel;
                 ModulesListView.ItemClick += ModulesListView_ItemClick;
+                vm.StartTimer();
             }
         }
 
@@ -29,7 +30,10 @@ namespace CourseApp.Views
         {
             // Simply go back in the navigation stack.
             if (this.Frame.CanGoBack)
-                this.Frame.GoBack();
+            {
+                viewModel.PauseTimer();
+                this.Frame.GoBack(); 
+            }
         }
 
 

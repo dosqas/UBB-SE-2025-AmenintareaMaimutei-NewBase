@@ -16,6 +16,7 @@ namespace CourseApp.ViewModels
         private DispatcherTimer? timer;
         private DateTime sessionStartTime;
         private int totalTimeSpent;
+        private int courseTimeLimit;
         private readonly CourseService courseService;
         private readonly CoinsService coinsService;
         public Course CurrentCourse { get; set; }
@@ -94,16 +95,24 @@ namespace CourseApp.ViewModels
 
 
 
-            totalTimeSpent = courseService.GetTimeSpent(course.CourseId);
-            lastSavedTime = totalTimeSpent; 
+            totalTimeSpent = courseService.GetTimeSpent(course.CourseId);// Tracks the total time spent on the course in seconds
+            lastSavedTime = totalTimeSpent; // Stores the last saved time to calculate delta on save
+            courseTimeLimit = course.TimeToComplete - totalTimeSpent; // Time limit for the course in seconds
 
-            TimeSpent = FormatTime(totalTimeSpent);
+            TimeSpent = FormatTime(courseTimeLimit - totalTimeSpent);
 
             timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             timer.Tick += (s, e) =>
             {
                 totalTimeSpent++;
-                TimeSpent = FormatTime(totalTimeSpent);
+                if(courseTimeLimit - totalTimeSpent <= 0)
+                {
+                    TimeSpent = FormatTime(0); // display 0 when time is up, still count time spent for user
+                }
+                else
+                {
+                    TimeSpent = FormatTime(courseTimeLimit - totalTimeSpent);
+                }
                 OnPropertyChanged(nameof(TimeRemaining));
             };
 
@@ -201,7 +210,7 @@ namespace CourseApp.ViewModels
         /// </summary>
         private void SaveTimeSpent()
         {
-            int delta = totalTimeSpent - lastSavedTime;
+            int delta = (totalTimeSpent - lastSavedTime) / 2; // don't ask why this is like this, if you remove /2, it will save double the time.
 
             if (delta > 0)
             {
