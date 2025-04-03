@@ -75,7 +75,7 @@ namespace CourseApp.Repository
             using (SqlConnection connection = DataLink.GetConnection())
             {
                 connection.Open();
-                string query = "SELECT CourseId, Title, Description, isPremium, Cost, ImageUrl, timeToComplete FROM Courses";
+                string query = "SELECT CourseId, Title, Description, isPremium, Cost, ImageUrl, timeToComplete, difficulty FROM Courses";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
@@ -90,6 +90,7 @@ namespace CourseApp.Repository
                             Cost = reader.GetInt32(4),
                             ImageUrl = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
                             TimeToComplete = reader.GetInt32(6)
+                            Difficulty = reader.IsDBNull(7) ? "Easy" : reader.GetString(5)
                         };
                         courses.Add(course);
                     }
