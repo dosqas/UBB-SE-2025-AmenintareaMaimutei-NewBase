@@ -52,8 +52,9 @@
             <Grid Grid.Row="1">
                 <StackPanel>
                     <TextBlock Text="Modules:" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" Foreground="#FFFFFF"/>
-                    
-                    <ListView ItemsSource="{Binding Modules}" x:Name="ModulesListView" 
+
+                    <ListView ItemsSource="{Binding ModuleRoadmap}" x:Name="ModulesListView"
+ 
                               IsItemClickEnabled="True" Background="Transparent" Margin="0,5,0,0">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
@@ -67,13 +68,13 @@
                                 <Border Background="#1E1E1E" BorderBrush="#3F3F3F" BorderThickness="1" 
                                         CornerRadius="8" Padding="15,12" Margin="0,3">
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="#FFFFFF" 
-                                                   Margin="0,0,0,5" FontSize="16"/>
-                                        <TextBlock Text="{Binding ShortDescription}" TextWrapping="Wrap" Foreground="#B0B0B0" FontSize="14"/>
+                                        <TextBlock Text="{Binding Module.Title}" FontWeight="SemiBold" Foreground="#FFFFFF" Margin="0,0,0,5" FontSize="16"/>
+                                        <TextBlock Text="{Binding Module.ShortDescription}" TextWrapping="Wrap" Foreground="#B0B0B0" FontSize="14"/>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
+                        
                     </ListView>
                 </StackPanel>
             </Grid>

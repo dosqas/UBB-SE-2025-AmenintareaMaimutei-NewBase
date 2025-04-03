@@ -35,11 +35,26 @@ namespace CourseApp.Views
 
         private void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is Models.Module module && viewModel.IsEnrolled)
+            if (e.ClickedItem is CourseViewModel.ModuleDisplayModel moduleDisplay && viewModel.IsEnrolled)
             {
-                this.Frame.Navigate(typeof(ModulePage), (module, viewModel));
+                if (!moduleDisplay.IsUnlocked)
+                {
+                    // Optional: Show message if locked
+                    var dialog = new ContentDialog
+                    {
+                        Title = "Locked Module",
+                        Content = "Please complete the previous module to unlock this one.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    _ = dialog.ShowAsync();
+                    return;
+                }
+
+                this.Frame.Navigate(typeof(ModulePage), (moduleDisplay.Module, viewModel));
             }
         }
+
 
     }
 }

@@ -60,6 +60,7 @@ namespace CourseApp.ViewModels
             courseService.CompleteModule(CurrentModule.ModuleId);
             IsCompleted = true;
             OnPropertyChanged(nameof(IsCompleted));
+            courseViewModel.ReloadModules(); // Refresh roadmap to unlock the next module
         }
     }
 }

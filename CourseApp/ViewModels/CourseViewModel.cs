@@ -5,6 +5,7 @@ using CourseApp.Services;
 using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using System;
+using System.Linq;
 
 
 namespace CourseApp.ViewModels
@@ -18,7 +19,8 @@ namespace CourseApp.ViewModels
         private readonly CourseService courseService;
         private readonly CoinsService coinsService;
         public Course CurrentCourse { get; set; }
-        public ObservableCollection<Models.Module> Modules { get; set; }
+        public ObservableCollection<ModuleDisplayModel> ModuleRoadmap { get; set; }
+
         public ICommand EnrollCommand { get; set; }
         public bool IsEnrolled { get; set; }
         public int CoinBalance
@@ -48,9 +50,12 @@ namespace CourseApp.ViewModels
             coinsService = new CoinsService();
             coinsService.GetUserCoins(0);
             CurrentCourse = course;
-            Modules = new ObservableCollection<Models.Module>(courseService.GetModules(course.CourseId));
             IsEnrolled = courseService.IsUserEnrolled(course.CourseId);
             EnrollCommand = new RelayCommand(ExecuteEnroll, CanEnroll);
+
+            LoadModules(); // ✅ load modules, regardless of enrollment status
+
+
 
             totalTimeSpent = courseService.GetTimeSpent(course.CourseId);// Tracks the total time spent on the course in seconds
             lastSavedTime = totalTimeSpent; // Stores the last saved time to calculate delta on save
@@ -65,6 +70,31 @@ namespace CourseApp.ViewModels
             };
 
         }
+
+        private void LoadModules()
+        {
+            var modules = courseService.GetModules(CurrentCourse.CourseId)
+                                       .OrderBy(m => m.Position)
+                                       .ToList();
+
+            ModuleRoadmap = new ObservableCollection<ModuleDisplayModel>();
+
+            for (int i = 0; i < modules.Count; i++)
+            {
+                bool isCompleted = courseService.IsModuleCompleted(modules[i].ModuleId);
+                bool isUnlocked = !IsEnrolled ? false : (i == 0 || courseService.IsModuleCompleted(modules[i - 1].ModuleId));
+
+                ModuleRoadmap.Add(new ModuleDisplayModel
+                {
+                    Module = modules[i],
+                    IsUnlocked = isUnlocked,
+                    IsCompleted = isCompleted
+                });
+            }
+
+            OnPropertyChanged(nameof(ModuleRoadmap));
+        }
+
 
 
         private bool CanEnroll(object parameter)
@@ -84,6 +114,8 @@ namespace CourseApp.ViewModels
             TimeSpent = FormatTime(totalTimeSpent);
             OnPropertyChanged(nameof(IsEnrolled));
             StartTimer();
+            LoadModules(); //refresh roadmap with unlocked module
+
         }
 
         /// <summary>
@@ -139,5 +171,17 @@ namespace CourseApp.ViewModels
             var ts = TimeSpan.FromSeconds(seconds);
             return $"{ts.Minutes + ts.Hours * 60} min {ts.Seconds} sec";
         }
+
+        public class ModuleDisplayModel
+        {
+            public Module Module { get; set; }
+            public bool IsUnlocked { get; set; }
+            public bool IsCompleted { get; set; }
+        }
+        public void ReloadModules()
+        {
+            LoadModules();
+        }
+
     }
 }
