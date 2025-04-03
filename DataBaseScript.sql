@@ -20,7 +20,9 @@ CREATE TABLE Courses (
     isPremium BIT NOT NULL DEFAULT 0,
     Cost INT DEFAULT 0,
     ImageUrl VARCHAR(255),
-    timeToComplete INT DEFAULT 3600 NOT NULL --in seconds
+    timeToComplete INT DEFAULT 3600 NOT NULL,
+    Difficulty VARCHAR(255) NOT NULL DEFAULT 'medium'
+	CONSTRAINT CK_Dificulty CHECK (Difficulty IN ('easy', 'medium', 'hard','asc'))
 );
 
 -- Modules Table
@@ -103,23 +105,23 @@ VALUES
 INSERT INTO UserWallet VALUES (0, 0, '2021-01-01')
 
 -- Insert Courses
-INSERT INTO Courses (CourseId, Title, Description, isPremium, Cost, ImageUrl, timeToComplete)
+INSERT INTO Courses (CourseId, Title, Description, isPremium, Cost, ImageUrl, timeToComplete,Difficulty)
 VALUES 
-(1, 'Python Basics', 'Learn Python programming fundamentals', 0, 0, 'python_basics.jpg', 3600),
-(2, 'Advanced JavaScript', 'Master JavaScript concepts', 1, 499, 'js_advanced.jpg', 4800),
-(3, 'SQL Essentials', 'Database management basics', 0, 0, 'sql_basic.jpg', 3600),
-(4, 'Web Development with React', 'Build dynamic web apps with React', 1, 599, 'react_web.jpg', 5400),
-(5, 'Data Science with Python', 'Learn data analysis and visualization', 0, 0, 'data_science.jpg', 7200),
-(6, 'Machine Learning Basics', 'Introduction to ML concepts', 1, 799, 'ml_basics.jpg', 8400),
-(7, 'Cybersecurity Fundamentals', 'Basics of cybersecurity and encryption', 0, 0, 'cybersecurity.jpg', 4800),
-(8, 'HTML & CSS for Beginners', 'Learn to build beautiful websites', 0, 0, 'html_css.jpg', 3600),
-(9, 'DevOps and CI/CD', 'Continuous integration and deployment', 1, 699, 'devops.jpg', 6000),
-(10, 'Mobile App Development', 'Create mobile apps with Flutter', 0, 0, 'flutter_apps.jpg', 7200),
-(11, 'C++ for Beginners', 'Introduction to C++ programming', 0, 0, 'cpp_basics.jpg', 4200),
-(12, 'Game Development with Unity', 'Build 2D and 3D games using Unity', 1, 899, 'unity_games.jpg', 9000),
-(13, 'Blockchain Fundamentals', 'Introduction to blockchain technology', 0, 0, 'blockchain.jpg', 5400),
-(14, 'Cloud Computing with AWS', 'Learn cloud computing with AWS services', 0, 0, 'aws_cloud.jpg', 7200),
-(15, 'Artificial Intelligence in Practice', 'Apply AI techniques to real-world problems', 1, 850, 'ai_practice.jpg', 9600);
+(1, 'Python Basics', 'Learn Python programming fundamentals', 0, 0, 'python_basics.jpg', 3600,'easy'),
+(2, 'ISS (Software Systems Engineering)', 'Software Systems Engineering (ISS) is a fundamental discipline.', 1, 50, 'iss_course.jpg', 14400, 'asc'),
+(3, 'SQL Essentials', 'Database management basics', 0, 0, 'sql_basic.jpg', 3600,'easy'),
+(4, 'Web Development with React', 'Build dynamic web apps with React', 1, 599, 'react_web.jpg', 5400,'medium'),
+(5, 'Data Science with Python', 'Learn data analysis and visualization', 0, 0, 'data_science.jpg', 7200,'medium'),
+(6, 'Machine Learning Basics', 'Introduction to ML concepts', 1, 799, 'ml_basics.jpg', 8400,'medium'),
+(7, 'Cybersecurity Fundamentals', 'Basics of cybersecurity and encryption', 0, 0, 'cybersecurity.jpg', 4800,'medium'),
+(8, 'HTML & CSS for Beginners', 'Learn to build beautiful websites', 0, 0, 'html_css.jpg', 3600,'easy'),
+(9, 'DevOps and CI/CD', 'Continuous integration and deployment', 1, 699, 'devops.jpg', 6000,'hard'),
+(10, 'Mobile App Development', 'Create mobile apps with Flutter', 0, 0, 'flutter_apps.jpg', 7200,'medium'),
+(11, 'C++ for Beginners', 'Introduction to C++ programming', 0, 0, 'cpp_basics.jpg', 4200,'easy'),
+(12, 'Game Development with Unity', 'Build 2D and 3D games using Unity', 1, 899, 'unity_games.jpg', 9000,'hard'),
+(13, 'Blockchain Fundamentals', 'Introduction to blockchain technology', 0, 0, 'blockchain.jpg', 5400,'medium'),
+(14, 'Cloud Computing with AWS', 'Learn cloud computing with AWS services', 0, 0, 'aws_cloud.jpg', 7200,'hard'),
+(15, 'Artificial Intelligence in Practice', 'Apply AI techniques to real-world problems', 1, 850, 'ai_practice.jpg', 9600,'hard');
 
 -- Insert Modules
 INSERT INTO Modules (ModuleId, CourseId, Title, Description, Position, isBonus, Cost)
@@ -364,5 +366,3 @@ VALUES
 (13, 7),
 (14, 7),
 (15, 5);
-
-SELECT * FROM UserProgress;

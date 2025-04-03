@@ -21,7 +21,7 @@ namespace CourseApp.ViewModels
         public ICommand OnModuleImageClick { get; set; }
 
 
-        public ModuleViewModel(Models.Module module , CourseViewModel courseVM)
+        public ModuleViewModel(Models.Module module, CourseViewModel courseVM)
         {
             courseService = new CourseService();
             coinsService = new CoinsService();
@@ -46,7 +46,7 @@ namespace CourseApp.ViewModels
         {
 
             bool confirmStatus = courseService.ClickModuleImage(CurrentModule.ModuleId);
-            if(confirmStatus)
+            if (confirmStatus)
                 OnPropertyChanged(nameof(CoinBalance));
         }
         public string TimeSpent => courseViewModel.TimeSpent;

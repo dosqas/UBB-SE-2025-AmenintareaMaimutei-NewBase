@@ -9,7 +9,7 @@ namespace CourseApp.Repository
     public class CourseRepository
     {
 
-       public bool IsModuleOpen(int userId, int moduleId)
+        public bool IsModuleOpen(int userId, int moduleId)
         {
             using (SqlConnection connection = DataLink.GetConnection())
             {
@@ -38,7 +38,7 @@ namespace CourseApp.Repository
             }
         }
 
-        public bool IsModuleImageClicked(int userId,int moduleId)
+        public bool IsModuleImageClicked(int userId, int moduleId)
         {
             using (SqlConnection connection = DataLink.GetConnection())
             {
@@ -53,7 +53,7 @@ namespace CourseApp.Repository
                 }
             }
         }
-        public void ClickModuleImage(int userId,int moduleId)
+        public void ClickModuleImage(int userId, int moduleId)
         {
             using (SqlConnection connection = DataLink.GetConnection())
             {
@@ -67,7 +67,7 @@ namespace CourseApp.Repository
                 }
             }
         }
-        
+
 
         public List<Course> GetAllCourses()
         {
@@ -75,7 +75,7 @@ namespace CourseApp.Repository
             using (SqlConnection connection = DataLink.GetConnection())
             {
                 connection.Open();
-                string query = "SELECT CourseId, Title, Description, isPremium, Cost, ImageUrl, timeToComplete FROM Courses";
+                string query = "SELECT CourseId, Title, Description, isPremium, Cost, ImageUrl, timeToComplete, difficulty FROM Courses";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
@@ -89,7 +89,8 @@ namespace CourseApp.Repository
                             IsPremium = reader.GetBoolean(3),
                             Cost = reader.GetInt32(4),
                             ImageUrl = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
-                            TimeToComplete = reader.GetInt32(6)
+                            TimeToComplete = reader.GetInt32(6),
+                            Difficulty = reader.IsDBNull(7) ? "Easy" : reader.GetString(7)
                         };
                         courses.Add(course);
                     }
@@ -509,7 +510,7 @@ namespace CourseApp.Repository
         }
 
 
-      
+
     }
 }
 

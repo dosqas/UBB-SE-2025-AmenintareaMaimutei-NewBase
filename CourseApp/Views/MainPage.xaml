@@ -115,7 +115,9 @@
                                     Margin="0">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="18" Foreground="#E0E0E0"/>
+                                    <TextBlock Text="{Binding Difficulty}" FontSize="14" Foreground="#9179FB" FontWeight="SemiBold"/>
                                     <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="#CCCCCC"/>
+                                    
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

@@ -91,7 +91,7 @@ namespace CourseApp.ViewModels
             IsEnrolled = courseService.IsUserEnrolled(course.CourseId);
             EnrollCommand = new RelayCommand(ExecuteEnroll, CanEnroll);
 
-            LoadModules(); 
+            LoadModules();
 
 
 
@@ -105,7 +105,7 @@ namespace CourseApp.ViewModels
             timer.Tick += (s, e) =>
             {
                 totalTimeSpent++;
-                if(courseTimeLimit - totalTimeSpent <= 0)
+                if (courseTimeLimit - totalTimeSpent <= 0)
                 {
                     TimeSpent = FormatTime(0); // display 0 when time is up, still count time spent for user
                 }
@@ -203,7 +203,7 @@ namespace CourseApp.ViewModels
                 timerStarted = false;
             }
         }
-        
+
         /// <summary>
         /// Saves only the new time spent since the last save to the database.
         /// This prevents double-counting time when the app restarts or navigates back.
