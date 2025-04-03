@@ -20,8 +20,7 @@ CREATE TABLE Courses (
     isPremium BIT NOT NULL DEFAULT 0,
     Cost INT DEFAULT 0,
     ImageUrl VARCHAR(255),
-    timeToComplete INT DEFAULT 3600 NOT NULL, --in seconds
-    Difficulty VARCHAR(255) NOT NULL
+    timeToComplete INT DEFAULT 3600 NOT NULL --in seconds
 );
 
 -- Modules Table
