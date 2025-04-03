@@ -4,14 +4,30 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="using:CourseApp.ViewModels"
     Background="#121212">
-    
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+    <Grid>
+
+        <Border x:Name="NotificationBanner"
+                Background="#4CAF50"
+                Padding="16"
+                CornerRadius="8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Margin="0,20,0,0"
+                Visibility="{Binding ShowNotification, Mode=OneWay}">
+            <TextBlock Text="{Binding NotificationMessage, Mode=OneWay}"
+                       Foreground="White"
+                       TextWrapping="Wrap"
+                       FontWeight="SemiBold" />
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <!-- Header Section -->
             <StackPanel Grid.Row="0">
                 <Grid>
@@ -25,6 +41,15 @@
                             </StackPanel>
                         </Border>
                         
+                        <!-- Progress Display -->
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,15" HorizontalAlignment="Center">
+                            <TextBlock Text="Progress: " FontSize="16" Foreground="#E0E0E0"/>
+                            <TextBlock Text="{Binding CompletedModules}" FontSize="16" Foreground="#9179FB" FontWeight="Bold"/>
+                            <TextBlock Text=" / " FontSize="16" Foreground="#E0E0E0"/>
+                            <TextBlock Text="{Binding RequiredModules}" FontSize="16" Foreground="#E0E0E0"/>
+                            <TextBlock Text=" modules completed" FontSize="16" Foreground="#E0E0E0"/>
+                        </StackPanel>
+
                         <Border Background="#2D2D2D" CornerRadius="10" Padding="12,6" HorizontalAlignment="Right" 
                             VerticalAlignment="Top" BorderBrush="#3F3F3F" BorderThickness="1">
                             <StackPanel Orientation="Horizontal" Spacing="5">
@@ -36,7 +61,7 @@
                 </Grid>
                 <TextBlock Text="{Binding CurrentCourse.Title}" FontSize="28" FontWeight="Bold" Margin="0,20,0,15" Foreground="#FFFFFF"/>
                 <TextBlock Text="{Binding CurrentCourse.Description}" TextWrapping="Wrap" Margin="0,0,0,25" Foreground="#B0B0B0"/>
-                
+
                 <StackPanel Orientation="Horizontal" Margin="0,5,0,20">
                     <Button Content="Back" Click="BackButton_Click" Margin="0,0,15,0" 
                             Background="#2D2D2D" Foreground="#FFFFFF" Padding="15,8" CornerRadius="5"/>
@@ -44,10 +69,10 @@
                             IsEnabled="{Binding IsEnrolled, Converter={StaticResource InverseBooleanConverter}}"
                             Background="#9179FB" Foreground="#FFFFFF" Padding="15,8" CornerRadius="5"/>
                 </StackPanel>
-                
+
                 <Border Height="1" Background="#3F3F3F" Margin="0,0,0,20" Opacity="0.6"/>
             </StackPanel>
-            
+
             <!-- Modules Section -->
             <Grid Grid.Row="1">
                 <StackPanel>
@@ -74,10 +99,11 @@
                                 </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-                        
+
                     </ListView>
                 </StackPanel>
             </Grid>
         </Grid>
-    </ScrollViewer>
+        </ScrollViewer>
+    </Grid>
 </Page>

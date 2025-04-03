@@ -45,9 +45,15 @@ namespace CourseApp.Services
             repository.EnrollUser(UserId, courseId);
         }
 
-        public void CompleteModule(int moduleId)
+        public void CompleteModule(int moduleId, int courseId)
         {
             repository.CompleteModule(UserId, moduleId);
+
+            // Check if course is now completed
+            if (repository.IsCourseCompleted(UserId, courseId))
+            {
+                repository.MarkCourseAsCompleted(UserId, courseId);
+            }
         }
 
         /// <summary>
@@ -119,6 +125,58 @@ namespace CourseApp.Services
         public int GetTimeSpent(int courseId)
         {
             return repository.GetTimeSpent(UserId, courseId);
+        }
+
+        public bool IsModuleAvailable(int moduleId)
+        {
+            return repository.IsModuleAvailable(UserId, moduleId);
+        }
+
+        public bool IsCourseCompleted(int courseId)
+        {
+            return repository.IsCourseCompleted(UserId, courseId);
+        }
+
+        public int GetCompletedModulesCount(int courseId)
+        {
+            return repository.GetCompletedModulesCount(UserId, courseId);
+        }
+
+        public int GetRequiredModulesCount(int courseId)
+        {
+            return repository.GetRequiredModulesCount(courseId);
+        }
+
+        public bool ClaimCompletionReward(int courseId)
+        {
+            bool claimed = repository.ClaimCompletionReward(UserId, courseId);
+            if (claimed)
+            {
+                // Award 50 coins using existing CoinsService
+                var coinsService = new CoinsService();
+                coinsService.EarnCoins(UserId, 50);
+            }
+            return claimed;
+        }
+
+        public bool ClaimTimedReward(int courseId, int timeSpent)
+        {
+            int timeLimit = repository.GetCourseTimeLimit(courseId);
+            bool claimed = repository.ClaimTimedReward(UserId, courseId, timeSpent, timeLimit);
+
+            if (claimed)
+            {
+                int rewardAmount = 300; //hardcoded reward for timed completion
+                var coinsService = new CoinsService();
+                coinsService.EarnCoins(UserId, rewardAmount);
+            }
+
+            return claimed;
+        }
+
+        public int GetCourseTimeLimit(int courseId)
+        {
+            return repository.GetCourseTimeLimit(courseId);
         }
 
     }

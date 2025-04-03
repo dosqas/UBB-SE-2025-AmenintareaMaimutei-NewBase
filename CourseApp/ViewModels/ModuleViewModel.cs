@@ -15,6 +15,7 @@ namespace CourseApp.ViewModels
         public ICommand CompleteModuleCommand { get; set; }
         public ICommand ModuleImageClick { get; }
 
+
         public ModuleViewModel(Models.Module module , CourseViewModel courseVM)
         {
             courseService = new CourseService();
@@ -57,7 +58,7 @@ namespace CourseApp.ViewModels
         private void ExecuteCompleteModule(object parameter)
         {
             // Mark module as complete in the database.
-            courseService.CompleteModule(CurrentModule.ModuleId);
+            this.courseViewModel.UpdateModuleCompletion(CurrentModule.ModuleId);
             IsCompleted = true;
             OnPropertyChanged(nameof(IsCompleted));
             courseViewModel.ReloadModules(); // Refresh roadmap to unlock the next module

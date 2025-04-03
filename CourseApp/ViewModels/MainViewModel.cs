@@ -120,7 +120,9 @@ namespace CourseApp.ViewModels
 
         public bool CheckUserDailyLogin()
         {
-            return coinsService.checkUserDailyLogin();
+            bool ok = coinsService.checkUserDailyLogin();
+            OnPropertyChanged(nameof(CoinBalance));
+            return ok;
         }
 
         private void Tag_PropertyChanged(object? sender, PropertyChangedEventArgs e)

@@ -225,6 +225,230 @@ namespace CourseApp.Repository
             }
         }
 
+        public int GetRequiredModulesCount(int courseId)
+        {
+            int count = 0;
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Modules WHERE CourseId = @courseId AND IsBonus = 0";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@courseId", courseId);
+                    count = (int)command.ExecuteScalar();
+                }
+            }
+            return count;
+        }
 
+        // Add method to get completed modules count
+        public int GetCompletedModulesCount(int userId, int courseId)
+        {
+            int count = 0;
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = @"SELECT COUNT(*) FROM UserProgress up
+                        INNER JOIN Modules m ON up.ModuleId = m.ModuleId
+                        WHERE up.UserId = @userId AND m.CourseId = @courseId
+                        AND up.status = 'completed' AND m.IsBonus = 0";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@courseId", courseId);
+                    count = (int)command.ExecuteScalar();
+                }
+            }
+            return count;
+        }
+
+        // Add method to check if course is completed
+        public bool IsCourseCompleted(int userId, int courseId)
+        {
+            int requiredModules = GetRequiredModulesCount(courseId);
+            int completedModules = GetCompletedModulesCount(userId, courseId);
+            return requiredModules > 0 && requiredModules == completedModules;
+        }
+
+        // Add method to check if module is available for completion (sequential logic)
+        public bool IsModuleAvailable(int userId, int moduleId)
+        {
+            bool available = false;
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                // A module is available if:
+                // 1. It's the first module in sequence (position = 1)
+                // 2. The previous module is completed
+                // 3. It's a bonus module (can be completed anytime)
+                string query = @"
+            SELECT 
+                CASE
+                    WHEN m.Position = 1 THEN 1
+                    WHEN m.IsBonus = 1 THEN 1
+                    WHEN EXISTS (
+                        SELECT 1 FROM UserProgress up
+                        INNER JOIN Modules prev ON up.ModuleId = prev.ModuleId
+                        WHERE up.UserId = @userId
+                        AND prev.CourseId = m.CourseId
+                        AND prev.Position = m.Position - 1
+                        AND up.status = 'completed'
+                    ) THEN 1
+                    ELSE 0
+                END as IsAvailable
+            FROM Modules m
+            WHERE m.ModuleId = @moduleId";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@moduleId", moduleId);
+                    available = (int)command.ExecuteScalar() == 1;
+                }
+            }
+            return available;
+        }
+
+        // Add method to track course completion
+        public void MarkCourseAsCompleted(int userId, int courseId)
+        {
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = @"
+            IF NOT EXISTS (
+                SELECT 1 FROM CourseCompletions 
+                WHERE UserId = @userId AND CourseId = @courseId
+            )
+            BEGIN
+                INSERT INTO CourseCompletions (UserId, CourseId, CompletionRewardClaimed, TimedRewardClaimed, CompletedAt)
+                VALUES (@userId, @courseId, 0, 0, GETDATE())
+            END";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@courseId", courseId);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        // Add method to claim completion reward
+        public bool ClaimCompletionReward(int userId, int courseId)
+        {
+            bool claimed = false;
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+
+                // First check if it's already claimed
+                string checkQuery = @"
+            SELECT CompletionRewardClaimed 
+            FROM CourseCompletions 
+            WHERE UserId = @userId AND CourseId = @courseId";
+
+                bool alreadyClaimed = false;
+                using (SqlCommand checkCommand = new SqlCommand(checkQuery, connection))
+                {
+                    checkCommand.Parameters.AddWithValue("@userId", userId);
+                    checkCommand.Parameters.AddWithValue("@courseId", courseId);
+                    var result = checkCommand.ExecuteScalar();
+                    alreadyClaimed = result != null && (bool)result;
+                }
+
+                if (!alreadyClaimed)
+                {
+                    string updateQuery = @"
+                UPDATE CourseCompletions
+                SET CompletionRewardClaimed = 1
+                WHERE UserId = @userId AND CourseId = @courseId";
+
+                    using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
+                    {
+                        updateCommand.Parameters.AddWithValue("@userId", userId);
+                        updateCommand.Parameters.AddWithValue("@courseId", courseId);
+                        updateCommand.ExecuteNonQuery();
+                        claimed = true;
+                    }
+                }
+            }
+            return claimed;
+        }
+
+        // Add method for timed reward
+        public bool ClaimTimedReward(int userId, int courseId, int timeSpent, int timeLimit)
+        {
+            bool claimed = false;
+
+            // Only claim if completed within time limit
+            if (timeSpent <= timeLimit)
+            {
+                using (SqlConnection connection = DataLink.GetConnection())
+                {
+                    connection.Open();
+
+                    // Check if already claimed
+                    string checkQuery = @"
+                SELECT TimedRewardClaimed 
+                FROM CourseCompletions 
+                WHERE UserId = @userId AND CourseId = @courseId";
+
+                    bool alreadyClaimed = false;
+                    using (SqlCommand checkCommand = new SqlCommand(checkQuery, connection))
+                    {
+                        checkCommand.Parameters.AddWithValue("@userId", userId);
+                        checkCommand.Parameters.AddWithValue("@courseId", courseId);
+                        var result = checkCommand.ExecuteScalar();
+                        alreadyClaimed = result != null && (bool)result;
+                    }
+
+                    if (!alreadyClaimed)
+                    {
+                        string updateQuery = @"
+                    UPDATE CourseCompletions
+                    SET TimedRewardClaimed = 1
+                    WHERE UserId = @userId AND CourseId = @courseId";
+
+                        using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
+                        {
+                            updateCommand.Parameters.AddWithValue("@userId", userId);
+                            updateCommand.Parameters.AddWithValue("@courseId", courseId);
+                            updateCommand.ExecuteNonQuery();
+                            claimed = true;
+                        }
+                    }
+                }
+            }
+
+            return claimed;
+        }
+
+        // Add method to get course time limit
+        public int GetCourseTimeLimit(int courseId)
+        {
+            int timeLimit = 0;
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT TimeToComplete FROM Courses WHERE CourseId = @courseId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@courseId", courseId);
+                    var result = command.ExecuteScalar();
+
+                    // Check for null or DBNull before conversion
+                    if (result != null && result != DBNull.Value)
+                    {
+                        timeLimit = Convert.ToInt32(result);
+                    }
+                }
+            }
+            return timeLimit;
+        }
+
+
+      
     }
 }
+
