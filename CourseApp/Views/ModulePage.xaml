@@ -43,9 +43,13 @@
                        Foreground="#DADADA" FontSize="16" LineHeight="24"/>
                 
                 <!-- Image section -->
-                <Button Command="{Binding ModuleImageClick}" HorizontalAlignment="Center" Background="Transparent" 
-                    BorderThickness="0" Padding="0" Margin="0,0,0,24">
-                    <Image Source="{Binding CurrentModule.ImageUrl}" MaxWidth="1000"/>
+                <Button Command="{Binding OnModuleImageClick}" 
+                       HorizontalAlignment="Center" 
+                       Background="Transparent" 
+                       BorderThickness="0" 
+                       Padding="0" 
+                       Margin="0,0,0,24">
+                   <Image Source="{Binding CurrentModule.ImageUrl}" MaxWidth="1000"/>
                 </Button>
                 
                 <Button Content="Complete Module" Command="{Binding CompleteModuleCommand}"

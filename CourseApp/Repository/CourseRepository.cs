@@ -8,6 +8,67 @@ namespace CourseApp.Repository
 {
     public class CourseRepository
     {
+
+       public bool IsModuleOpen(int userId, int moduleId)
+        {
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM UserProgress WHERE UserId = @userId AND ModuleId = @moduleId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@moduleId", moduleId);
+                    return (int)command.ExecuteScalar() > 0;
+                }
+            }
+        }
+        public void OpenModule(int userId, int moduleId)
+        {
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = @"INSERT INTO UserProgress (UserId, ModuleId, status,ImageClicked) VALUES (@userId, @moduleId, 'not_completed',0)";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@moduleId", moduleId);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public bool IsModuleImageClicked(int userId,int moduleId)
+        {
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT ImageClicked FROM UserProgress WHERE ModuleId = @moduleId AND UserId = @userId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@moduleId", moduleId);
+                    command.Parameters.AddWithValue("@userId", userId);
+                    var result = command.ExecuteScalar();
+                    return result != null && Convert.ToBoolean(result);
+                }
+            }
+        }
+        public void ClickModuleImage(int userId,int moduleId)
+        {
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "UPDATE UserProgress SET ImageClicked = 1 WHERE ModuleId = @moduleId AND UserId = @userId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@moduleId", moduleId);
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        
+
         public List<Course> GetAllCourses()
         {
             List<Course> courses = new List<Course>();

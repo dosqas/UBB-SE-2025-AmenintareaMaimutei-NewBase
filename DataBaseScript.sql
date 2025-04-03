@@ -68,6 +68,7 @@ CREATE TABLE UserProgress (
     UserId INT NOT NULL,
     ModuleId INT NOT NULL,
     status VARCHAR(20) NOT NULL,
+    ImageClicked BIT NOT NULL DEFAULT 0,
 	PRIMARY KEY (UserId, ModuleId),
     CONSTRAINT CK_Status CHECK (status IN ('not_completed', 'completed')),
     CONSTRAINT UQ_UserProgress UNIQUE (UserId, ModuleId),
@@ -363,3 +364,5 @@ VALUES
 (13, 7),
 (14, 7),
 (15, 5);
+
+SELECT * FROM UserProgress;

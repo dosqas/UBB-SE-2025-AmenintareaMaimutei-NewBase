@@ -90,12 +90,12 @@ namespace CourseApp.ViewModels
             IsEnrolled = courseService.IsUserEnrolled(course.CourseId);
             EnrollCommand = new RelayCommand(ExecuteEnroll, CanEnroll);
 
-            LoadModules(); // ✅ load modules, regardless of enrollment status
+            LoadModules(); 
 
 
 
-            totalTimeSpent = courseService.GetTimeSpent(course.CourseId);// Tracks the total time spent on the course in seconds
-            lastSavedTime = totalTimeSpent; // Stores the last saved time to calculate delta on save
+            totalTimeSpent = courseService.GetTimeSpent(course.CourseId);
+            lastSavedTime = totalTimeSpent; 
 
             TimeSpent = FormatTime(totalTimeSpent);
 

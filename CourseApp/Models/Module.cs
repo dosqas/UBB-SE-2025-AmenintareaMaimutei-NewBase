@@ -13,5 +13,6 @@
             get=>Description.Length > 23 ? Description.Substring(0, 23) + "..." : Description;
         }
         public string ImageUrl { get; set; }
+
     }
 }

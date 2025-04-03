@@ -9,12 +9,20 @@ namespace CourseApp.Services
     public class CourseService
     {
         private readonly CourseRepository repository;
+        private readonly CoinsRepository coinsRepository = new CoinsRepository();
         private const int UserId = 0;
         public CourseService()
         {
             repository = new CourseRepository();
         }
 
+        public void OpenModule(int moduleId)
+        {
+            if (!repository.IsModuleOpen(UserId, moduleId))
+            {
+                repository.OpenModule(UserId, moduleId);
+            }
+        }
         public List<Course> GetCourses()
         {
             return repository.GetAllCourses();
@@ -126,6 +134,21 @@ namespace CourseApp.Services
         {
             return repository.GetTimeSpent(UserId, courseId);
         }
+
+        public bool ClickModuleImage(int moduleId)
+        {
+            if(repository.IsModuleImageClicked(UserId, moduleId))
+            {
+                return false ;
+            }
+            
+            repository.ClickModuleImage(UserId, moduleId);
+            coinsRepository.AddCoins(UserId, 10);
+            return true;
+
+        }
+
+
 
         public bool IsModuleAvailable(int moduleId)
         {
