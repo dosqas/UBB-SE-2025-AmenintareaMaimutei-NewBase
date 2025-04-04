@@ -40,7 +40,7 @@ namespace CourseApp.Views
 
         private void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is ModuleDisplayModelView moduleDisplay && viewModel.IsEnrolled)
+            if (e.ClickedItem is CourseViewModel.ModuleDisplayModelView moduleDisplay && viewModel.IsEnrolled)
             {
                 if (moduleDisplay.IsUnlocked)
                 {

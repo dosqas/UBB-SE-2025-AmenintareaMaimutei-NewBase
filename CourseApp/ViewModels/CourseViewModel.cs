@@ -32,7 +32,12 @@ namespace CourseApp.ViewModels
             get => coinsService.GetUserCoins(0);
         }
 
-
+        public class ModuleDisplayModelView
+        {
+            public Module Module { get; set; }
+            public bool IsUnlocked { get; set; }
+            public bool IsCompleted { get; set; }
+        }
 
 
         private string timeSpent;
@@ -141,17 +146,9 @@ namespace CourseApp.ViewModels
         private void LoadModules()
         {
             var modules = new List<Module>();
-            if (IsCourseCompleted)
-            {
-                modules = courseService.GetModules(CurrentCourse.CourseId)
+            modules = courseService.GetModules(CurrentCourse.CourseId)
                                        .OrderBy(m => m.Position)
                                        .ToList();
-            }
-            else {
-                modules = courseService.GetNormalModules(CurrentCourse.CourseId)
-                                       .OrderBy(m => m.Position)
-                                       .ToList();
-            }
             ModuleRoadmap = new ObservableCollection<ModuleDisplayModelView>();
 
             for (int i = 0; i < modules.Count; i++)
@@ -345,6 +342,7 @@ namespace CourseApp.ViewModels
                 notificationTimer.Stop();
             };
             notificationTimer.Start();
+            ReloadModules();
         }
 
         public void TryBuyBonusModule(Module module)
