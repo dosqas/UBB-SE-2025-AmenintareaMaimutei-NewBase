@@ -113,12 +113,56 @@
                                     CornerRadius="10" 
                                     Padding="15" 
                                     Margin="0">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="18" Foreground="#E0E0E0"/>
-                                    <TextBlock Text="{Binding Difficulty}" FontSize="14" Foreground="#9179FB" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="#CCCCCC"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
                                     
-                                </StackPanel>
+                                    <!-- Course Content -->
+                                    <StackPanel Grid.Column="0" Margin="5,0,10,0">
+                                        <TextBlock Text="{Binding Title}" 
+                                                   FontWeight="SemiBold" 
+                                                   FontSize="20" 
+                                                   Foreground="#FFFFFF"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                                   
+                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,8">
+                                            <Border Background="#9179FB" 
+                                                    CornerRadius="4" 
+                                                    Padding="6,2" 
+                                                    Margin="0,0,8,0">
+                                                <TextBlock Text="{Binding Difficulty}" 
+                                                           FontSize="12" 
+                                                           Foreground="White" 
+                                                           FontWeight="Medium"/>
+                                            </Border>
+                                            
+                                            <ItemsControl ItemsSource="{Binding Tags}" 
+                                                          VerticalAlignment="Center">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" Spacing="5"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Name}" 
+                                                                   Foreground="#AAAAAA" 
+                                                                   FontSize="12"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                        
+                                        <TextBlock Text="{Binding Description}" 
+                                                   TextWrapping="Wrap" 
+                                                   Foreground="#CCCCCC" 
+                                                   FontSize="14" 
+                                                   MaxLines="2" 
+                                                   TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                </Grid>
                             </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>

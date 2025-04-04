@@ -60,14 +60,40 @@
                     </Grid>
                 </Grid>
                 <TextBlock Text="{Binding CurrentCourse.Title}" FontSize="28" FontWeight="Bold" Margin="0,20,0,15" Foreground="#FFFFFF"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Spacing="8">
+                    <!-- Difficulty level -->
+                    <Border Background="#3F3F3F" CornerRadius="4" Padding="8,4">
+                        <TextBlock Text="{Binding CurrentCourse.Difficulty}" FontSize="14" Foreground="#9179FB" FontWeight="SemiBold"/>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding Tags}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="5"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#2D2D2D" CornerRadius="4" Padding="8,4">
+                                    <TextBlock Text="{Binding Name}" FontSize="14" Foreground="#E0E0E0"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
                 <TextBlock Text="{Binding CurrentCourse.Description}" TextWrapping="Wrap" Margin="0,0,0,25" Foreground="#B0B0B0"/>
-
+                
                 <StackPanel Orientation="Horizontal" Margin="0,5,0,20">
                     <Button Content="Back" Click="BackButton_Click" Margin="0,0,15,0" 
                             Background="#2D2D2D" Foreground="#FFFFFF" Padding="15,8" CornerRadius="5"/>
                     <Button Content="Enroll" Command="{Binding EnrollCommand}"
                             IsEnabled="{Binding IsEnrolled, Converter={StaticResource InverseBooleanConverter}}"
                             Background="#9179FB" Foreground="#FFFFFF" Padding="15,8" CornerRadius="5"/>
+                    <Border Background="#2D2D2D" CornerRadius="5" Padding="15,8" Margin="15,0,0,0" Visibility="{Binding CoinVisibility}" >
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock Text="{Binding CurrentCourse.Cost}" Foreground="#FFD700" FontWeight="SemiBold"/>
+                                <TextBlock Text="🪙" Foreground="#FFD700"/>
+                            </StackPanel>
+                    </Border>
                 </StackPanel>
 
                 <Border Height="1" Background="#3F3F3F" Margin="0,0,0,20" Opacity="0.6"/>
@@ -91,12 +117,18 @@
                             <DataTemplate>
                                 <Border Background="#1E1E1E" BorderBrush="#3F3F3F" BorderThickness="1" 
                                         CornerRadius="8" Padding="15,12" Margin="0,3">
-                                        <StackPanel Orientation="Horizontal">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="🔴" FontSize="16" Foreground="Red" Visibility="{Binding IsUnlocked, Converter={StaticResource InverseBooleanConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,0,0"/>
                                             <StackPanel Orientation="Vertical">
                                                 <TextBlock Text="{Binding Module.Title}" FontWeight="SemiBold" Foreground="#FFFFFF" Margin="0,0,0,5" FontSize="16"/>
                                                 <TextBlock Text="{Binding Module.ShortDescription}" TextWrapping="Wrap" Foreground="#B0B0B0" FontSize="14"/>
                                             </StackPanel>
+                                        </StackPanel>
+                                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsLockedBonus}">
+                                            <TextBlock Text="{Binding Module.Cost}" Foreground="#FFD700" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                            <TextBlock Text="🪙" Foreground="#FFD700" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                        </StackPanel>
                                         </StackPanel>
                                     </Border>
                             </DataTemplate>

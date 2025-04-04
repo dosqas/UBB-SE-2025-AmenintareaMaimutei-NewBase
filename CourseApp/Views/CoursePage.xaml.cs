@@ -8,6 +8,8 @@ namespace CourseApp.Views
 {
     public sealed partial class CoursePage : Page
     {
+
+
         private CourseViewModel viewModel;
         public CoursePage()
         {
@@ -28,7 +30,6 @@ namespace CourseApp.Views
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            // Simply go back in the navigation stack.
             if (this.Frame.CanGoBack)
             {
                 viewModel.PauseTimer();
@@ -39,23 +40,24 @@ namespace CourseApp.Views
 
         private void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is CourseViewModel.ModuleDisplayModel moduleDisplay && viewModel.IsEnrolled)
+            if (e.ClickedItem is ModuleDisplayModelView moduleDisplay && viewModel.IsEnrolled)
             {
-                if (!moduleDisplay.IsUnlocked)
+                if (moduleDisplay.IsUnlocked)
                 {
-                    // Optional: Show message if locked
-                    var dialog = new ContentDialog
-                    {
-                        Title = "Locked Module",
-                        Content = "Please complete the previous module to unlock this one.",
-                        CloseButtonText = "OK",
-                        XamlRoot = this.XamlRoot
-                    };
-                    _ = dialog.ShowAsync();
+                    this.Frame.Navigate(typeof(ModulePage), (moduleDisplay.Module, viewModel));
                     return;
                 }
+                if (moduleDisplay.Module.IsBonus)
+                {
+                    viewModel.TryBuyBonusModule(moduleDisplay.Module);
 
-                this.Frame.Navigate(typeof(ModulePage), (moduleDisplay.Module, viewModel));
+                }
+                var dialog = new ContentDialog
+                {
+                    Title = "Module Locked",
+                    Content = "You need to complete the previous modules to unlock this one.",
+                    CloseButtonText = "OK"
+                };
             }
         }
 

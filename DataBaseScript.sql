@@ -366,3 +366,7 @@ VALUES
 (13, 7),
 (14, 7),
 (15, 5);
+
+update UserWallet
+SET coinBalance=100000
+where UserId=0;

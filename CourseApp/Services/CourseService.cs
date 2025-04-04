@@ -8,6 +8,9 @@ namespace CourseApp.Services
 {
     public class CourseService
     {
+        public List<Tag>getCourseTags(int CourseId){
+            return repository.GetTagsForCourse(CourseId);
+        }
         private readonly CourseRepository repository;
         private readonly CoinsRepository coinsRepository = new CoinsRepository();
         private const int UserId = 0;
@@ -33,6 +36,35 @@ namespace CourseApp.Services
             return repository.GetAllTags();
         }
 
+        public bool BuyBonusModule(int moduleId, int courseId)
+        {
+            var module = repository.GetModule(moduleId);
+            if (module == null || !module.IsBonus)
+            {
+                return false;
+            }
+            if(repository.IsModuleOpen(UserId, moduleId))
+            {
+                return false;
+            }
+            var course = repository.GetCourse(courseId);
+            if (course == null)
+            {
+                return false;
+            }
+            if (!coinsRepository.DeductCoins(UserId, module.Cost))
+            {
+                return false;
+            }
+            repository.OpenModule(UserId, moduleId);
+            return true;
+        }
+
+        public List<Module> GetNormalModules(int courseId)
+        {
+            return repository.GetModulesByCourseId(courseId).Where(m => !m.IsBonus).ToList();
+        }
+
         public List<Module> GetModules(int courseId)
         {
             return repository.GetModulesByCourseId(courseId);
@@ -48,16 +80,33 @@ namespace CourseApp.Services
             return repository.IsModuleCompleted(UserId, moduleId);
         }
 
-        public void EnrollInCourse(int courseId)
+        public bool EnrollInCourse(int courseId)
         {
+            if(repository.IsUserEnrolled(UserId, courseId))
+            {
+                return false;
+            }
+            var course = repository.GetCourse(courseId);
+            if (course == null)
+            {
+                return false;
+            }
+            if (course.IsPremium)
+            {
+                int cost = course.Cost;
+                if (!coinsRepository.DeductCoins(UserId, cost))
+                {
+                    return false; 
+                }
+            }
             repository.EnrollUser(UserId, courseId);
+            return true;
         }
 
         public void CompleteModule(int moduleId, int courseId)
         {
             repository.CompleteModule(UserId, moduleId);
 
-            // Check if course is now completed
             if (repository.IsCourseCompleted(UserId, courseId))
             {
                 repository.MarkCourseAsCompleted(UserId, courseId);
@@ -148,7 +197,10 @@ namespace CourseApp.Services
 
         }
 
-
+        public bool IsModuleInProgress(int moduleId)
+        {
+            return repository.IsModuleInProgress(0,moduleId);
+        }
 
         public bool IsModuleAvailable(int moduleId)
         {

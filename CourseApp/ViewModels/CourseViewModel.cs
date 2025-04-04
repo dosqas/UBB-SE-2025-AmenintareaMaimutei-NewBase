@@ -6,6 +6,7 @@ using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 
 namespace CourseApp.ViewModels
@@ -20,14 +21,19 @@ namespace CourseApp.ViewModels
         private readonly CourseService courseService;
         private readonly CoinsService coinsService;
         public Course CurrentCourse { get; set; }
-        public ObservableCollection<ModuleDisplayModel> ModuleRoadmap { get; set; }
+        public ObservableCollection<ModuleDisplayModelView> ModuleRoadmap { get; set; }
 
         public ICommand EnrollCommand { get; set; }
         public bool IsEnrolled { get; set; }
+
+        public bool CoinVisibility { get => CurrentCourse.IsPremium && !IsEnrolled; }
         public int CoinBalance
         {
             get => coinsService.GetUserCoins(0);
         }
+
+
+
 
         private string timeSpent;
         private bool timerStarted;
@@ -37,6 +43,9 @@ namespace CourseApp.ViewModels
         /// Formatted string showing the current tracked time spent on the course.
         /// Updated every second while the timer is running.
         /// </summary>
+        /// 
+
+        public ObservableCollection<Tag> Tags => new(courseService.getCourseTags(CurrentCourse.CourseId));
         public string TimeSpent
         {
             get => timeSpent;
@@ -128,21 +137,32 @@ namespace CourseApp.ViewModels
 
             // wonky merge END
         }
-
+        
         private void LoadModules()
         {
-            var modules = courseService.GetModules(CurrentCourse.CourseId)
+            var modules = new List<Module>();
+            if (IsCourseCompleted)
+            {
+                modules = courseService.GetModules(CurrentCourse.CourseId)
                                        .OrderBy(m => m.Position)
                                        .ToList();
-
-            ModuleRoadmap = new ObservableCollection<ModuleDisplayModel>();
+            }
+            else {
+                modules = courseService.GetNormalModules(CurrentCourse.CourseId)
+                                       .OrderBy(m => m.Position)
+                                       .ToList();
+            }
+            ModuleRoadmap = new ObservableCollection<ModuleDisplayModelView>();
 
             for (int i = 0; i < modules.Count; i++)
             {
                 bool isCompleted = courseService.IsModuleCompleted(modules[i].ModuleId);
-                bool isUnlocked = !IsEnrolled ? false : (i == 0 || courseService.IsModuleCompleted(modules[i - 1].ModuleId));
-
-                ModuleRoadmap.Add(new ModuleDisplayModel
+                bool isUnlocked = false;
+                if (!modules[i].IsBonus)
+                    isUnlocked = !IsEnrolled ? false : (i == 0 || courseService.IsModuleCompleted(modules[i - 1].ModuleId));
+                else
+                    isUnlocked = courseService.IsModuleInProgress(modules[i].ModuleId);
+                ModuleRoadmap.Add(new ModuleDisplayModelView
                 {
                     Module = modules[i],
                     IsUnlocked = isUnlocked,
@@ -154,10 +174,9 @@ namespace CourseApp.ViewModels
         }
 
 
-
         private bool CanEnroll(object parameter)
         {
-            return !IsEnrolled;
+            return !IsEnrolled && coinsService.GetUserCoins(0) >= CurrentCourse.Cost;
         }
 
         /// <summary>
@@ -165,15 +184,18 @@ namespace CourseApp.ViewModels
         /// and starts timing from scratch for a new enrollment.
         /// </summary>
         private void ExecuteEnroll(object parameter)
-        {
-            courseService.EnrollInCourse(CurrentCourse.CourseId);
+        {   
+            if(!courseService.EnrollInCourse(CurrentCourse.CourseId))
+            {
+                return;
+            }
             IsEnrolled = true;
             totalTimeSpent = 0;
             TimeSpent = FormatTime(totalTimeSpent);
             OnPropertyChanged(nameof(IsEnrolled));
+            OnPropertyChanged(nameof(CoinBalance));
             StartTimer();
-            LoadModules(); //refresh roadmap with unlocked module
-
+            LoadModules(); 
         }
 
         /// <summary>
@@ -230,12 +252,6 @@ namespace CourseApp.ViewModels
             return $"{ts.Minutes + ts.Hours * 60} min {ts.Seconds} sec";
         }
 
-        public class ModuleDisplayModel
-        {
-            public Module Module { get; set; }
-            public bool IsUnlocked { get; set; }
-            public bool IsCompleted { get; set; }
-        }
         public void ReloadModules()
         {
             LoadModules();
@@ -316,5 +332,54 @@ namespace CourseApp.ViewModels
             notificationTimer.Start();
         }
 
+        private void NotifyBuyModule(Module module)
+        {
+            NotificationMessage = $"Congratulations! You have purchased bonus module{module.Title}, {module.Cost} coins have been deducted from your balance.";
+            ShowNotification = true;
+            // Make the text disappear after a few seconds
+            DispatcherTimer notificationTimer = new DispatcherTimer();
+            notificationTimer.Interval = TimeSpan.FromSeconds(3);
+            notificationTimer.Tick += (s, e) =>
+            {
+                ShowNotification = false;
+                notificationTimer.Stop();
+            };
+            notificationTimer.Start();
+        }
+
+        public void TryBuyBonusModule(Module module)
+        {
+            if (courseService.IsModuleCompleted(module.ModuleId))
+                return;
+            bool success = courseService.BuyBonusModule(module.ModuleId, CurrentCourse.CourseId);
+            
+            if (success) {
+                var moduleToUpdate = ModuleRoadmap.FirstOrDefault(m => m.Module.ModuleId == module.ModuleId);
+                if (moduleToUpdate != null)
+                {
+                    moduleToUpdate.IsUnlocked = true;
+                    moduleToUpdate.IsCompleted = false;
+                    courseService.OpenModule(module.ModuleId);
+                }
+                NotifyBuyModule(module);
+                OnPropertyChanged(nameof(ModuleRoadmap));
+                OnPropertyChanged(nameof(CoinBalance));
+                return;
+            }
+            
+
+            NotificationMessage = $"You do not have enough coins to buy this module.";
+            ShowNotification = true;
+            // Make the text disappear after a few seconds
+            DispatcherTimer notificationTimer = new DispatcherTimer();
+            notificationTimer.Interval = TimeSpan.FromSeconds(3);
+            notificationTimer.Tick += (s, e) =>
+            {
+                ShowNotification = false;
+                notificationTimer.Stop();
+            };
+            notificationTimer.Start();
+            
+        }
     }
 }

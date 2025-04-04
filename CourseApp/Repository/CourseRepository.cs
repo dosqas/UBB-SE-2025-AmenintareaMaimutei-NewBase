@@ -9,6 +9,38 @@ namespace CourseApp.Repository
     public class CourseRepository
     {
 
+        public Course GetCourse(int CourseId)
+        {
+            Course course = null;
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT CourseId, Title, Description, isPremium, Cost, ImageUrl, timeToComplete, difficulty FROM Courses WHERE CourseId = @courseId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@courseId", CourseId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            course = new Course
+                            {
+                                CourseId = reader.GetInt32(0),
+                                Title = reader.GetString(1),
+                                Description = reader.GetString(2),
+                                IsPremium = reader.GetBoolean(3),
+                                Cost = reader.GetInt32(4),
+                                ImageUrl = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
+                                TimeToComplete = reader.GetInt32(6),
+                                Difficulty = reader.IsDBNull(7) ? "Easy" : reader.GetString(7)
+                            };
+                        }
+                    }
+                }
+            }
+            return course;
+        }
+
         public bool IsModuleOpen(int userId, int moduleId)
         {
             using (SqlConnection connection = DataLink.GetConnection())
@@ -332,7 +364,6 @@ namespace CourseApp.Repository
             return requiredModules > 0 && requiredModules == completedModules;
         }
 
-        // Add method to check if module is available for completion (sequential logic)
         public bool IsModuleAvailable(int userId, int moduleId)
         {
             bool available = false;
@@ -394,6 +425,24 @@ namespace CourseApp.Repository
                     command.ExecuteNonQuery();
                 }
             }
+        }
+
+
+        public bool IsModuleInProgress(int userId, int moduleId)
+        {
+            bool isBought = false;
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM UserProgress WHERE UserId = @userId AND ModuleId = @moduleId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@moduleId", moduleId);
+                    isBought = (int)command.ExecuteScalar() > 0;
+                }
+            }
+            return isBought;
         }
 
         // Add method to claim completion reward
@@ -509,8 +558,37 @@ namespace CourseApp.Repository
             return timeLimit;
         }
 
-
-
+        public Module GetModule(int moduleId)
+        {
+            Module module = null;
+            using (SqlConnection connection = DataLink.GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT ModuleId, CourseId, Title, Description, Position, isBonus, Cost, ImageUrl FROM Modules WHERE ModuleId = @moduleId";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@moduleId", moduleId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            module = new Module
+                            {
+                                ModuleId = reader.GetInt32(0),
+                                CourseId = reader.GetInt32(1),
+                                Title = reader.GetString(2),
+                                Description = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
+                                Position = reader.GetInt32(4),
+                                IsBonus = reader.GetBoolean(5),
+                                Cost = reader.GetInt32(6),
+                                ImageUrl = reader.IsDBNull(7) ? string.Empty : reader.GetString(7)
+                            };
+                        }
+                    }
+                }
+            }
+            return module;
+        }
     }
 }
 
