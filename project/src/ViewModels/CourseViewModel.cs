@@ -1,27 +1,25 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 using CourseApp.Models;
 using CourseApp.Services;
-using System.ComponentModel;
 using Microsoft.UI.Xaml;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable SA1010 // Opening square brackets should be spaced correctly
 
 namespace CourseApp.ViewModels
-
 {
-    public class CourseViewModel : BaseViewModel
+    public partial class CourseViewModel : BaseViewModel
     {
-        private DispatcherTimer? timer;
-        private DateTime sessionStartTime;
+        private readonly DispatcherTimer? timer;
         private int totalTimeSpent;
-        private int courseTimeLimit;
+        private readonly int courseTimeLimit;
         private readonly CourseService courseService;
         private readonly CoinsService coinsService;
         public Course CurrentCourse { get; set; }
-        public ObservableCollection<ModuleDisplayModelView> ModuleRoadmap { get; set; }
+        public ObservableCollection<ModuleDisplayModelView> ModuleRoadmap { get; set; } = [];
 
         public ICommand EnrollCommand { get; set; }
         public bool IsEnrolled { get; set; }
@@ -34,13 +32,12 @@ namespace CourseApp.ViewModels
 
         public class ModuleDisplayModelView
         {
-            public Module Module { get; set; }
+            public Module? Module { get; set; }
             public bool IsUnlocked { get; set; }
             public bool IsCompleted { get; set; }
         }
 
-
-        private string timeSpent;
+        private string? timeSpent;
         private bool timerStarted;
         private int lastSavedTime = 0;
 
@@ -48,20 +45,17 @@ namespace CourseApp.ViewModels
         /// Formatted string showing the current tracked time spent on the course.
         /// Updated every second while the timer is running.
         /// </summary>
-        /// 
-
-        public ObservableCollection<Tag> Tags => new(courseService.getCourseTags(CurrentCourse.CourseId));
+        ///
+        public ObservableCollection<Tag> Tags => new (courseService.getCourseTags(CurrentCourse.CourseId));
         public string TimeSpent
         {
-            get => timeSpent;
+            get => timeSpent!;
             set
             {
                 timeSpent = value;
                 OnPropertyChanged(nameof(TimeSpent));
             }
         }
-
-        // wonky merge, probably have duplicated stuff - START
 
         private string notificationMessage = string.Empty;
         private bool showNotification = false;
@@ -93,9 +87,6 @@ namespace CourseApp.ViewModels
         public bool CompletionRewardClaimed { get; private set; } = false;
         public bool TimedRewardClaimed { get; private set; } = false;
 
-
-        // wonky merge, probably have duplicated stuff - END
-
         public CourseViewModel(Course course)
         {
             courseService = new CourseService();
@@ -103,13 +94,11 @@ namespace CourseApp.ViewModels
             coinsService.GetUserCoins(0);
             CurrentCourse = course;
             IsEnrolled = courseService.IsUserEnrolled(course.CourseId);
-            EnrollCommand = new RelayCommand(ExecuteEnroll, CanEnroll);
+            EnrollCommand = new RelayCommand(ExecuteEnroll!, CanEnroll!);
 
             LoadModules();
 
-
-
-            totalTimeSpent = courseService.GetTimeSpent(course.CourseId);// Tracks the total time spent on the course in seconds
+            totalTimeSpent = courseService.GetTimeSpent(course.CourseId); // Tracks the total time spent on the course in seconds
             lastSavedTime = totalTimeSpent; // Stores the last saved time to calculate delta on save
             courseTimeLimit = course.TimeToComplete - totalTimeSpent; // Time limit for the course in seconds
 
@@ -130,8 +119,6 @@ namespace CourseApp.ViewModels
                 OnPropertyChanged(nameof(TimeRemaining));
             };
 
-            // wonky merge START
-
             CompletedModules = courseService.GetCompletedModulesCount(course.CourseId);
             RequiredModules = courseService.GetRequiredModulesCount(course.CourseId);
             OnPropertyChanged(nameof(CompletedModules));
@@ -139,26 +126,27 @@ namespace CourseApp.ViewModels
             OnPropertyChanged(nameof(IsCourseCompleted));
 
             TimeLimit = courseService.GetCourseTimeLimit(course.CourseId);
-
-            // wonky merge END
         }
-        
+
         private void LoadModules()
         {
-            var modules = new List<Module>();
-            modules = courseService.GetModules(CurrentCourse.CourseId)
-                                       .OrderBy(m => m.Position)
-                                       .ToList();
-            ModuleRoadmap = new ObservableCollection<ModuleDisplayModelView>();
+            var modules = courseService.GetModules(CurrentCourse.CourseId)
+                           .OrderBy(m => m.Position)
+                           .ToList();
 
             for (int i = 0; i < modules.Count; i++)
             {
                 bool isCompleted = courseService.IsModuleCompleted(modules[i].ModuleId);
                 bool isUnlocked = false;
                 if (!modules[i].IsBonus)
-                    isUnlocked = !IsEnrolled ? false : (i == 0 || courseService.IsModuleCompleted(modules[i - 1].ModuleId));
+                {
+                    isUnlocked = IsEnrolled && (i == 0 || courseService.IsModuleCompleted(modules[i - 1].ModuleId));
+                }
                 else
+                {
                     isUnlocked = courseService.IsModuleInProgress(modules[i].ModuleId);
+                }
+
                 ModuleRoadmap.Add(new ModuleDisplayModelView
                 {
                     Module = modules[i],
@@ -170,7 +158,6 @@ namespace CourseApp.ViewModels
             OnPropertyChanged(nameof(ModuleRoadmap));
         }
 
-
         private bool CanEnroll(object parameter)
         {
             return !IsEnrolled && coinsService.GetUserCoins(0) >= CurrentCourse.Cost;
@@ -181,8 +168,8 @@ namespace CourseApp.ViewModels
         /// and starts timing from scratch for a new enrollment.
         /// </summary>
         private void ExecuteEnroll(object parameter)
-        {   
-            if(!courseService.EnrollInCourse(CurrentCourse.CourseId))
+        {
+            if (!courseService.EnrollInCourse(CurrentCourse.CourseId))
             {
                 return;
             }
@@ -192,7 +179,7 @@ namespace CourseApp.ViewModels
             OnPropertyChanged(nameof(IsEnrolled));
             OnPropertyChanged(nameof(CoinBalance));
             StartTimer();
-            LoadModules(); 
+            LoadModules();
         }
 
         /// <summary>
@@ -204,7 +191,6 @@ namespace CourseApp.ViewModels
             if (!timerStarted && IsEnrolled)
             {
                 timerStarted = true;
-                sessionStartTime = DateTime.Now;
                 timer?.Start();
             }
         }
@@ -243,10 +229,10 @@ namespace CourseApp.ViewModels
         /// </summary>
         /// <param name="seconds">The number of seconds to format.</param>
         /// <returns>Formatted string representing the time.</returns>
-        private string FormatTime(int seconds)
+        private static string FormatTime(int seconds)
         {
             var ts = TimeSpan.FromSeconds(seconds);
-            return $"{ts.Minutes + ts.Hours * 60} min {ts.Seconds} sec";
+            return $"{ts.Minutes + (ts.Hours * 60)} min {ts.Seconds} sec";
         }
 
         public void ReloadModules()
@@ -255,7 +241,6 @@ namespace CourseApp.ViewModels
         }
 
         // wonky merge START
-
         public void UpdateModuleCompletion(int moduleId)
         {
             // Mark module as completed
@@ -305,9 +290,12 @@ namespace CourseApp.ViewModels
             ShowNotification = true;
 
             // Make the text disappear after a few seconds
-            DispatcherTimer notificationTimer = new DispatcherTimer();
-            notificationTimer.Interval = TimeSpan.FromSeconds(3);
-            notificationTimer.Tick += (s, e) => {
+            DispatcherTimer notificationTimer = new ()
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
+            notificationTimer.Tick += (s, e) =>
+            {
                 ShowNotification = false;
                 notificationTimer.Stop();
             };
@@ -320,9 +308,12 @@ namespace CourseApp.ViewModels
             ShowNotification = true;
 
             // Make the text disappear after a few seconds
-            DispatcherTimer notificationTimer = new DispatcherTimer();
-            notificationTimer.Interval = TimeSpan.FromSeconds(3);
-            notificationTimer.Tick += (s, e) => {
+            DispatcherTimer notificationTimer = new ()
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
+            notificationTimer.Tick += (s, e) =>
+            {
                 ShowNotification = false;
                 notificationTimer.Stop();
             };
@@ -334,8 +325,10 @@ namespace CourseApp.ViewModels
             NotificationMessage = $"Congratulations! You have purchased bonus module{module.Title}, {module.Cost} coins have been deducted from your balance.";
             ShowNotification = true;
             // Make the text disappear after a few seconds
-            DispatcherTimer notificationTimer = new DispatcherTimer();
-            notificationTimer.Interval = TimeSpan.FromSeconds(3);
+            DispatcherTimer notificationTimer = new ()
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
             notificationTimer.Tick += (s, e) =>
             {
                 ShowNotification = false;
@@ -348,11 +341,15 @@ namespace CourseApp.ViewModels
         public void TryBuyBonusModule(Module module)
         {
             if (courseService.IsModuleCompleted(module.ModuleId))
+            {
                 return;
+            }
+
             bool success = courseService.BuyBonusModule(module.ModuleId, CurrentCourse.CourseId);
-            
-            if (success) {
-                var moduleToUpdate = ModuleRoadmap.FirstOrDefault(m => m.Module.ModuleId == module.ModuleId);
+
+            if (success)
+            {
+                var moduleToUpdate = ModuleRoadmap!.FirstOrDefault(m => m.Module!.ModuleId == module.ModuleId);
                 if (moduleToUpdate != null)
                 {
                     moduleToUpdate.IsUnlocked = true;
@@ -364,20 +361,20 @@ namespace CourseApp.ViewModels
                 OnPropertyChanged(nameof(CoinBalance));
                 return;
             }
-            
 
             NotificationMessage = $"You do not have enough coins to buy this module.";
             ShowNotification = true;
             // Make the text disappear after a few seconds
-            DispatcherTimer notificationTimer = new DispatcherTimer();
-            notificationTimer.Interval = TimeSpan.FromSeconds(3);
+            DispatcherTimer notificationTimer = new ()
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
             notificationTimer.Tick += (s, e) =>
             {
                 ShowNotification = false;
                 notificationTimer.Stop();
             };
             notificationTimer.Start();
-            
         }
     }
 }
