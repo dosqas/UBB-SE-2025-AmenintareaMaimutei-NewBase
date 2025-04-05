@@ -8,8 +8,9 @@ namespace CourseApp.Services
 {
     public class CourseService
     {
-        public List<Tag>getCourseTags(int CourseId){
-            return repository.GetTagsForCourse(CourseId);
+        public List<Tag> GetCourseTags(int courseId)
+        {
+            return repository.GetTagsForCourse(courseId);
         }
         private readonly CourseRepository repository;
         private readonly CoinsRepository coinsRepository = new CoinsRepository();
@@ -43,7 +44,7 @@ namespace CourseApp.Services
             {
                 return false;
             }
-            if(repository.IsModuleOpen(UserId, moduleId))
+            if (repository.IsModuleOpen(UserId, moduleId))
             {
                 return false;
             }
@@ -82,7 +83,7 @@ namespace CourseApp.Services
 
         public bool EnrollInCourse(int courseId)
         {
-            if(repository.IsUserEnrolled(UserId, courseId))
+            if (repository.IsUserEnrolled(UserId, courseId))
             {
                 return false;
             }
@@ -96,7 +97,7 @@ namespace CourseApp.Services
                 int cost = course.Cost;
                 if (!coinsRepository.DeductCoins(UserId, cost))
                 {
-                    return false; 
+                    return false;
                 }
             }
             repository.EnrollUser(UserId, courseId);
@@ -194,12 +195,11 @@ namespace CourseApp.Services
             repository.ClickModuleImage(UserId, moduleId);
             coinsRepository.AddCoins(UserId, 10);
             return true;
-
         }
 
         public bool IsModuleInProgress(int moduleId)
         {
-            return repository.IsModuleInProgress(0,moduleId);
+            return repository.IsModuleInProgress(0, moduleId);
         }
 
         public bool IsModuleAvailable(int moduleId)
@@ -240,7 +240,7 @@ namespace CourseApp.Services
 
             if (claimed)
             {
-                int rewardAmount = 300; //hardcoded reward for timed completion
+                int rewardAmount = 300; // hardcoded reward for timed completion
                 var coinsService = new CoinsService();
                 coinsService.EarnCoins(UserId, rewardAmount);
             }
@@ -252,6 +252,5 @@ namespace CourseApp.Services
         {
             return repository.GetCourseTimeLimit(courseId);
         }
-
     }
 }

@@ -8,9 +8,7 @@ namespace CourseApp.Views
 {
     public sealed partial class CoursePage : Page
     {
-
-
-        private CourseViewModel viewModel;
+        private CourseViewModel? viewModel;
         public CoursePage()
         {
             this.InitializeComponent();
@@ -23,34 +21,22 @@ namespace CourseApp.Views
                 viewModel = vm;
                 this.DataContext = viewModel;
                 ModulesListView.ItemClick += ModulesListView_ItemClick;
-                vm.StartTimer();
+                vm.StartProgressTimer();
             }
         }
-
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.Frame.CanGoBack)
-            {
-                viewModel.PauseTimer();
-                this.Frame.GoBack(); 
-            }
-        }
-
 
         private void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is CourseViewModel.ModuleDisplayModelView moduleDisplay && viewModel.IsEnrolled)
+            if (e.ClickedItem is CourseViewModel.ModuleDisplayViewModel moduleDisplay && viewModel!.IsEnrolled)
             {
                 if (moduleDisplay.IsUnlocked)
                 {
                     this.Frame.Navigate(typeof(ModulePage), (moduleDisplay.Module, viewModel));
                     return;
                 }
-                if (moduleDisplay.Module.IsBonus)
+                if (moduleDisplay.Module!.IsBonus)
                 {
-                    viewModel.TryBuyBonusModule(moduleDisplay.Module);
-
+                    viewModel.PurchaseBonusModule(moduleDisplay.Module);
                 }
                 var dialog = new ContentDialog
                 {
@@ -60,7 +46,5 @@ namespace CourseApp.Views
                 };
             }
         }
-
-
     }
 }
