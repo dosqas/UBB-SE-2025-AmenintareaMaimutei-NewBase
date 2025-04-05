@@ -1,11 +1,6 @@
-﻿using CourseApp.Models;
+﻿using System.Windows.Input;
+using CourseApp.Models;
 using CourseApp.Services;
-using System;
-using System.Windows.Input;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Popups;
-using Microsoft.UI.Xaml.Controls;
-using CourseApp.Views;
 
 namespace CourseApp.ViewModels
 {
@@ -20,7 +15,6 @@ namespace CourseApp.ViewModels
 
         public ICommand OnModuleImageClick { get; set; }
 
-
         public ModuleViewModel(Models.Module module, CourseViewModel courseVM)
         {
             courseService = new CourseService();
@@ -34,7 +28,7 @@ namespace CourseApp.ViewModels
             courseService.OpenModule(module.ModuleId);
             courseViewModel.PropertyChanged += (s, e) =>
             {
-                if (e.PropertyName == nameof(courseViewModel.TimeSpent))
+                if (e.PropertyName == nameof(courseViewModel.FormattedTimeRemaining))
                 {
                     OnPropertyChanged(nameof(TimeSpent));
                 }
@@ -44,13 +38,13 @@ namespace CourseApp.ViewModels
 
         private async void ExecuteModuleImageClick(object? obj)
         {
-
             bool confirmStatus = courseService.ClickModuleImage(CurrentModule.ModuleId);
             if (confirmStatus)
+            {
                 OnPropertyChanged(nameof(CoinBalance));
+            }
         }
-        public string TimeSpent => courseViewModel.TimeSpent;
-
+        public string TimeSpent => courseViewModel.FormattedTimeRemaining;
 
         public int CoinBalance
         {
@@ -65,10 +59,10 @@ namespace CourseApp.ViewModels
         private void ExecuteCompleteModule(object parameter)
         {
             // Mark module as complete in the database.
-            this.courseViewModel.UpdateModuleCompletion(CurrentModule.ModuleId);
+            this.courseViewModel.CompleteModule(CurrentModule.ModuleId);
             IsCompleted = true;
             OnPropertyChanged(nameof(IsCompleted));
-            courseViewModel.ReloadModules(); // Refresh roadmap to unlock the next module
+            courseViewModel.RefreshModuleRoadmap(); // Refresh roadmap to unlock the next module
         }
     }
 }

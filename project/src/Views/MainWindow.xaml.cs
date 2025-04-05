@@ -1,17 +1,19 @@
+using System;
+using System.Collections.Generic;
 using CourseApp.Models;
 using CourseApp.ViewModels;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
+
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable SA1010 // Opening square brackets should be spaced correctly
 
 namespace CourseApp.Views
 {
     public sealed partial class MainWindow : Window
     {
-        private readonly Dictionary<int, CourseViewModel> courseVMCache = new();
+        private readonly Dictionary<int, CourseViewModel> courseVMCache = [];
         private CourseViewModel? currentCourseVM;
-        public static MainWindow Instance { get; private set; }
+        public static MainWindow? Instance { get; private set; }
 
         public MainWindow()
         {
@@ -43,11 +45,11 @@ namespace CourseApp.Views
                 // Only pause previous timer if switching courses
                 if (currentCourseVM != null && currentCourseVM != newVM)
                 {
-                    currentCourseVM.PauseTimer();
+                    currentCourseVM.PauseProgressTimer();
                 }
 
                 currentCourseVM = newVM;
-                currentCourseVM.StartTimer();
+                currentCourseVM.StartProgressTimer();
             }
 
             // Navigated to a module page
@@ -57,11 +59,11 @@ namespace CourseApp.Views
 
                 if (currentCourseVM != null && currentCourseVM != courseVM)
                 {
-                    currentCourseVM.PauseTimer();
+                    currentCourseVM.PauseProgressTimer();
                 }
 
                 currentCourseVM = courseVM;
-                currentCourseVM.StartTimer();
+                currentCourseVM.StartProgressTimer();
             }
 
             // Navigated to something else (like MainPage)
@@ -70,14 +72,10 @@ namespace CourseApp.Views
                 // Only pause if leaving course/module
                 if (e.SourcePageType != typeof(CoursePage) && e.SourcePageType != typeof(ModulePage))
                 {
-                    currentCourseVM?.PauseTimer();
+                    currentCourseVM?.PauseProgressTimer();
                 }
             }
         }
-
-
-
-
 
         public CourseViewModel GetOrCreateCourseViewModel(Course course)
         {
@@ -88,6 +86,5 @@ namespace CourseApp.Views
             }
             return vm;
         }
-
     }
 }
