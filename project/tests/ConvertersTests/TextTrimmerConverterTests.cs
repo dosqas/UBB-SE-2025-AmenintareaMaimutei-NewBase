@@ -1,0 +1,124 @@
+﻿namespace tests.ConvertersTests
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using CourseApp.Converters;
+
+    /// <summary>
+    /// Unit tests for the <see cref="TextTrimmerConverter"/> class.
+    /// </summary>
+    public class TextTrimmerConverterTests
+    {
+        private readonly TextTrimmerConverter testConverter;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextTrimmerConverterTests"/> class.
+        /// </summary>
+        public TextTrimmerConverterTests()
+        {
+            // Initialize the converter before each test
+            this.testConverter = new TextTrimmerConverter();
+        }
+
+        /// <summary>
+        /// Tests that the Convert method trims the string when its length exceeds the default length.
+        /// </summary>
+        [Fact]
+        public void ConvertShouldTrimStringWhenLengthExceedsDefault()
+        {
+            // Arrange
+            var input = "This is a test string that is too long.";
+            var expected = "This is a test string t...";
+
+            // Act
+            var result = this.testConverter.Convert(input, typeof(string), null!, null!);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        /// <summary>
+        /// Tests that the Convert method does not trim the string when its length is within the default length.
+        /// </summary>
+        [Fact]
+        public void ConvertShouldNotTrimStringWhenLengthIsWithinDefault()
+        {
+            // Arrange
+            var input = "Short string";
+            var expected = "Short string";
+
+            // Act
+            var result = this.testConverter.Convert(input, typeof(string), null!, null!);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        /// <summary>
+        /// Tests that the Convert method trims the string when its length exceeds a custom length.
+        /// </summary>
+        [Fact]
+        public void ConvertShouldTrimStringWhenLengthExceedsCustomLength()
+        {
+            // Arrange
+            var input = "This is a test string that is too long.";
+            var expected = "This is a test st...";
+
+            // Act
+            var result = this.testConverter.Convert(input, typeof(string), "17", null!);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        /// <summary>
+        /// Tests that the Convert method does not trim the string when its length is within a custom length.
+        /// </summary>
+        [Fact]
+        public void ConvertShouldNotTrimStringWhenLengthIsWithinCustomLength()
+        {
+            // Arrange
+            var input = "Short string";
+            var expected = "Short string";
+
+            // Act
+            var result = this.testConverter.Convert(input, typeof(string), "20", null!);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        /// <summary>
+        /// Tests that the Convert method returns the original value when the input is not a string.
+        /// </summary>
+        [Fact]
+        public void ConvertShouldReturnOriginalValueWhenInputIsNotString()
+        {
+            // Arrange
+            var input = 12345;
+
+            // Act
+            var result = this.testConverter.Convert(input, typeof(string), null!, null!);
+
+            // Assert
+            Assert.Equal(input, result);
+        }
+
+        /// <summary>
+        /// Tests that the ConvertBack method throws a NotImplementedException.
+        /// </summary>
+        [Fact]
+        public void ConvertBackShouldThrowNotImplementedException()
+        {
+            // Arrange
+            var input = "Any string";
+
+            // Act & Assert
+            var exception = Assert.Throws<NotImplementedException>(() => this.testConverter.ConvertBack(input, typeof(string), null!, null!));
+            Assert.Equal("Reverse conversion is not supported.", exception.Message);
+        }
+    }
+}

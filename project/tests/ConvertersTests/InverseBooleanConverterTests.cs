@@ -13,7 +13,7 @@
     /// </summary>
     public class InverseBooleanConverterTests
     {
-        private readonly InverseBooleanConverter TestConverter;
+        private readonly InverseBooleanConverter testConverter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InverseBooleanConverterTests"/> class.
@@ -21,9 +21,12 @@
         public InverseBooleanConverterTests()
         {
             // Initialize the converter before each test
-            this.TestConverter = new InverseBooleanConverter();
+            this.testConverter = new InverseBooleanConverter();
         }
 
+        /// <summary>
+        /// Tests that Convert returns false when the input is true.
+        /// </summary>
         [Fact]
         public void ConvertShouldReturnFalseWhenTrue()
         {
@@ -31,12 +34,15 @@
             var input = true;
 
             // Act
-            var result = this.TestConverter.Convert(input, typeof(bool), null, string.Empty);
+            var result = this.testConverter.Convert(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.False((bool)result);
         }
 
+        /// <summary>
+        /// Tests that Convert returns true when the input is false.
+        /// </summary>
         [Fact]
         public void ConvertShouldReturnTrueWhenFalse()
         {
@@ -44,12 +50,15 @@
             var input = false;
 
             // Act
-            var result = this.TestConverter.Convert(input, typeof(bool), null, string.Empty);
+            var result = this.testConverter.Convert(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.True((bool)result);
         }
 
+        /// <summary>
+        /// Tests that Convert returns the original value when the input is not a boolean.
+        /// </summary>
         [Fact]
         public void ConvertShouldReturnOriginalValueWhenInputIsNotBoolean()
         {
@@ -57,12 +66,15 @@
             var input = "string";
 
             // Act
-            var result = this.TestConverter.Convert(input, typeof(bool), null, string.Empty);
+            var result = this.testConverter.Convert(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.Equal(input, result);
         }
 
+        /// <summary>
+        /// Tests that ConvertBack returns false when the input is true.
+        /// </summary>
         [Fact]
         public void ConvertBackShouldReturnFalseWhenTrue()
         {
@@ -70,12 +82,15 @@
             var input = true;
 
             // Act
-            var result = this.TestConverter.ConvertBack(input, typeof(bool), null, string.Empty);
+            var result = this.testConverter.ConvertBack(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.False((bool)result);
         }
 
+        /// <summary>
+        /// Tests that ConvertBack returns true when the input is false.
+        /// </summary>
         [Fact]
         public void ConvertBackShouldReturnTrueWhenFalse()
         {
@@ -83,12 +98,15 @@
             var input = false;
 
             // Act
-            var result = this.TestConverter.ConvertBack(input, typeof(bool), null, string.Empty);
+            var result = this.testConverter.ConvertBack(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.True((bool)result);
         }
 
+        /// <summary>
+        /// Tests that ConvertBack returns the original value when the input is not a boolean.
+        /// </summary>
         [Fact]
         public void ConvertBackShouldReturnOriginalValueWhenInputIsNotBoolean()
         {
@@ -96,7 +114,7 @@
             var input = "string";
 
             // Act
-            var result = this.TestConverter.ConvertBack(input, typeof(bool), null, string.Empty);
+            var result = this.testConverter.ConvertBack(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.Equal(input, result);
