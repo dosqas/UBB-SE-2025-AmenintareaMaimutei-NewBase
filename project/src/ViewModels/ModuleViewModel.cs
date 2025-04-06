@@ -4,7 +4,7 @@ using CourseApp.Services;
 
 namespace CourseApp.ViewModels
 {
-    public class ModuleViewModel : BaseViewModel
+    public partial class ModuleViewModel : BaseViewModel
     {
         private readonly CourseService courseService;
         private readonly CoinsService coinsService;
