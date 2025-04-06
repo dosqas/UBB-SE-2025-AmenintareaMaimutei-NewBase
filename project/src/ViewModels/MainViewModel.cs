@@ -9,159 +9,160 @@ namespace CourseApp.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
+        private const int CurrentUserId = 0;
+
         private readonly CourseService courseService;
         private readonly CoinsService coinsService;
-        private string searchText = string.Empty;
-        private bool isPremium;
-        private bool isFree;
-        private bool isEnrolled;
-        private bool isNotEnrolled;
 
+        private string searchQuery = string.Empty;
+        private bool filterByPremium;
+        private bool filterByFree;
+        private bool filterByEnrolled;
+        private bool filterByNotEnrolled;
 
-        public ObservableCollection<Course> Courses { get; set; }
-        public ObservableCollection<Tag> Tags { get; set; }
+        public ObservableCollection<Course> DisplayedCourses { get; private set; }
+        public ObservableCollection<Tag> AvailableTags { get; private set; }
 
-        public int CoinBalance
+        public int UserCoinBalance => coinsService.GetUserCoins(CurrentUserId);
+
+        public string SearchQuery
         {
-            get => coinsService.GetUserCoins(0);
-
-        }
-
-        public string SearchText
-        {
-            get => searchText;
+            get => searchQuery;
             set
             {
-                if (value.Length <= 100 && searchText != value)
+                if (value.Length <= 100 && searchQuery != value)
                 {
-                    searchText = value;
+                    searchQuery = value;
                     OnPropertyChanged();
-                    FilterCourses();
+                    ApplyAllFilters();
                 }
             }
         }
 
-        public bool IsPremium
+        public bool FilterByPremium
         {
-            get => isPremium;
+            get => filterByPremium;
             set
             {
-                if (isPremium != value)
+                if (filterByPremium != value)
                 {
-                    isPremium = value;
+                    filterByPremium = value;
                     OnPropertyChanged();
-                    FilterCourses();
+                    ApplyAllFilters();
                 }
             }
         }
 
-        public bool IsFree
+        public bool FilterByFree
         {
-            get => isFree;
+            get => filterByFree;
             set
             {
-                if (isFree != value)
+                if (filterByFree != value)
                 {
-                    isFree = value;
+                    filterByFree = value;
                     OnPropertyChanged();
-                    FilterCourses();
+                    ApplyAllFilters();
                 }
             }
         }
 
-        public bool IsEnrolled
+        public bool FilterByEnrolled
         {
-            get => isEnrolled;
+            get => filterByEnrolled;
             set
             {
-                if (isEnrolled != value)
+                if (filterByEnrolled != value)
                 {
-                    isEnrolled = value;
+                    filterByEnrolled = value;
                     OnPropertyChanged();
-                    FilterCourses();
+                    ApplyAllFilters();
                 }
             }
         }
 
-        public bool IsNotEnrolled
+        public bool FilterByNotEnrolled
         {
-            get => isNotEnrolled;
+            get => filterByNotEnrolled;
             set
             {
-                if (isNotEnrolled != value)
+                if (filterByNotEnrolled != value)
                 {
-                    isNotEnrolled = value;
+                    filterByNotEnrolled = value;
                     OnPropertyChanged();
-                    FilterCourses();
+                    ApplyAllFilters();
                 }
             }
         }
 
-        public ICommand ClearFiltersCommand { get; set; }
+        public ICommand ResetAllFiltersCommand { get; private set; }
 
         public MainViewModel()
         {
             courseService = new CourseService();
             coinsService = new CoinsService();
-            coinsService.GetUserCoins(0);
-            // Initially load all courses and tags.
-            Courses = new ObservableCollection<Course>(courseService.GetCourses());
-            var tagList = courseService.GetTags();
-            Tags = new ObservableCollection<Tag>(tagList);
 
-            // Subscribe to each tag's property changes to re-filter when selection changes.
-            foreach (var tag in Tags)
+            DisplayedCourses = new ObservableCollection<Course>(courseService.GetCourses());
+            AvailableTags = new ObservableCollection<Tag>(courseService.GetTags());
+
+            foreach (var tag in AvailableTags)
             {
-                tag.PropertyChanged += Tag_PropertyChanged;
+                tag.PropertyChanged += OnTagSelectionChanged;
             }
 
-            ClearFiltersCommand = new RelayCommand(ExecuteClearFilters);
+            ResetAllFiltersCommand = new RelayCommand(ResetAllFilters);
         }
 
-        public bool CheckUserDailyLogin()
+        public bool TryDailyLoginReward()
         {
-            bool ok = coinsService.CheckUserDailyLogin();
-            OnPropertyChanged(nameof(CoinBalance));
-            return ok;
+            bool loginRewardGranted = coinsService.CheckUserDailyLogin();
+            OnPropertyChanged(nameof(UserCoinBalance));
+            return loginRewardGranted;
         }
 
-        private void Tag_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void OnTagSelectionChanged(object? sender, PropertyChangedEventArgs eventArgs)
         {
-            if (e.PropertyName == nameof(Tag.IsSelected))
+            if (eventArgs.PropertyName == nameof(Tag.IsSelected))
             {
-                FilterCourses();
+                ApplyAllFilters();
             }
         }
 
-        private void ExecuteClearFilters(object? parameter)
+        private void ResetAllFilters(object? parameter)
         {
-            SearchText = string.Empty;
-            IsPremium = false;
-            IsFree = false;
-            IsEnrolled = false;
-            IsNotEnrolled = false;
-            foreach (var tag in Tags)
+            SearchQuery = string.Empty;
+            FilterByPremium = false;
+            FilterByFree = false;
+            FilterByEnrolled = false;
+            FilterByNotEnrolled = false;
+
+            foreach (var tag in AvailableTags)
             {
                 tag.IsSelected = false;
             }
-            FilterCourses();
+
+            ApplyAllFilters();
         }
 
-        /// <summary>
-        /// Applies all active filters and updates the Courses collection.
-        /// </summary>
-        private void FilterCourses()
+        private void ApplyAllFilters()
         {
-            // Get list of selected tag IDs.
-            var selectedTagIds = Tags.Where(t => t.IsSelected).Select(t => t.TagId).ToList();
+            var selectedTagIds = AvailableTags
+                .Where(tag => tag.IsSelected)
+                .Select(tag => tag.TagId)
+                .ToList();
 
-            var filteredCourses = courseService.GetFilteredCourses(SearchText, IsPremium, IsFree, IsEnrolled, IsNotEnrolled, selectedTagIds);
+            var filteredCourses = courseService.GetFilteredCourses(
+                searchQuery,
+                filterByPremium,
+                filterByFree,
+                filterByEnrolled,
+                filterByNotEnrolled,
+                selectedTagIds);
 
-            // Update the Courses collection.
-            Courses.Clear();
+            DisplayedCourses.Clear();
             foreach (var course in filteredCourses)
             {
-                Courses.Add(course);
+                DisplayedCourses.Add(course);
             }
         }
     }
