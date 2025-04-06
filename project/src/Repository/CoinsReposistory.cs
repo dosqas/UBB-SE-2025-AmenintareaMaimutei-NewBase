@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using CourseApp.Data;
 
@@ -12,119 +7,131 @@ namespace CourseApp.Repository
     public class CoinsRepository
     {
         private readonly SqlConnection connection;
+
+        private const int DefaultInitialCoinBalance = 0;
+
         public CoinsRepository()
         {
             connection = DataLink.GetConnection();
         }
-        public void InitUserWallet(int userId, int initialBalance = 0)
+
+        public void InitializeUserWalletIfNotExists(int userId, int initialCoinBalance = DefaultInitialCoinBalance)
         {
-            using (SqlConnection connection = DataLink.GetConnection())
+            using (SqlConnection databaseConnection = DataLink.GetConnection())
             {
-                connection.Open();
+                databaseConnection.Open();
 
-                string query = @"
-            IF NOT EXISTS (SELECT 1 FROM UserWallet WHERE UserId = @userId)
-            BEGIN
-                INSERT INTO UserWallet (UserId, coinBalance, lastLogin)
-                VALUES (@userId, @initialBalance, GETDATE())
-            END";
+                string insertWalletIfNotExistsQuery = @"
+                    IF NOT EXISTS (SELECT 1 FROM UserWallet WHERE UserId = @userId)
+                    BEGIN
+                        INSERT INTO UserWallet (UserId, coinBalance, lastLogin)
+                        VALUES (@userId, @initialCoinBalance, GETDATE())
+                    END";
 
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlCommand sqlCommand = new SqlCommand(insertWalletIfNotExistsQuery, databaseConnection))
                 {
-                    command.Parameters.AddWithValue("@userId", userId);
-                    command.Parameters.AddWithValue("@initialBalance", initialBalance);
-                    command.ExecuteNonQuery();
+                    sqlCommand.Parameters.AddWithValue("@userId", userId);
+                    sqlCommand.Parameters.AddWithValue("@initialCoinBalance", initialCoinBalance);
+                    sqlCommand.ExecuteNonQuery();
                 }
             }
         }
 
-        public int GetUserCoins(int userId)
+        public int GetUserCoinBalance(int userId)
         {
-            using (SqlConnection connection = DataLink.GetConnection())
+            using (SqlConnection databaseConnection = DataLink.GetConnection())
             {
-                connection.Open();
-                string query = "SELECT coinBalance FROM UserWallet WHERE UserId = @userId";
-                using (SqlCommand command = new SqlCommand(query, connection))
+                databaseConnection.Open();
+                string selectCoinBalanceQuery = "SELECT coinBalance FROM UserWallet WHERE UserId = @userId";
+                using (SqlCommand sqlCommand = new SqlCommand(selectCoinBalanceQuery, databaseConnection))
                 {
-                    command.Parameters.AddWithValue("@userId", userId);
-                    return (int?)command.ExecuteScalar() ?? 0;
+                    sqlCommand.Parameters.AddWithValue("@userId", userId);
+                    return (int?)sqlCommand.ExecuteScalar() ?? DefaultInitialCoinBalance;
                 }
             }
         }
-        public void UpdateUserCoins(int userId, int newBalance)
+        public void SetUserCoinBalance(int userId, int updatedCoinBalance)
         {
-            using (SqlConnection connection = DataLink.GetConnection())
+            using (SqlConnection databaseConnection = DataLink.GetConnection())
             {
-                connection.Open();
-                string query = @"IF EXISTS (SELECT 1 FROM UserWallet WHERE UserId = @userId)
-                                BEGIN
-                                    UPDATE UserWallet SET coinBalance = @newBalance WHERE UserId = @userId
-                                END
-                                ELSE
-                                BEGIN
-                                    INSERT INTO UserWallet (UserId, coinBalance, lastLogin)
-                                    VALUES (@userId, @newBalance, GETDATE())
-                                END";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@userId", userId);
-                    command.Parameters.AddWithValue("@newBalance", newBalance);
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
+                databaseConnection.Open();
 
-        public DateTime GetUserLastLogin(int userId)
-        {
-            using (SqlConnection connection = DataLink.GetConnection())
-            {
-                connection.Open();
-                string query = "SELECT lastLogin FROM UserWallet WHERE UserId = @userId";
-                using (SqlCommand command = new SqlCommand(query, connection))
+                string upsertWalletQuery = @"
+                    IF EXISTS (SELECT 1 FROM UserWallet WHERE UserId = @userId)
+                        BEGIN
+                            UPDATE UserWallet SET coinBalance = @updatedCoinBalance WHERE UserId = @userId
+                        END
+                    ELSE
+                        BEGIN
+                            INSERT INTO UserWallet (UserId, coinBalance, lastLogin)
+                            VALUES (@userId, @updatedCoinBalance, GETDATE())
+                        END";
+
+                using (SqlCommand sqlCommand = new SqlCommand(upsertWalletQuery, databaseConnection))
                 {
-                    command.Parameters.AddWithValue("@userId", userId);
-                    return (DateTime?)command.ExecuteScalar() ?? DateTime.MinValue;
+                    sqlCommand.Parameters.AddWithValue("@userId", userId);
+                    sqlCommand.Parameters.AddWithValue("@updatedCoinBalance", updatedCoinBalance);
+                    sqlCommand.ExecuteNonQuery();
                 }
             }
         }
 
-        public void UpdateLastLogin(int userId)
+        public DateTime GetUserLastLoginTime(int userId)
         {
-            using (SqlConnection connection = DataLink.GetConnection())
+            using (SqlConnection databaseConnection = DataLink.GetConnection())
             {
-                connection.Open();
-                string query = @"IF EXISTS (SELECT 1 FROM UserWallet WHERE UserId = @userId)
-                                BEGIN
-                                    UPDATE UserWallet SET lastLogin = GETDATE() WHERE UserId = @userId
-                                END
-                                ELSE
-                                BEGIN
-                                    INSERT INTO UserWallet (UserId, coinBalance, lastLogin)
-                                    VALUES (@userId, 0, GETDATE())
-                                END";
-                using (SqlCommand command = new SqlCommand(query, connection))
+                databaseConnection.Open();
+                string selectLastLoginQuery = "SELECT lastLogin FROM UserWallet WHERE UserId = @userId";
+                using (SqlCommand sqlCommand = new SqlCommand(selectLastLoginQuery, databaseConnection))
                 {
-                    command.Parameters.AddWithValue("@userId", userId);
-                    command.ExecuteNonQuery();
+                    sqlCommand.Parameters.AddWithValue("@userId", userId);
+                    return (DateTime?)sqlCommand.ExecuteScalar() ?? DateTime.MinValue;
                 }
             }
         }
 
-        public void AddCoins(int userId, int amount)
+        public void UpdateUserLastLoginTimeToNow(int userId)
         {
-            int currentCoins = GetUserCoins(userId);
-            UpdateUserCoins(userId, currentCoins + amount);
+            using (SqlConnection databaseConnection = DataLink.GetConnection())
+            {
+                databaseConnection.Open();
+                string upsertLastLoginQuery = @"
+                    IF EXISTS (SELECT 1 FROM UserWallet WHERE UserId = @userId)
+                        BEGIN
+                            UPDATE UserWallet SET lastLogin = GETDATE() WHERE UserId = @userId
+                        END
+                    ELSE
+                        BEGIN
+                            INSERT INTO UserWallet (UserId, coinBalance, lastLogin)
+                            VALUES (@userId, @defaultBalance, GETDATE())
+                        END";
+
+                using (SqlCommand sqlCommand = new SqlCommand(upsertLastLoginQuery, databaseConnection))
+                {
+                    sqlCommand.Parameters.AddWithValue("@userId", userId);
+                    sqlCommand.Parameters.AddWithValue("@defaultBalance", DefaultInitialCoinBalance);
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
         }
 
-        public bool DeductCoins(int userId, int cost)
+        public void AddCoinsToUserWallet(int userId, int amountToAdd)
         {
-            int currentCoins = GetUserCoins(userId);
-            if (currentCoins >= cost)
+            int currentCoinBalance = GetUserCoinBalance(userId);
+            SetUserCoinBalance(userId, currentCoinBalance + amountToAdd);
+        }
+
+        public bool TryDeductCoinsFromUserWallet(int userId, int deductionAmount)
+        {
+            int currentCoinBalance = GetUserCoinBalance(userId);
+
+            if (currentCoinBalance >= deductionAmount)
             {
-                UpdateUserCoins(userId, currentCoins - cost);
-                return true; // Purchase successful
+                SetUserCoinBalance(userId, currentCoinBalance - deductionAmount);
+                return true;
             }
-            return false; // Not enough coins
+
+            return false;
         }
     }
 }
