@@ -7,18 +7,18 @@ namespace CourseApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is bool boolean)
+            if (value is bool booleanValue)
             {
-                return !boolean;
+                return !booleanValue;
             }
             return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            if (value is bool boolean)
+            if (value is bool booleanValue)
             {
-                return !boolean;
+                return !booleanValue;
             }
             return value;
         }
