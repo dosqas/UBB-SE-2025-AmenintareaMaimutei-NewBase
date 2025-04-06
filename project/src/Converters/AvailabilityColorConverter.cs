@@ -22,7 +22,7 @@ namespace CourseApp.Converters
         /// if false, returns a gray color indicating unavailability.
         /// </summary>
         /// <param name="value">The boolean value representing availability.</param>
-        /// <param name="targetType">The target type (expected to be a SolidColorBrush).</param>
+        /// <param name="targetType">The target type.</param>
         /// <param name="parameter">Any optional parameters passed in XAML.</param>
         /// <param name="language">The language for localization.</param>
         /// <returns>A SolidColorBrush based on the availability state.</returns>
@@ -42,8 +42,8 @@ namespace CourseApp.Converters
         /// The ConvertBack method is not implemented as this converter only supports one-way conversion.
         /// </summary>
         /// <param name="value">The value to convert back.</param>
-        /// <param name="targetType">The target type for conversion.</param>
-        /// <param name="parameter">Any optional parameters passed.</param>
+        /// <param name="targetType">The target type.</param>
+        /// <param name="parameter">Any optional parameters passed in XAML.</param>
         /// <param name="language">The language for localization.</param>
         /// <returns>Throws NotImplementedException because reverse conversion is not needed.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -13,7 +13,7 @@ namespace CourseApp.Converters
         /// <summary>
         /// Converts a boolean value to its inverse.
         /// </summary>
-        /// <param name="value">The boolean value to invert.</param>
+        /// <param name="value">The boolean value to invert (expected to be a boolean).</param>
         /// <param name="targetType">The target type (expected to be a boolean).</param>
         /// <param name="parameter">Any optional parameters passed in XAML.</param>
         /// <param name="language">The language for localization.</param>

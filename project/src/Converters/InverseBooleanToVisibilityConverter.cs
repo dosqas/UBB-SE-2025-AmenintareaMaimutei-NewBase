@@ -40,7 +40,7 @@ namespace CourseApp.Converters
         /// <param name="targetType">The target type.</param>
         /// <param name="parameter">Any optional parameters passed.</param>
         /// <param name="language">The language for localization.</param>
-        /// <returns>Throws <see cref="NotImplementedException"/> because reverse conversion is not necessary.</returns>
+        /// <returns>Throws NotImplementedException because reverse conversion is not needed.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException("Reverse conversion is not supported.");
