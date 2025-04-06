@@ -1,29 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using CourseApp.Data;
 using CourseApp.Models;
-using System;
 
 namespace CourseApp.Repository
 {
     public class CourseRepository
     {
-
-        public Course GetCourse(int CourseId)
+        public Course? GetCourse(int courseId)
         {
-            Course course = null;
             using (SqlConnection connection = DataLink.GetConnection())
             {
                 connection.Open();
                 string query = "SELECT CourseId, Title, Description, isPremium, Cost, ImageUrl, timeToComplete, difficulty FROM Courses WHERE CourseId = @courseId";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@courseId", CourseId);
+                    command.Parameters.AddWithValue("@courseId", courseId);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            course = new Course
+                            return new Course
                             {
                                 CourseId = reader.GetInt32(0),
                                 Title = reader.GetString(1),
@@ -38,7 +36,7 @@ namespace CourseApp.Repository
                     }
                 }
             }
-            return course;
+            return null;
         }
 
         public bool IsModuleOpen(int userId, int moduleId)
@@ -99,7 +97,6 @@ namespace CourseApp.Repository
                 }
             }
         }
-
 
         public List<Course> GetAllCourses()
         {
@@ -427,7 +424,6 @@ namespace CourseApp.Repository
             }
         }
 
-
         public bool IsModuleInProgress(int userId, int moduleId)
         {
             bool isBought = false;
@@ -558,9 +554,8 @@ namespace CourseApp.Repository
             return timeLimit;
         }
 
-        public Module GetModule(int moduleId)
+        public Module? GetModule(int moduleId)
         {
-            Module module = null;
             using (SqlConnection connection = DataLink.GetConnection())
             {
                 connection.Open();
@@ -572,7 +567,7 @@ namespace CourseApp.Repository
                     {
                         if (reader.Read())
                         {
-                            module = new Module
+                            return new Module
                             {
                                 ModuleId = reader.GetInt32(0),
                                 CourseId = reader.GetInt32(1),
@@ -587,7 +582,7 @@ namespace CourseApp.Repository
                     }
                 }
             }
-            return module;
+            return null;
         }
     }
 }

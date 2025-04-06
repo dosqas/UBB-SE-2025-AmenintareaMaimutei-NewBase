@@ -1,17 +1,16 @@
+using System;
 using Microsoft.UI.Xaml.Controls;
 using CourseApp.Models;
 using CourseApp.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Navigation;
-using System;
-
 
 namespace CourseApp.Views
 {
     public sealed partial class MainPage : Page
     {
-        //keep this static so that the dialog is only shown once. The page is recreated every time it is navigated to.
-        private static bool _dialogShown = false;
+        // keep this static so that the dialog is only shown once. The page is recreated every time it is navigated to.
+        private static bool isDialogShown = false;
 
         public MainPage()
         {
@@ -23,11 +22,11 @@ namespace CourseApp.Views
         private async void RootGrid_Loaded(object sender, RoutedEventArgs e)
         {
             // Ensure the dialog is only shown once. Just in case.
-            if (!_dialogShown)
+            if (!isDialogShown)
             {
-                _dialogShown = true;
+                isDialogShown = true;
 
-                bool dailyLoginRewardEligible = (this.DataContext as MainViewModel)!.CheckUserDailyLogin();
+                bool dailyLoginRewardEligible = (this.DataContext as MainViewModel) !.CheckUserDailyLogin();
 
                 if (dailyLoginRewardEligible)
                 {
@@ -48,10 +47,17 @@ namespace CourseApp.Views
             if (e.ClickedItem is Course selectedCourse)
             {
                 var mainWindow = MainWindow.Instance;
-                var courseVM = mainWindow.GetOrCreateCourseViewModel(selectedCourse);
-                this.Frame.Navigate(typeof(CoursePage), courseVM);
+                if (mainWindow != null)
+                {
+                    var courseVM = mainWindow.GetOrCreateCourseViewModel(selectedCourse);
+                    this.Frame.Navigate(typeof(CoursePage), courseVM);
+                }
+                else
+                {
+                    // Handle the case where mainWindow is null
+                    // For example, you could log an error or show a message to the user
+                }
             }
         }
-
     }
 }

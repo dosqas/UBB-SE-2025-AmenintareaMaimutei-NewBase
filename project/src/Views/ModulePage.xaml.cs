@@ -1,14 +1,14 @@
+using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using CourseApp.Models;
 using CourseApp.ViewModels;
-using System;
 
 namespace CourseApp.Views
 {
     public sealed partial class ModulePage : Page
     {
-        private ModuleViewModel viewModel;
+        private ModuleViewModel viewModel = null!;
         public ModulePage()
         {
             this.InitializeComponent();
@@ -23,13 +23,12 @@ namespace CourseApp.Views
                 this.DataContext = viewModel;
             }
         }
-
-
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             if (this.Frame.CanGoBack)
+            {
                 this.Frame.GoBack();
+            }
         }
-        
     }
 }
