@@ -94,7 +94,6 @@
                 <StackPanel>
                         <TextBlock Text="Modules:" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" Foreground="#FFFFFF"/>
                         <ListView ItemsSource="{Binding ModuleRoadmap}" x:Name="ModulesListView"
- 
                               IsItemClickEnabled="True" Background="Transparent" Margin="0,5,0,0">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">

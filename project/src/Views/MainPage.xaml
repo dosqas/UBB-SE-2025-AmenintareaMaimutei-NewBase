@@ -115,7 +115,6 @@
                                                    FontSize="20" 
                                                    Foreground="#FFFFFF"
                                                    TextTrimming="CharacterEllipsis"/>
-
                                         <StackPanel Orientation="Horizontal" Margin="0,4,0,8">
                                             <Border Background="#9179FB" 
                                                     CornerRadius="4" 
