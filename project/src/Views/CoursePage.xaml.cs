@@ -25,15 +25,6 @@ namespace CourseApp.Views
             }
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.Frame.CanGoBack)
-            {
-                viewModel.PauseProgressTracking();
-                this.Frame.GoBack();
-            }
-        }
-
         private void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is CourseViewModel.ModuleDisplayViewModel moduleDisplay && viewModel!.IsUserEnrolled)
