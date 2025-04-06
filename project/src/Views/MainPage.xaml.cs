@@ -26,7 +26,7 @@ namespace CourseApp.Views
             {
                 isDialogShown = true;
 
-                bool dailyLoginRewardEligible = (this.DataContext as MainViewModel) !.CheckUserDailyLogin();
+                bool dailyLoginRewardEligible = (this.DataContext as MainViewModel) !.TryDailyLoginReward();
 
                 if (dailyLoginRewardEligible)
                 {
