@@ -10,7 +10,6 @@ namespace CourseApp.Models
         public bool IsPremium { get; set; }
         public int Cost { get; set; }
 
-        
         public string ImageUrl { get; set; }
         public int TimeToComplete { get; set; } // in seconds
         public string Difficulty { get; set; }
