@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace CourseApp.Converters
 {
-    public class InverseBooleanConverter : IValueConverter
+    public partial class InverseBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

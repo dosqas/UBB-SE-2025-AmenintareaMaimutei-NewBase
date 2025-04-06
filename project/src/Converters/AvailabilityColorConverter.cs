@@ -1,12 +1,11 @@
-﻿
-using System;
+﻿using System;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml;
 
 namespace CourseApp.Converters
 {
-    public class AvailabilityColorConverter : IValueConverter
+    public partial class AvailabilityColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

@@ -1,11 +1,10 @@
-﻿
-using System;
+﻿using System;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml;
 
 namespace CourseApp.Converters
 {
-    public class InverseBooleanToVisibilityConverter : IValueConverter
+    public partial class InverseBooleanToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
