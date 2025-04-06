@@ -36,14 +36,15 @@ namespace CourseApp.ViewModels
             courseService.OpenModule(module.ModuleId);
         }
 
-        private async void ExecuteModuleImageClick(object? obj)
+        public void ExecuteModuleImageClick(object? obj)
         {
-            bool confirmStatus = courseService.ClickModuleImage(CurrentModule.ModuleId);
+            var confirmStatus = courseService.ClickModuleImage(CurrentModule.ModuleId);
             if (confirmStatus)
             {
                 OnPropertyChanged(nameof(CoinBalance));
             }
         }
+
         public string TimeSpent => courseViewModel.TimeRemainingFormatted;
 
         public int CoinBalance

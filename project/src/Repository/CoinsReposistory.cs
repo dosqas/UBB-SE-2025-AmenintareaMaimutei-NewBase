@@ -1,20 +1,20 @@
-﻿using CourseApp.Data;
-using Microsoft.Data.SqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using CourseApp.Data;
 
 namespace CourseApp.Repository
 {
-    class CoinsRepository
+    public class CoinsRepository
     {
-        private readonly SqlConnection _connection;
+        private readonly SqlConnection connection;
         public CoinsRepository()
         {
-            _connection = DataLink.GetConnection();
+            connection = DataLink.GetConnection();
         }
         public void InitUserWallet(int userId, int initialBalance = 0)
         {
@@ -116,7 +116,6 @@ namespace CourseApp.Repository
             UpdateUserCoins(userId, currentCoins + amount);
         }
 
-
         public bool DeductCoins(int userId, int cost)
         {
             int currentCoins = GetUserCoins(userId);
@@ -127,7 +126,5 @@ namespace CourseApp.Repository
             }
             return false; // Not enough coins
         }
-
-
     }
 }
