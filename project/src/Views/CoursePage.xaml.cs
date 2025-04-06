@@ -1,4 +1,3 @@
-using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using CourseApp.Models;
@@ -35,7 +34,7 @@ namespace CourseApp.Views
             }
         }
 
-        private async void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is CourseViewModel.ModuleProgressStatus moduleDisplay && viewModel!.IsEnrolled)
             {
@@ -54,7 +53,6 @@ namespace CourseApp.Views
                     Content = "You need to complete the previous modules to unlock this one.",
                     CloseButtonText = "OK"
                 };
-                await dialog.ShowAsync();
             }
         }
     }
