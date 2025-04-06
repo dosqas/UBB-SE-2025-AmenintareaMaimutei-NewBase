@@ -1,9 +1,5 @@
-﻿using CourseApp.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using CourseApp.Repository;
 
 namespace CourseApp.Services
 {
@@ -11,40 +7,38 @@ namespace CourseApp.Services
     {
         private const int UserId = 0;
 
-
         private readonly CoinsRepository coinsRepository = new CoinsRepository();
+
         public CoinsService()
         {
-
         }
 
         public int GetUserCoins(int userId)
         {
-            return coinsRepository.GetUserCoins(userId);
+            return coinsRepository.GetUserCoinBalance(userId);
         }
 
         public bool SpendCoins(int userId, int cost)
         {
-            return coinsRepository.DeductCoins(userId, cost);
+            return coinsRepository.TryDeductCoinsFromUserWallet(userId, cost);
         }
 
         public void EarnCoins(int userId, int amount)
         {
-            coinsRepository.AddCoins(userId, amount);
+            coinsRepository.AddCoinsToUserWallet(userId, amount);
         }
 
-        public bool checkUserDailyLogin(int userId = 0)
+        public bool CheckUserDailyLogin(int userId = 0)
         {
-            DateTime lastLogin = coinsRepository.GetUserLastLogin(userId);
+            DateTime lastLogin = coinsRepository.GetUserLastLoginTime(userId);
             DateTime today = DateTime.Now;
             if (lastLogin.Date < today.Date)
             {
-                coinsRepository.AddCoins(userId, 100);
-                coinsRepository.UpdateLastLogin(userId);
+                coinsRepository.AddCoinsToUserWallet(userId, 100);
+                coinsRepository.UpdateUserLastLoginTimeToNow(userId);
                 return true;
             }
             return false;
         }
     }
-
 }
