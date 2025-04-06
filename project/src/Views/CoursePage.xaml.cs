@@ -21,7 +21,7 @@ namespace CourseApp.Views
                 viewModel = vm;
                 this.DataContext = viewModel;
                 ModulesListView.ItemClick += ModulesListView_ItemClick;
-                vm.StartTimer();
+                vm.StartCourseProgressTimer();
             }
         }
 
@@ -29,14 +29,14 @@ namespace CourseApp.Views
         {
             if (this.Frame.CanGoBack)
             {
-                viewModel.PauseTimer();
+                viewModel.PauseCourseProgressTimer();
                 this.Frame.GoBack();
             }
         }
 
         private void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is CourseViewModel.ModuleDisplayModelView moduleDisplay && viewModel!.IsEnrolled)
+            if (e.ClickedItem is CourseViewModel.ModuleProgressStatus moduleDisplay && viewModel!.IsEnrolled)
             {
                 if (moduleDisplay.IsUnlocked)
                 {
@@ -45,7 +45,7 @@ namespace CourseApp.Views
                 }
                 if (moduleDisplay.Module!.IsBonus)
                 {
-                    viewModel.TryBuyBonusModule(moduleDisplay.Module);
+                    viewModel.AttemptBonusModulePurchase(moduleDisplay.Module);
                 }
                 var dialog = new ContentDialog
                 {

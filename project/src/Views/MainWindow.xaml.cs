@@ -45,11 +45,11 @@ namespace CourseApp.Views
                 // Only pause previous timer if switching courses
                 if (currentCourseVM != null && currentCourseVM != newVM)
                 {
-                    currentCourseVM.PauseTimer();
+                    currentCourseVM.PauseCourseProgressTimer();
                 }
 
                 currentCourseVM = newVM;
-                currentCourseVM.StartTimer();
+                currentCourseVM.StartCourseProgressTimer();
             }
 
             // Navigated to a module page
@@ -59,11 +59,11 @@ namespace CourseApp.Views
 
                 if (currentCourseVM != null && currentCourseVM != courseVM)
                 {
-                    currentCourseVM.PauseTimer();
+                    currentCourseVM.PauseCourseProgressTimer();
                 }
 
                 currentCourseVM = courseVM;
-                currentCourseVM.StartTimer();
+                currentCourseVM.StartCourseProgressTimer();
             }
 
             // Navigated to something else (like MainPage)
@@ -72,7 +72,7 @@ namespace CourseApp.Views
                 // Only pause if leaving course/module
                 if (e.SourcePageType != typeof(CoursePage) && e.SourcePageType != typeof(ModulePage))
                 {
-                    currentCourseVM?.PauseTimer();
+                    currentCourseVM?.PauseCourseProgressTimer();
                 }
             }
         }

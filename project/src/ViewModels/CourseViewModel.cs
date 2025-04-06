@@ -11,145 +11,273 @@ using Microsoft.UI.Xaml;
 
 namespace CourseApp.ViewModels
 {
+    /// <summary>
+    /// ViewModel for handling course presentation, progress tracking, and user interactions
+    /// </summary>
     public partial class CourseViewModel : BaseViewModel
     {
-        private readonly DispatcherTimer? timer;
-        private int totalTimeSpent;
-        private readonly int courseTimeLimit;
+        #region Constants
+
+        /// <summary>Duration for which notifications are displayed (in seconds)</summary>
+        private const int NotificationDisplayDurationInSeconds = 3;
+
+        /// <summary>Coin reward for completing all required modules</summary>
+        private const int CourseCompletionRewardCoins = 50;
+
+        /// <summary>Coin reward for completing the course within time limit</summary>
+        private const int TimedCompletionRewardCoins = 300;
+
+        /// <summary>Adjustment factor for time tracking to prevent double counting</summary>
+        private const int TimeTrackingDatabaseAdjustmentDivisor = 2;
+
+        /// <summary>Number of minutes in one hour</summary>
+        private const int MinutesInAnHour = 60;
+
+        /// <summary>Base interval for timer ticks (1 second)</summary>
+        private const int SecondsInOneSecond = 1;
+        #endregion
+
+        #region Fields
+        private DispatcherTimer? courseProgressTimer;
+        private int totalSecondsSpentOnCourse;
+        private int courseCompletionTimeLimitInSeconds;
+        private string? formattedTimeRemaining;
+        private bool isCourseTimerRunning;
+        private int lastSavedTimeInSeconds = 0;
+
         private readonly CourseService courseService;
         private readonly CoinsService coinsService;
-        public Course CurrentCourse { get; set; }
-        public ObservableCollection<ModuleDisplayModelView> ModuleRoadmap { get; set; } = [];
+        private readonly NotificationHelper notificationHelper;
 
-        public ICommand EnrollCommand { get; set; }
-        public bool IsEnrolled { get; set; }
+        private string notificationMessageText = string.Empty;
+        private bool shouldShowNotification = false;
+        #endregion
 
-        public bool CoinVisibility { get => CurrentCourse.IsPremium && !IsEnrolled; }
-        public int CoinBalance
+        #region Properties
+
+        /// <summary>Gets the current course being viewed</summary>
+        public Course CurrentCourse { get; }
+
+        /// <summary>Gets the collection of modules with their progress status</summary>
+        public ObservableCollection<ModuleProgressStatus> ModuleRoadmap { get; } = [];
+
+        /// <summary>Gets the command for enrolling in the course</summary>
+        public ICommand? EnrollCommand { get; private set; }
+
+        /// <summary>Gets a value indicating whether the user is enrolled in this course</summary>
+        public bool IsEnrolled { get; private set; }
+
+        /// <summary>Gets whether coin information should be visible</summary>
+        public bool CoinVisibility => CurrentCourse.IsPremium && !IsEnrolled;
+
+        /// <summary>Gets the current coin balance of the user</summary>
+        public int CoinBalance => coinsService.GetUserCoins(0);
+
+        /// <summary>Gets the tags associated with this course</summary>
+        public ObservableCollection<Tag> Tags => new (courseService.GetCourseTags(CurrentCourse.CourseId));
+
+        /// <summary>
+        /// Gets or sets the formatted string representing time remaining in course
+        /// Format: "X min Y sec"
+        /// </summary>
+        public string FormattedTimeRemaining
         {
-            get => coinsService.GetUserCoins(0);
+            get => formattedTimeRemaining!;
+            private set
+            {
+                formattedTimeRemaining = value;
+                OnPropertyChanged();
+            }
         }
 
-        public class ModuleDisplayModelView
+        /// <summary>Gets or sets the notification message to display</summary>
+        public string NotificationMessage
         {
+            get => notificationMessageText;
+            private set
+            {
+                notificationMessageText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>Gets or sets whether notification should be visible</summary>
+        public bool ShowNotification
+        {
+            get => shouldShowNotification;
+            private set
+            {
+                shouldShowNotification = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>Gets the number of completed modules</summary>
+        public int CompletedModules { get; private set; }
+
+        /// <summary>Gets the number of required modules</summary>
+        public int RequiredModules { get; private set; }
+
+        /// <summary>Gets whether all required modules are completed</summary>
+        public bool IsCourseCompleted => CompletedModules >= RequiredModules;
+
+        /// <summary>Gets the total time limit for course completion (in seconds)</summary>
+        public int TimeLimit { get; private set; }
+
+        /// <summary>Gets the remaining time to complete the course (in seconds)</summary>
+        public int TimeRemaining => Math.Max(0, TimeLimit - totalSecondsSpentOnCourse);
+
+        /// <summary>Gets whether completion reward was claimed</summary>
+        public bool CompletionRewardClaimed { get; private set; }
+
+        /// <summary>Gets whether timed completion reward was claimed</summary>
+        public bool TimedRewardClaimed { get; private set; }
+        #endregion
+
+        #region Nested Classes
+
+        /// <summary>
+        /// Represents a module along with its progress status
+        /// </summary>
+        public class ModuleProgressStatus
+        {
+            /// <summary>Gets or sets the module</summary>
             public Module? Module { get; set; }
+
+            /// <summary>Gets or sets whether the module is unlocked</summary>
             public bool IsUnlocked { get; set; }
+
+            /// <summary>Gets or sets whether the module is completed</summary>
             public bool IsCompleted { get; set; }
         }
 
-        private string? timeSpent;
-        private bool timerStarted;
-        private int lastSavedTime = 0;
+        /// <summary>
+        /// Helper class for managing temporary notifications
+        /// </summary>
+        /// <remarks>
+        /// Initializes a new instance of the NotificationHelper class
+        /// </remarks>
+        private class NotificationHelper(CourseViewModel parentViewModel)
+        {
+            private readonly CourseViewModel parent = parentViewModel;
+            private DispatcherTimer? notificationTimer;
+
+            /// <summary>
+            /// Displays a temporary notification message
+            /// </summary>
+            /// <param name="message">The message to display</param>
+            public void ShowTemporaryNotification(string message)
+            {
+                parent.NotificationMessage = message;
+                parent.ShowNotification = true;
+
+                notificationTimer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromSeconds(NotificationDisplayDurationInSeconds)
+                };
+                notificationTimer.Tick += OnNotificationTimerTick!;
+                notificationTimer.Start();
+            }
+
+            private void OnNotificationTimerTick(object sender, object e)
+            {
+                parent.ShowNotification = false;
+                notificationTimer!.Tick -= OnNotificationTimerTick!;
+                notificationTimer.Stop();
+                notificationTimer = null;
+            }
+        }
+        #endregion
+
+        #region Constructor and Initialization
 
         /// <summary>
-        /// Formatted string showing the current tracked time spent on the course.
-        /// Updated every second while the timer is running.
+        /// Initializes a new instance of the CourseViewModel class
         /// </summary>
-        ///
-        public ObservableCollection<Tag> Tags => new (courseService.GetCourseTags(CurrentCourse.CourseId));
-        public string TimeSpent
-        {
-            get => timeSpent!;
-            set
-            {
-                timeSpent = value;
-                OnPropertyChanged(nameof(TimeSpent));
-            }
-        }
-
-        private string notificationMessage = string.Empty;
-        private bool showNotification = false;
-
-        public string NotificationMessage
-        {
-            get => notificationMessage;
-            set
-            {
-                notificationMessage = value;
-                OnPropertyChanged(nameof(NotificationMessage));
-            }
-        }
-
-        public bool ShowNotification
-        {
-            get => showNotification;
-            set
-            {
-                showNotification = value;
-                OnPropertyChanged(nameof(ShowNotification));
-            }
-        }
-        public int CompletedModules { get; private set; }
-        public int RequiredModules { get; private set; }
-        public bool IsCourseCompleted => CompletedModules >= RequiredModules;
-        public int TimeLimit { get; private set; }
-        public int TimeRemaining => Math.Max(0, TimeLimit - totalTimeSpent);
-        public bool CompletionRewardClaimed { get; private set; } = false;
-        public bool TimedRewardClaimed { get; private set; } = false;
-
+        /// <param name="course">The course to display and manage</param>
+        /// <exception cref="ArgumentNullException">Thrown when course is null</exception>
         public CourseViewModel(Course course)
         {
+            CurrentCourse = course ?? throw new ArgumentNullException(nameof(course));
             courseService = new CourseService();
             coinsService = new CoinsService();
-            coinsService.GetUserCoins(0);
-            CurrentCourse = course;
-            IsEnrolled = courseService.IsUserEnrolled(course.CourseId);
-            EnrollCommand = new RelayCommand(ExecuteEnroll!, CanEnroll!);
+            notificationHelper = new NotificationHelper(this);
 
-            LoadModules();
-
-            totalTimeSpent = courseService.GetTimeSpent(course.CourseId); // Tracks the total time spent on the course in seconds
-            lastSavedTime = totalTimeSpent; // Stores the last saved time to calculate delta on save
-            courseTimeLimit = course.TimeToComplete - totalTimeSpent; // Time limit for the course in seconds
-
-            TimeSpent = FormatTime(courseTimeLimit - totalTimeSpent);
-
-            timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            timer.Tick += (s, e) =>
-            {
-                totalTimeSpent++;
-                if (courseTimeLimit - totalTimeSpent <= 0)
-                {
-                    TimeSpent = FormatTime(0); // display 0 when time is up, still count time spent for user
-                }
-                else
-                {
-                    TimeSpent = FormatTime(courseTimeLimit - totalTimeSpent);
-                }
-                OnPropertyChanged(nameof(TimeRemaining));
-            };
-
-            CompletedModules = courseService.GetCompletedModulesCount(course.CourseId);
-            RequiredModules = courseService.GetRequiredModulesCount(course.CourseId);
-            OnPropertyChanged(nameof(CompletedModules));
-            OnPropertyChanged(nameof(RequiredModules));
-            OnPropertyChanged(nameof(IsCourseCompleted));
-
-            TimeLimit = courseService.GetCourseTimeLimit(course.CourseId);
+            InitializeProperties();
+            SetupCourseTimer();
+            LoadInitialData();
         }
 
-        private void LoadModules()
+        private void InitializeProperties()
+        {
+            IsEnrolled = courseService.IsUserEnrolled(CurrentCourse.CourseId);
+            EnrollCommand = new RelayCommand(EnrollUserInCourse, CanUserEnrollInCourse);
+        }
+
+        private void SetupCourseTimer()
+        {
+            courseProgressTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(SecondsInOneSecond)
+            };
+            courseProgressTimer.Tick += OnCourseTimerTick!;
+        }
+
+        private void LoadInitialData()
+        {
+            totalSecondsSpentOnCourse = courseService.GetTimeSpent(CurrentCourse.CourseId);
+            lastSavedTimeInSeconds = totalSecondsSpentOnCourse;
+            courseCompletionTimeLimitInSeconds = CurrentCourse.TimeToComplete - totalSecondsSpentOnCourse;
+            FormattedTimeRemaining = FormatTimeRemainingDisplay(courseCompletionTimeLimitInSeconds - totalSecondsSpentOnCourse);
+
+            CompletedModules = courseService.GetCompletedModulesCount(CurrentCourse.CourseId);
+            RequiredModules = courseService.GetRequiredModulesCount(CurrentCourse.CourseId);
+            TimeLimit = courseService.GetCourseTimeLimit(CurrentCourse.CourseId);
+
+            LoadAndOrganizeCourseModules();
+        }
+        #endregion
+
+        #region Timer Methods
+        private void OnCourseTimerTick(object sender, object e)
+        {
+            totalSecondsSpentOnCourse++;
+            UpdateTimeDisplay();
+            OnPropertyChanged(nameof(TimeRemaining));
+        }
+
+        /// <summary>
+        /// Updates the formatted time display
+        /// </summary>
+        private void UpdateTimeDisplay()
+        {
+            int remainingSeconds = courseCompletionTimeLimitInSeconds - totalSecondsSpentOnCourse;
+            FormattedTimeRemaining = FormatTimeRemainingDisplay(Math.Max(0, remainingSeconds));
+        }
+        #endregion
+
+        #region Module Management
+
+        /// <summary>
+        /// Loads and organizes all modules for the current course with their progress status
+        /// </summary>
+        private void LoadAndOrganizeCourseModules()
         {
             var modules = courseService.GetModules(CurrentCourse.CourseId)
-                           .OrderBy(m => m.Position)
+                           .OrderBy(module => module.Position)
                            .ToList();
 
-            for (int i = 0; i < modules.Count; i++)
-            {
-                bool isCompleted = courseService.IsModuleCompleted(modules[i].ModuleId);
-                bool isUnlocked = false;
-                if (!modules[i].IsBonus)
-                {
-                    isUnlocked = IsEnrolled && (i == 0 || courseService.IsModuleCompleted(modules[i - 1].ModuleId));
-                }
-                else
-                {
-                    isUnlocked = courseService.IsModuleInProgress(modules[i].ModuleId);
-                }
+            ModuleRoadmap.Clear();
 
-                ModuleRoadmap.Add(new ModuleDisplayModelView
+            for (int index = 0; index < modules.Count; index++)
+            {
+                var module = modules[index];
+                bool isCompleted = courseService.IsModuleCompleted(module.ModuleId);
+                bool isUnlocked = GetModuleUnlockStatus(module, index);
+
+                ModuleRoadmap.Add(new ModuleProgressStatus
                 {
-                    Module = modules[i],
+                    Module = module,
                     IsUnlocked = isUnlocked,
                     IsCompleted = isCompleted
                 });
@@ -158,223 +286,270 @@ namespace CourseApp.ViewModels
             OnPropertyChanged(nameof(ModuleRoadmap));
         }
 
-        private bool CanEnroll(object parameter)
+        /// <summary>
+        /// Determines if a module should be unlocked based on its position and progress
+        /// </summary>
+        /// <param name="module">The module to check</param>
+        /// <param name="moduleIndex">The index of the module in the collection</param>
+        /// <returns>True if the module should be unlocked, otherwise false</returns>
+        private bool GetModuleUnlockStatus(Module module, int moduleIndex)
         {
-            return !IsEnrolled && coinsService.GetUserCoins(0) >= CurrentCourse.Cost;
+            if (!module.IsBonus)
+            {
+                return IsEnrolled &&
+                      (moduleIndex == 0 ||
+                       courseService.IsModuleCompleted(ModuleRoadmap[moduleIndex - 1].Module!.ModuleId));
+            }
+            return courseService.IsModuleInProgress(module.ModuleId);
         }
 
         /// <summary>
-        /// Handles course enrollment logic. Sets IsEnrolled to true, resets the timer to 0,
-        /// and starts timing from scratch for a new enrollment.
+        /// Determines if the user can enroll in the course
         /// </summary>
-        private void ExecuteEnroll(object parameter)
+        private bool CanUserEnrollInCourse(object? parameter)
+        {
+            return !IsEnrolled && CoinBalance >= CurrentCourse.Cost;
+        }
+
+        /// <summary>
+        /// Enrolls the user in the current course
+        /// </summary>
+        private void EnrollUserInCourse(object? parameter)
         {
             if (!courseService.EnrollInCourse(CurrentCourse.CourseId))
             {
                 return;
             }
+
             IsEnrolled = true;
-            totalTimeSpent = 0;
-            TimeSpent = FormatTime(totalTimeSpent);
+            ResetCourseProgressTracking();
             OnPropertyChanged(nameof(IsEnrolled));
             OnPropertyChanged(nameof(CoinBalance));
-            StartTimer();
-            LoadModules();
+            StartCourseProgressTimer();
+            LoadAndOrganizeCourseModules();
         }
 
         /// <summary>
-        /// Starts the timer for tracking time spent on the course.
-        /// This will only run if the course is enrolled and the timer is not already running.
+        /// Resets all course progress tracking metrics
         /// </summary>
-        public void StartTimer()
+        private void ResetCourseProgressTracking()
         {
-            if (!timerStarted && IsEnrolled)
+            totalSecondsSpentOnCourse = 0;
+            FormattedTimeRemaining = FormatTimeRemainingDisplay(totalSecondsSpentOnCourse);
+        }
+        #endregion
+
+        #region Timer Control Methods
+
+        /// <summary>
+        /// Starts the course progress timer if not already running
+        /// </summary>
+        public void StartCourseProgressTimer()
+        {
+            if (!isCourseTimerRunning && IsEnrolled)
             {
-                timerStarted = true;
-                timer?.Start();
+                isCourseTimerRunning = true;
+                courseProgressTimer!.Start();
             }
         }
 
         /// <summary>
-        /// Stops the timer and saves the newly accumulated time to the database.
-        /// Called when the user navigates away from the course or module.
+        /// Pauses the course progress timer and saves the current progress
         /// </summary>
-        public void PauseTimer()
+        public void PauseCourseProgressTimer()
         {
-            if (timerStarted)
+            if (isCourseTimerRunning)
             {
-                timer?.Stop();
-                SaveTimeSpent();
-                timerStarted = false;
+                courseProgressTimer!.Stop();
+                SaveCourseProgressTime();
+                isCourseTimerRunning = false;
             }
         }
 
         /// <summary>
-        /// Saves only the new time spent since the last save to the database.
-        /// This prevents double-counting time when the app restarts or navigates back.
+        /// Saves the current course progress time to the database
         /// </summary>
-        private void SaveTimeSpent()
+        private void SaveCourseProgressTime()
         {
-            int delta = (totalTimeSpent - lastSavedTime) / 2; // don't ask why this is like this, if you remove /2, it will save double the time.
+            int secondsToSave = (totalSecondsSpentOnCourse - lastSavedTimeInSeconds) / TimeTrackingDatabaseAdjustmentDivisor;
 
-            if (delta > 0)
+            if (secondsToSave > 0)
             {
-                courseService.UpdateTimeSpent(CurrentCourse.CourseId, delta);
-                lastSavedTime = totalTimeSpent;
+                courseService.UpdateTimeSpent(CurrentCourse.CourseId, secondsToSave);
+                lastSavedTimeInSeconds = totalSecondsSpentOnCourse;
+            }
+        }
+        #endregion
+
+        #region Utility Methods
+
+        /// <summary>
+        /// Formats time in seconds to a display string (X min Y sec)
+        /// </summary>
+        /// <param name="totalSeconds">Total seconds to format</param>
+        /// <returns>Formatted time string</returns>
+        private static string FormatTimeRemainingDisplay(int totalSeconds)
+        {
+            TimeSpan timeSpan = TimeSpan.FromSeconds(totalSeconds);
+            int totalMinutes = timeSpan.Minutes + (timeSpan.Hours * MinutesInAnHour);
+            return $"{totalMinutes} min {timeSpan.Seconds} sec";
+        }
+
+        /// <summary>
+        /// Refreshes the course modules display
+        /// </summary>
+        public void RefreshCourseModulesDisplay()
+        {
+            LoadAndOrganizeCourseModules();
+        }
+        #endregion
+
+        #region Reward Handling
+
+        /// <summary>
+        /// Marks a module as completed and checks for any earned rewards
+        /// </summary>
+        /// <param name="targetModuleId">ID of the module to mark as completed</param>
+        public void MarkModuleAsCompletedAndCheckRewards(int targetModuleId)
+        {
+            courseService.CompleteModule(targetModuleId, CurrentCourse.CourseId);
+            UpdateCompletionStatus();
+
+            if (IsCourseCompleted)
+            {
+                CheckForCompletionReward();
+                CheckForTimedReward();
             }
         }
 
         /// <summary>
-        /// Converts a time value in seconds into a formatted string like "X min Y sec".
+        /// Updates the module completion status properties
         /// </summary>
-        /// <param name="seconds">The number of seconds to format.</param>
-        /// <returns>Formatted string representing the time.</returns>
-        private static string FormatTime(int seconds)
+        private void UpdateCompletionStatus()
         {
-            var ts = TimeSpan.FromSeconds(seconds);
-            return $"{ts.Minutes + (ts.Hours * 60)} min {ts.Seconds} sec";
-        }
-
-        public void ReloadModules()
-        {
-            LoadModules();
-        }
-
-        // wonky merge START
-        public void UpdateModuleCompletion(int moduleId)
-        {
-            // Mark module as completed
-            courseService.CompleteModule(moduleId, CurrentCourse.CourseId);
-
-            // Update completion counts
             CompletedModules = courseService.GetCompletedModulesCount(CurrentCourse.CourseId);
             OnPropertyChanged(nameof(CompletedModules));
             OnPropertyChanged(nameof(IsCourseCompleted));
+        }
 
-            // Check if course is now completed
-            if (IsCourseCompleted)
+        /// <summary>
+        /// Checks and claims the course completion reward if eligible
+        /// </summary>
+        private void CheckForCompletionReward()
+        {
+            bool rewardClaimed = courseService.ClaimCompletionReward(CurrentCourse.CourseId);
+            if (rewardClaimed)
             {
-                // Try to claim the completion reward
-                bool rewardClaimed = courseService.ClaimCompletionReward(CurrentCourse.CourseId);
-                if (rewardClaimed)
-                {
-                    CompletionRewardClaimed = true;
-                    OnPropertyChanged(nameof(CompletionRewardClaimed));
-                    OnPropertyChanged(nameof(CoinBalance));
-
-                    // Show reward notification
-                    NotifyCompletionReward();
-                }
-
-                // Try to claim the timed reward
-                if (TimeRemaining > 0)
-                {
-                    bool timedRewardClaimed = courseService.ClaimTimedReward(CurrentCourse.CourseId, totalTimeSpent);
-                    if (timedRewardClaimed)
-                    {
-                        TimedRewardClaimed = true;
-                        OnPropertyChanged(nameof(TimedRewardClaimed));
-                        OnPropertyChanged(nameof(CoinBalance));
-
-                        // Show timed reward notification
-                        NotifyTimedReward();
-                    }
-                } // TODO: There is overlap between the messages if both rewards are claimed.
+                CompletionRewardClaimed = true;
+                OnPropertyChanged(nameof(CompletionRewardClaimed));
+                OnPropertyChanged(nameof(CoinBalance));
+                ShowCourseCompletionRewardNotification();
             }
         }
 
-        // Replace dialog notifications with TextBlock notifications
-        private void NotifyCompletionReward()
+        /// <summary>
+        /// Checks and claims the timed completion reward if eligible
+        /// </summary>
+        private void CheckForTimedReward()
         {
-            NotificationMessage = "Congratulations! You have completed all required modules in this course. 50 coins have been added to your balance.";
-            ShowNotification = true;
+            if (TimeRemaining > 0)
+            {
+                bool rewardClaimed = courseService.ClaimTimedReward(CurrentCourse.CourseId, totalSecondsSpentOnCourse);
+                if (rewardClaimed)
+                {
+                    TimedRewardClaimed = true;
+                    OnPropertyChanged(nameof(TimedRewardClaimed));
+                    OnPropertyChanged(nameof(CoinBalance));
+                    ShowTimedCompletionRewardNotification();
+                }
+            }
+        }
+        #endregion
 
-            // Make the text disappear after a few seconds
-            DispatcherTimer notificationTimer = new ()
-            {
-                Interval = TimeSpan.FromSeconds(3)
-            };
-            notificationTimer.Tick += (s, e) =>
-            {
-                ShowNotification = false;
-                notificationTimer.Stop();
-            };
-            notificationTimer.Start();
+        #region Notification Methods
+
+        /// <summary>
+        /// Shows notification for course completion reward
+        /// </summary>
+        private void ShowCourseCompletionRewardNotification()
+        {
+            string message = $"Congratulations! You have completed all required modules in this course. {CourseCompletionRewardCoins} coins have been added to your balance.";
+            notificationHelper.ShowTemporaryNotification(message);
         }
 
-        private void NotifyTimedReward()
+        /// <summary>
+        /// Shows notification for timed completion reward
+        /// </summary>
+        private void ShowTimedCompletionRewardNotification()
         {
-            NotificationMessage = $"Congratulations! You completed the course within the time limit. 300 coins have been added to your balance.";
-            ShowNotification = true;
-
-            // Make the text disappear after a few seconds
-            DispatcherTimer notificationTimer = new ()
-            {
-                Interval = TimeSpan.FromSeconds(3)
-            };
-            notificationTimer.Tick += (s, e) =>
-            {
-                ShowNotification = false;
-                notificationTimer.Stop();
-            };
-            notificationTimer.Start();
+            string message = $"Congratulations! You completed the course within the time limit. {TimedCompletionRewardCoins} coins have been added to your balance.";
+            notificationHelper.ShowTemporaryNotification(message);
         }
 
-        private void NotifyBuyModule(Module module)
+        /// <summary>
+        /// Shows notification for successful module purchase
+        /// </summary>
+        /// <param name="module">The module that was purchased</param>
+        private void ShowModulePurchaseNotification(Module module)
         {
-            NotificationMessage = $"Congratulations! You have purchased bonus module{module.Title}, {module.Cost} coins have been deducted from your balance.";
-            ShowNotification = true;
-            // Make the text disappear after a few seconds
-            DispatcherTimer notificationTimer = new ()
-            {
-                Interval = TimeSpan.FromSeconds(3)
-            };
-            notificationTimer.Tick += (s, e) =>
-            {
-                ShowNotification = false;
-                notificationTimer.Stop();
-            };
-            notificationTimer.Start();
-            ReloadModules();
+            string message = $"Congratulations! You have purchased bonus module {module.Title}, {module.Cost} coins have been deducted from your balance.";
+            notificationHelper.ShowTemporaryNotification(message);
+            RefreshCourseModulesDisplay();
         }
+        #endregion
 
-        public void TryBuyBonusModule(Module module)
+        #region Module Purchase
+
+        /// <summary>
+        /// Attempts to purchase a bonus module
+        /// </summary>
+        /// <param name="module">The module to purchase</param>
+        public void AttemptBonusModulePurchase(Module module)
         {
+            ArgumentNullException.ThrowIfNull(module);
+
             if (courseService.IsModuleCompleted(module.ModuleId))
             {
                 return;
             }
 
-            bool success = courseService.BuyBonusModule(module.ModuleId, CurrentCourse.CourseId);
+            bool purchaseSuccessful = courseService.BuyBonusModule(module.ModuleId, CurrentCourse.CourseId);
 
-            if (success)
+            if (purchaseSuccessful)
             {
-                var moduleToUpdate = ModuleRoadmap!.FirstOrDefault(m => m.Module!.ModuleId == module.ModuleId);
-                if (moduleToUpdate != null)
-                {
-                    moduleToUpdate.IsUnlocked = true;
-                    moduleToUpdate.IsCompleted = false;
-                    courseService.OpenModule(module.ModuleId);
-                }
-                NotifyBuyModule(module);
+                UpdatePurchasedModuleStatus(module);
+                ShowModulePurchaseNotification(module);
                 OnPropertyChanged(nameof(ModuleRoadmap));
                 OnPropertyChanged(nameof(CoinBalance));
-                return;
             }
-
-            NotificationMessage = $"You do not have enough coins to buy this module.";
-            ShowNotification = true;
-            // Make the text disappear after a few seconds
-            DispatcherTimer notificationTimer = new ()
+            else
             {
-                Interval = TimeSpan.FromSeconds(3)
-            };
-            notificationTimer.Tick += (s, e) =>
-            {
-                ShowNotification = false;
-                notificationTimer.Stop();
-            };
-            notificationTimer.Start();
+                ShowPurchaseFailedNotification();
+            }
         }
+
+        /// <summary>
+        /// Updates the status of a purchased module
+        /// </summary>
+        /// <param name="module">The module that was purchased</param>
+        private void UpdatePurchasedModuleStatus(Module module)
+        {
+            var moduleToUpdate = ModuleRoadmap.FirstOrDefault(m => m.Module!.ModuleId == module.ModuleId);
+            if (moduleToUpdate != null)
+            {
+                moduleToUpdate.IsUnlocked = true;
+                moduleToUpdate.IsCompleted = false;
+                courseService.OpenModule(module.ModuleId);
+            }
+        }
+
+        /// <summary>
+        /// Shows notification for failed module purchase
+        /// </summary>
+        private void ShowPurchaseFailedNotification()
+        {
+            notificationHelper.ShowTemporaryNotification("You do not have enough coins to buy this module.");
+        }
+        #endregion
     }
 }
