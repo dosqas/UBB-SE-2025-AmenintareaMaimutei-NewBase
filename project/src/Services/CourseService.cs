@@ -53,7 +53,7 @@ namespace CourseApp.Services
             {
                 return false;
             }
-            if (!coinsRepository.DeductCoins(UserId, module.Cost))
+            if (!coinsRepository.TryDeductCoinsFromUserWallet(UserId, module.Cost))
             {
                 return false;
             }
@@ -95,7 +95,7 @@ namespace CourseApp.Services
             if (course.IsPremium)
             {
                 int cost = course.Cost;
-                if (!coinsRepository.DeductCoins(UserId, cost))
+                if (!coinsRepository.TryDeductCoinsFromUserWallet(UserId, cost))
                 {
                     return false;
                 }
@@ -193,7 +193,7 @@ namespace CourseApp.Services
             }
 
             repository.ClickModuleImage(UserId, moduleId);
-            coinsRepository.AddCoins(UserId, 10);
+            coinsRepository.AddCoinsToUserWallet(UserId, 10);
             return true;
         }
 
