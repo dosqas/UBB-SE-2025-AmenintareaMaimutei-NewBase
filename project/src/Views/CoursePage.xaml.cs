@@ -21,13 +21,22 @@ namespace CourseApp.Views
                 viewModel = vm;
                 this.DataContext = viewModel;
                 ModulesListView.ItemClick += ModulesListView_ItemClick;
-                vm.StartProgressTracking();
+                vm.StartTimer();
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.Frame.CanGoBack)
+            {
+                viewModel.PauseTimer();
+                this.Frame.GoBack();
             }
         }
 
         private void ModulesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is CourseViewModel.ModuleDisplayViewModel moduleDisplay && viewModel!.IsUserEnrolled)
+            if (e.ClickedItem is CourseViewModel.ModuleDisplayModelView moduleDisplay && viewModel!.IsEnrolled)
             {
                 if (moduleDisplay.IsUnlocked)
                 {
@@ -36,7 +45,7 @@ namespace CourseApp.Views
                 }
                 if (moduleDisplay.Module!.IsBonus)
                 {
-                    viewModel.AttemptBonusModulePurchase(moduleDisplay.Module);
+                    viewModel.TryBuyBonusModule(moduleDisplay.Module);
                 }
                 var dialog = new ContentDialog
                 {
@@ -44,13 +53,6 @@ namespace CourseApp.Views
                     Content = "You need to complete the previous modules to unlock this one.",
                     CloseButtonText = "OK"
                 };
-            }
-        }
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.Frame.CanGoBack)
-            {
-                this.Frame.GoBack();
             }
         }
     }
