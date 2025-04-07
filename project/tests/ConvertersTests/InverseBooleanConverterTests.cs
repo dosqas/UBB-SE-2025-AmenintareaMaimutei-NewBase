@@ -1,4 +1,4 @@
-﻿namespace tests.ConvertersTests
+﻿namespace Tests.ConvertersTests
 {
     using CourseApp.Converters;
     using Microsoft.UI;
