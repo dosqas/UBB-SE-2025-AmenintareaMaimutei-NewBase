@@ -6,7 +6,7 @@ using CourseApp.Models;
 
 namespace CourseApp.Repository
 {
-    public class CourseRepository
+    public class CourseRepository : ICourseRepository
     {
         public Course? GetCourse(int courseId)
         {

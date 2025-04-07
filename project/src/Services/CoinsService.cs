@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using CourseApp.Repository;
 
 namespace CourseApp.Services
@@ -7,29 +7,28 @@ namespace CourseApp.Services
     {
         private const int UserId = 0;
 
-        private readonly ICoinsRepository coinsRepository;
+        private readonly CoinsRepository coinsRepository = new CoinsRepository();
 
-        public CoinsService(ICoinsRepository coinsRepository = null)
+        public CoinsService()
         {
-            this.coinsRepository = coinsRepository ?? new CoinsRepository();  // Default to the real repository if not injected
         }
 
-        public int GetCoinBalance(int userId)
+        public int GetUserCoins(int userId)
         {
             return coinsRepository.GetUserCoinBalance(userId);
         }
 
-        public bool TrySpendingCoins(int userId, int cost)
+        public bool SpendCoins(int userId, int cost)
         {
             return coinsRepository.TryDeductCoinsFromUserWallet(userId, cost);
         }
 
-        public void AddCoins(int userId, int amount)
+        public void EarnCoins(int userId, int amount)
         {
             coinsRepository.AddCoinsToUserWallet(userId, amount);
         }
 
-        public bool ApplyDailyLoginBonu(int userId = 0)
+        public bool CheckUserDailyLogin(int userId = 0)
         {
             DateTime lastLogin = coinsRepository.GetUserLastLoginTime(userId);
             DateTime today = DateTime.Now;
