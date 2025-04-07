@@ -3,7 +3,7 @@ using CourseApp.Repository;
 
 namespace CourseApp.Services
 {
-    public class CoinsService
+    public class CoinsService : ICoinsService
     {
         private const int UserId = 0;
 

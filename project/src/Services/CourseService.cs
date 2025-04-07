@@ -6,7 +6,7 @@ using CourseApp.Repository;
 
 namespace CourseApp.Services
 {
-    public class CourseService
+    public class CourseService : ICourseService
     {
         public List<Tag> GetCourseTags(int courseId)
         {
