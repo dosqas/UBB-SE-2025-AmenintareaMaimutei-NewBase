@@ -4,7 +4,7 @@ using CourseApp.Data;
 
 namespace CourseApp.Repository
 {
-    public class CoinsRepository
+    public class CoinsRepository : ICoinsRepository
     {
         private readonly SqlConnection connection;
 

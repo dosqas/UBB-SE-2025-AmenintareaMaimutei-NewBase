@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using CourseApp.Repository;
 
 namespace CourseApp.Services

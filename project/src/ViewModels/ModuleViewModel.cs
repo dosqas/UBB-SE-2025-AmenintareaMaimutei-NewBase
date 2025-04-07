@@ -13,19 +13,24 @@ namespace CourseApp.ViewModels
         public bool IsCompleted { get; set; }
         public ICommand CompleteModuleCommand { get; set; }
 
-        public ICommand OnModuleImageClick { get; set; }
+        public ICommand ModuleImageClickCommand { get; set; }
 
-        public ModuleViewModel(Models.Module module, CourseViewModel courseVM)
+        public ModuleViewModel(Models.Module module, CourseViewModel courseVM,
+            ICourseService? courseServiceOverride = null,
+            ICoinsService? coinsServiceOverride = null)
         {
-            courseService = new CourseService();
-            coinsService = new CoinsService();
-            coinsService.GetUserCoins(0);
+            // Corrected initialization: Use the proper concrete service classes
+            courseService = courseService ?? new CourseService();
+            coinsService = coinsService ?? new CoinsService();
+
             CurrentModule = module;
             IsCompleted = courseService.IsModuleCompleted(module.ModuleId);
             CompleteModuleCommand = new RelayCommand(ExecuteCompleteModule, CanCompleteModule);
-            OnModuleImageClick = new RelayCommand(ExecuteModuleImageClick);
+            ModuleImageClickCommand = new RelayCommand(HandleModuleImageClick);
             courseViewModel = courseVM;
+
             courseService.OpenModule(module.ModuleId);
+
             courseViewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(courseViewModel.FormattedTimeRemaining))
@@ -33,10 +38,11 @@ namespace CourseApp.ViewModels
                     OnPropertyChanged(nameof(TimeSpent));
                 }
             };
+
             courseService.OpenModule(module.ModuleId);
         }
 
-        public void ExecuteModuleImageClick(object? obj)
+        public void HandleModuleImageClick(object? obj)
         {
             var confirmStatus = courseService.ClickModuleImage(CurrentModule.ModuleId);
             if (confirmStatus)
@@ -49,7 +55,7 @@ namespace CourseApp.ViewModels
 
         public int CoinBalance
         {
-            get => coinsService.GetUserCoins(0);
+            get => coinsService.GetCoinBalance(0);
         }
 
         private bool CanCompleteModule(object parameter)
