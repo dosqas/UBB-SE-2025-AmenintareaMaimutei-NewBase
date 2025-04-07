@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CourseApp.Models;
@@ -228,7 +228,7 @@ namespace CourseApp.Services
             if (claimed)
             {
                 var coinsService = new CoinsService();
-                coinsService.AddCoins(UserId, 50);
+                coinsService.EarnCoins(UserId, 50);
             }
             return claimed;
         }
@@ -242,7 +242,7 @@ namespace CourseApp.Services
             {
                 int rewardAmount = 300; // hardcoded reward for timed completion
                 var coinsService = new CoinsService();
-                coinsService.AddCoins(UserId, rewardAmount);
+                coinsService.EarnCoins(UserId, rewardAmount);
             }
 
             return claimed;
