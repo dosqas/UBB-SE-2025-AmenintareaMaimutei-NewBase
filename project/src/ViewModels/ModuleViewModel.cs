@@ -4,66 +4,60 @@ using CourseApp.Services;
 
 namespace CourseApp.ViewModels
 {
-    public partial class ModuleViewModel : BaseViewModel, IModuleViewModel
+    public partial class ModuleViewModel : BaseViewModel
     {
-        private readonly CourseService courseService;
-        private readonly CoinsService coinsService;
-        private readonly CourseViewModel courseViewModel;
-        public Module CurrentModule { get; set; }
-        public bool IsCompleted { get; set; }
-        public ICommand CompleteModuleCommand { get; set; }
+        private readonly IModuleCompletionService moduleCompletionService;
+        private readonly ICoinsService coinsService;
+        private readonly ICourseViewModel courseViewModel;
 
-        public ICommand OnModuleImageClick { get; set; }
+        public Module CurrentModule { get; }
+        public bool IsCompleted { get; private set; }
+        public ICommand CompleteModuleCommand { get; }
+        public ICommand OnModuleImageClick { get; }
 
-        public ModuleViewModel(Models.Module module, CourseViewModel courseVM)
+        public ModuleViewModel(Module module, ICourseViewModel courseVM,
+                             IModuleCompletionService moduleCompletionService,
+                             ICoinsService coinsService)
         {
-            courseService = new CourseService();
-            coinsService = new CoinsService();
-            coinsService.GetUserCoins(0);
             CurrentModule = module;
-            IsCompleted = courseService.IsModuleCompleted(module.ModuleId);
+            courseViewModel = courseVM;
+            this.moduleCompletionService = moduleCompletionService;
+            this.coinsService = coinsService;
+
+            IsCompleted = this.moduleCompletionService.IsModuleCompleted(module.ModuleId);
+
             CompleteModuleCommand = new RelayCommand(ExecuteCompleteModule, CanCompleteModule);
             OnModuleImageClick = new RelayCommand(ExecuteModuleImageClick);
-            courseViewModel = courseVM;
-            courseService.OpenModule(module.ModuleId);
+
+            this.moduleCompletionService.OpenModule(module.ModuleId);
+
             courseViewModel.PropertyChanged += (s, e) =>
             {
-                if (e.PropertyName == nameof(courseViewModel.FormattedTimeRemaining))
+                if (e.PropertyName == nameof(ICourseViewModel.FormattedTimeRemaining))
                 {
                     OnPropertyChanged(nameof(TimeSpent));
                 }
             };
-            courseService.OpenModule(module.ModuleId);
+        }
+
+        public string TimeSpent => courseViewModel.FormattedTimeRemaining;
+        public int CoinBalance => coinsService.GetUserCoins(0);
+
+        private bool CanCompleteModule(object parameter) => !IsCompleted;
+
+        private void ExecuteCompleteModule(object parameter)
+        {
+            courseViewModel.MarkModuleAsCompletedAndCheckRewards(CurrentModule.ModuleId);
+            IsCompleted = true;
+            OnPropertyChanged(nameof(IsCompleted));
         }
 
         public void ExecuteModuleImageClick(object? obj)
         {
-            var confirmStatus = courseService.ClickModuleImage(CurrentModule.ModuleId);
-            if (confirmStatus)
+            if (moduleCompletionService.ClickModuleImage(CurrentModule.ModuleId))
             {
                 OnPropertyChanged(nameof(CoinBalance));
             }
-        }
-
-        public string TimeSpent => courseViewModel.FormattedTimeRemaining;
-
-        public int CoinBalance
-        {
-            get => coinsService.GetUserCoins(0);
-        }
-
-        private bool CanCompleteModule(object parameter)
-        {
-            return !IsCompleted;
-        }
-
-        private void ExecuteCompleteModule(object parameter)
-        {
-            // Mark module as complete in the database.
-            this.courseViewModel.MarkModuleAsCompletedAndCheckRewards(CurrentModule.ModuleId);
-            IsCompleted = true;
-            OnPropertyChanged(nameof(IsCompleted));
-            courseViewModel.RefreshCourseModulesDisplay(); // Refresh roadmap to unlock the next module
         }
     }
 }
