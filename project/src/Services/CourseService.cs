@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CourseApp.Models;
@@ -6,7 +6,7 @@ using CourseApp.Repository;
 
 namespace CourseApp.Services
 {
-    public class CourseService : ICourseService, ICourseFilterService, IModuleCompletionService
+    public class CourseService : ICourseService
     {
         public List<Tag> GetCourseTags(int courseId)
         {
@@ -228,7 +228,7 @@ namespace CourseApp.Services
             if (claimed)
             {
                 var coinsService = new CoinsService();
-                coinsService.EarnCoins(UserId, 50);
+                coinsService.AddCoins(UserId, 50);
             }
             return claimed;
         }
@@ -242,7 +242,7 @@ namespace CourseApp.Services
             {
                 int rewardAmount = 300; // hardcoded reward for timed completion
                 var coinsService = new CoinsService();
-                coinsService.EarnCoins(UserId, rewardAmount);
+                coinsService.AddCoins(UserId, rewardAmount);
             }
 
             return claimed;

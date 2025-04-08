@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
@@ -10,9 +10,9 @@ namespace CourseApp.ViewModels
     public class MainViewModel : BaseViewModel
     {
         private const int CurrentUserId = 0;
-        private readonly ICourseService courseService;
-        private readonly ICoinsService coinsService;
-        private readonly ICourseFilterService filterService;
+
+        private readonly CourseService courseService;
+        private readonly CoinsService coinsService;
 
         private string searchQuery = string.Empty;
         private bool filterByPremium;
@@ -20,10 +20,10 @@ namespace CourseApp.ViewModels
         private bool filterByEnrolled;
         private bool filterByNotEnrolled;
 
-        public ObservableCollection<Course> DisplayedCourses { get; }
-        public ObservableCollection<Tag> AvailableTags { get; }
+        public ObservableCollection<Course> DisplayedCourses { get; private set; }
+        public ObservableCollection<Tag> AvailableTags { get; private set; }
 
-        public int UserCoinBalance => coinsService.GetUserCoins(CurrentUserId);
+        public int UserCoinBalance => coinsService.GetCoinBalance(CurrentUserId);
 
         public string SearchQuery
         {
@@ -95,18 +95,15 @@ namespace CourseApp.ViewModels
             }
         }
 
-        public ICommand ResetAllFiltersCommand { get; }
+        public ICommand ResetAllFiltersCommand { get; private set; }
 
-        public MainViewModel(ICourseService courseService,
-                           ICoinsService coinsService,
-                           ICourseFilterService filterService)
+        public MainViewModel()
         {
-            this.courseService = courseService;
-            this.coinsService = coinsService;
-            this.filterService = filterService;
+            courseService = new CourseService();
+            coinsService = new CoinsService();
 
-            DisplayedCourses = new ObservableCollection<Course>(this.courseService.GetCourses());
-            AvailableTags = new ObservableCollection<Tag>(this.courseService.GetTags());
+            DisplayedCourses = new ObservableCollection<Course>(courseService.GetCourses());
+            AvailableTags = new ObservableCollection<Tag>(courseService.GetTags());
 
             foreach (var tag in AvailableTags)
             {
@@ -118,14 +115,14 @@ namespace CourseApp.ViewModels
 
         public bool TryDailyLoginReward()
         {
-            bool loginRewardGranted = coinsService.CheckUserDailyLogin();
+            bool loginRewardGranted = coinsService.ApplyDailyLoginBonus();
             OnPropertyChanged(nameof(UserCoinBalance));
             return loginRewardGranted;
         }
 
-        private void OnTagSelectionChanged(object? sender, PropertyChangedEventArgs e)
+        private void OnTagSelectionChanged(object? sender, PropertyChangedEventArgs eventArgs)
         {
-            if (e.PropertyName == nameof(Tag.IsSelected))
+            if (eventArgs.PropertyName == nameof(Tag.IsSelected))
             {
                 ApplyAllFilters();
             }
@@ -154,7 +151,7 @@ namespace CourseApp.ViewModels
                 .Select(tag => tag.TagId)
                 .ToList();
 
-            var filteredCourses = filterService.GetFilteredCourses(
+            var filteredCourses = courseService.GetFilteredCourses(
                 searchQuery,
                 filterByPremium,
                 filterByFree,

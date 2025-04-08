@@ -6,30 +6,30 @@ namespace CourseApp.ViewModels
 {
     public partial class ModuleViewModel : BaseViewModel
     {
-        private readonly IModuleCompletionService moduleCompletionService;
-        private readonly ICoinsService coinsService;
-        private readonly ICourseViewModel courseViewModel;
+        private readonly CourseService courseService;
+        private readonly CoinsService coinsService;
+        private readonly CourseViewModel courseViewModel;
+        public Module CurrentModule { get; set; }
+        public bool IsCompleted { get; set; }
+        public ICommand CompleteModuleCommand { get; set; }
 
-        public Module CurrentModule { get; }
-        public bool IsCompleted { get; private set; }
-        public ICommand CompleteModuleCommand { get; }
-        public ICommand OnModuleImageClick { get; }
+        public ICommand ModuleImageClickCommand { get; set; }
 
-        public ModuleViewModel(Module module, ICourseViewModel courseVM,
-                             IModuleCompletionService moduleCompletionService,
-                             ICoinsService coinsService)
+        public ModuleViewModel(Models.Module module, CourseViewModel courseVM,
+            ICourseService? courseServiceOverride = null,
+            ICoinsService? coinsServiceOverride = null)
         {
+            // Corrected initialization: Use the proper concrete service classes
+            courseService = courseService ?? new CourseService();
+            coinsService = coinsService ?? new CoinsService();
+
             CurrentModule = module;
-            courseViewModel = courseVM;
-            this.moduleCompletionService = moduleCompletionService;
-            this.coinsService = coinsService;
-
-            IsCompleted = this.moduleCompletionService.IsModuleCompleted(module.ModuleId);
-
+            IsCompleted = courseService.IsModuleCompleted(module.ModuleId);
             CompleteModuleCommand = new RelayCommand(ExecuteCompleteModule, CanCompleteModule);
-            OnModuleImageClick = new RelayCommand(ExecuteModuleImageClick);
+            ModuleImageClickCommand = new RelayCommand(HandleModuleImageClick);
+            courseViewModel = courseVM;
 
-            this.moduleCompletionService.OpenModule(module.ModuleId);
+            courseService.OpenModule(module.ModuleId);
 
             courseViewModel.PropertyChanged += (s, e) =>
             {
@@ -38,12 +38,31 @@ namespace CourseApp.ViewModels
                     OnPropertyChanged(nameof(TimeSpent));
                 }
             };
+
+            courseService.OpenModule(module.ModuleId);
+        }
+
+        public void HandleModuleImageClick(object? obj)
+        {
+            var confirmStatus = courseService.ClickModuleImage(CurrentModule.ModuleId);
+            if (confirmStatus)
+            {
+                OnPropertyChanged(nameof(CoinBalance));
+            }
         }
 
         public string TimeSpent => courseViewModel.FormattedTimeRemaining;
         public int CoinBalance => coinsService.GetUserCoins(0);
 
-        private bool CanCompleteModule(object parameter) => !IsCompleted;
+        public int CoinBalance
+        {
+            get => coinsService.GetCoinBalance(0);
+        }
+
+        private bool CanCompleteModule(object parameter)
+        {
+            return !IsCompleted;
+        }
 
         private void ExecuteCompleteModule(object parameter)
         {

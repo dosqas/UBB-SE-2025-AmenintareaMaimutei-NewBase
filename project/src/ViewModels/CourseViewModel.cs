@@ -71,7 +71,7 @@ namespace CourseApp.ViewModels
         public bool CoinVisibility => CurrentCourse.IsPremium && !IsEnrolled;
 
         /// <summary>Gets the current coin balance of the user</summary>
-        public int CoinBalance => coinsService.GetUserCoins(0);
+        public int CoinBalance => coinsService.GetCoinBalance(0);
 
         /// <summary>Gets the tags associated with this course</summary>
         public ObservableCollection<Tag> Tags => new (courseService.GetCourseTags(CurrentCourse.CourseId));
