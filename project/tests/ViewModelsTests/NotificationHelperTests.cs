@@ -1,40 +1,66 @@
-﻿using System;
-using CourseApp.Services;
-using CourseApp.ViewModels;
-using Moq;
-using Xunit;
+﻿// <copyright file="NotificationHelperTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-namespace CourseApp.Tests.ViewModels
+namespace Tests.ViewModelsTests
 {
+    using System;
+    using CourseApp.Services;
+    using CourseApp.ViewModels;
+    using Moq;
+    using Xunit;
+
+    /// <summary>
+    /// Contains unit tests for the <see cref="NotificationHelper"/> class.
+    /// </summary>
     public class NotificationHelperTests
     {
-        private readonly Mock<CourseViewModel> _mockParentViewModel;
-        private readonly Mock<ITimerService> _mockTimerService;
-        private readonly NotificationHelper _notificationHelper;
+        private readonly Mock<CourseViewModel> mockParentViewModel;
+        private readonly Mock<ITimerService> mockTimerService;
+        private readonly NotificationHelper notificationHelper;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationHelperTests"/> class.
+        /// Sets up the test environment with mock objects.
+        /// </summary>
         public NotificationHelperTests()
         {
-            _mockParentViewModel = new Mock<CourseViewModel>();
-            _mockTimerService = new Mock<ITimerService>();
-            _notificationHelper = new NotificationHelper(_mockParentViewModel.Object, _mockTimerService.Object);
+            this.mockParentViewModel = new Mock<CourseViewModel>();
+            this.mockTimerService = new Mock<ITimerService>();
+            this.notificationHelper = new NotificationHelper(this.mockParentViewModel.Object, this.mockTimerService.Object);
         }
 
+        /// <summary>
+        /// Tests that the constructor throws ArgumentNullException when parentViewModel is null.
+        /// </summary>
         [Fact]
         public void Constructor_ThrowsArgumentNullException_WhenParentViewModelIsNull()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<ArgumentNullException>(
-                () => new NotificationHelper(null, _mockTimerService.Object));
+            // Arrange
+            CourseViewModel? nullParentViewModel = null;
+
+            // Act & Assert
+            _ = Assert.Throws<ArgumentNullException>(
+                () => new NotificationHelper(nullParentViewModel!, this.mockTimerService.Object));
         }
 
+        /// <summary>
+        /// Tests that the constructor throws ArgumentNullException when timerService is null.
+        /// </summary>
         [Fact]
         public void Constructor_ThrowsArgumentNullException_WhenTimerServiceIsNull()
         {
-            // Arrange & Act & Assert
+            // Arrange
+            ITimerService? nullTimerService = null;
+
+            // Act & Assert
             Assert.Throws<ArgumentNullException>(
-                () => new NotificationHelper(_mockParentViewModel.Object, null));
+                () => new NotificationHelper(this.mockParentViewModel.Object, nullTimerService!));
         }
 
+        /// <summary>
+        /// Tests that the constructor properly subscribes to the timer's Tick event.
+        /// </summary>
         [Fact]
         public void Constructor_SubscribesToTimerTickEvent()
         {
@@ -42,12 +68,15 @@ namespace CourseApp.Tests.ViewModels
             var timerMock = new Mock<ITimerService>();
 
             // Act
-            var helper = new NotificationHelper(_mockParentViewModel.Object, timerMock.Object);
+            var helper = new NotificationHelper(this.mockParentViewModel.Object, timerMock.Object);
 
             // Assert
             timerMock.VerifyAdd(t => t.Tick += It.IsAny<EventHandler>(), Times.Once);
         }
 
+        /// <summary>
+        /// Tests that ShowTemporaryNotification sets the notification message and visibility.
+        /// </summary>
         [Fact]
         public void ShowTemporaryNotification_SetsNotificationMessageAndVisibility()
         {
@@ -55,13 +84,16 @@ namespace CourseApp.Tests.ViewModels
             const string testMessage = "Test notification";
 
             // Act
-            _notificationHelper.ShowTemporaryNotification(testMessage);
+            this.notificationHelper.ShowTemporaryNotification(testMessage);
 
             // Assert
-            _mockParentViewModel.VerifySet(vm => vm.NotificationMessage = testMessage, Times.Once);
-            _mockParentViewModel.VerifySet(vm => vm.ShowNotification = true, Times.Once);
+            this.mockParentViewModel.VerifySet(vm => vm.NotificationMessage = testMessage, Times.Once);
+            this.mockParentViewModel.VerifySet(vm => vm.ShowNotification = true, Times.Once);
         }
 
+        /// <summary>
+        /// Tests that ShowTemporaryNotification sets the timer interval and starts the timer.
+        /// </summary>
         [Fact]
         public void ShowTemporaryNotification_SetsTimerIntervalAndStartsTimer()
         {
@@ -70,13 +102,16 @@ namespace CourseApp.Tests.ViewModels
             var expectedInterval = TimeSpan.FromSeconds(CourseViewModel.NotificationDisplayDurationInSeconds);
 
             // Act
-            _notificationHelper.ShowTemporaryNotification(testMessage);
+            this.notificationHelper.ShowTemporaryNotification(testMessage);
 
             // Assert
-            _mockTimerService.VerifySet(t => t.Interval = expectedInterval, Times.Once);
-            _mockTimerService.Verify(t => t.Start(), Times.Once);
+            this.mockTimerService.VerifySet(t => t.Interval = expectedInterval, Times.Once);
+            this.mockTimerService.Verify(t => t.Start(), Times.Once);
         }
 
+        /// <summary>
+        /// Tests that the timer tick event handler hides the notification and stops the timer.
+        /// </summary>
         [Fact]
         public void OnNotificationTimerTick_HidesNotificationAndStopsTimer()
         {
@@ -85,45 +120,54 @@ namespace CourseApp.Tests.ViewModels
 
             // Act
             // Simulate timer tick by invoking the event handler directly
-            _mockTimerService.Raise(t => t.Tick += null, this, eventArgs);
+            this.mockTimerService.Raise(t => t.Tick += null, this, eventArgs);
 
             // Assert
-            _mockParentViewModel.VerifySet(vm => vm.ShowNotification = false, Times.Once);
-            _mockTimerService.Verify(t => t.Stop(), Times.Once);
+            this.mockParentViewModel.VerifySet(vm => vm.ShowNotification = false, Times.Once);
+            this.mockTimerService.Verify(t => t.Stop(), Times.Once);
         }
 
+        /// <summary>
+        /// Tests that the timer tick event handler doesn't throw when parent view model is null.
+        /// </summary>
         [Fact]
         public void OnNotificationTimerTick_DoesNotThrow_WhenParentViewModelIsNull()
         {
             // Arrange
             var eventArgs = EventArgs.Empty;
             var timerMock = new Mock<ITimerService>();
-            var helper = new NotificationHelper(_mockParentViewModel.Object, timerMock.Object);
+            var helper = new NotificationHelper(this.mockParentViewModel.Object, timerMock.Object);
 
             // This test ensures we don't get NullReferenceException if parent is null
             // (though constructor prevents null parent in reality)
-            _mockParentViewModel.SetupGet(vm => vm.ShowNotification).Throws<NullReferenceException>();
+            this.mockParentViewModel.SetupGet(vm => vm.ShowNotification).Throws<NullReferenceException>();
 
             // Act & Assert (should not throw)
             timerMock.Raise(t => t.Tick += null, this, eventArgs);
         }
 
+        /// <summary>
+        /// Tests that ShowTemporaryNotification doesn't throw when timer start fails.
+        /// </summary>
         [Fact]
         public void ShowTemporaryNotification_DoesNotThrow_WhenTimerStartFails()
         {
             // Arrange
-            _mockTimerService.Setup(t => t.Start()).Throws<InvalidOperationException>();
+            this.mockTimerService.Setup(t => t.Start()).Throws<InvalidOperationException>();
 
             // Act & Assert (should not throw)
-            _notificationHelper.ShowTemporaryNotification("Test");
+            this.notificationHelper.ShowTemporaryNotification("Test");
         }
 
+        /// <summary>
+        /// Tests that Dispose properly cleans up event handlers.
+        /// </summary>
         [Fact]
         public void Dispose_CleansUpEventHandlers()
         {
             // Arrange
             var timerMock = new Mock<ITimerService>();
-            var helper = new NotificationHelper(_mockParentViewModel.Object, timerMock.Object);
+            var helper = new NotificationHelper(this.mockParentViewModel.Object, timerMock.Object);
 
             // Act
             if (helper is IDisposable disposable)

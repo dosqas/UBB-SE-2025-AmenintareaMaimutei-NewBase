@@ -1,4 +1,4 @@
-﻿namespace Tests.CourseViewModelTests
+﻿namespace Tests.ViewModelsTests
 {
     using System;
     using System.Collections.Generic;
@@ -63,7 +63,7 @@
             _mockCourseService.Setup(x => x.GetCompletedModulesCount(It.IsAny<int>())).Returns(0);
             _mockCourseService.Setup(x => x.GetRequiredModulesCount(It.IsAny<int>())).Returns(5);
             _mockCourseService.Setup(x => x.GetCourseTimeLimit(It.IsAny<int>())).Returns(3600);
-            _mockCoinsService.Setup(x => x.GetUserCoins(It.IsAny<int>())).Returns(200);
+            _mockCoinsService.Setup(x => x.GetCoinBalance(It.IsAny<int>())).Returns(200);
 
             // Setup modules
             var modules = new List<Module>
@@ -108,7 +108,7 @@
         public void EnrollCommand_CannotExecute_WhenUserDoesNotHaveEnoughCoins()
         {
             // Arrange
-            _mockCoinsService.Setup(x => x.GetUserCoins(It.IsAny<int>())).Returns(50);
+            _mockCoinsService.Setup(x => x.GetCoinBalance(It.IsAny<int>())).Returns(50);
 
             // Act & Assert
             Assert.False(_viewModel.EnrollCommand.CanExecute(null));
@@ -126,7 +126,7 @@
             // Assert
             Assert.True(_viewModel.IsEnrolled);
             _mockCourseService.Verify(x => x.EnrollInCourse(_testCourse.CourseId), Times.Once);
-            _mockCoinsService.Verify(x => x.SpendCoins(It.IsAny<int>(), _testCourse.Cost), Times.Once);
+            _mockCoinsService.Verify(x => x.TrySpendingCoins(It.IsAny<int>(), _testCourse.Cost), Times.Once);
         }
 
         [Fact]
@@ -207,7 +207,7 @@
             Assert.Equal($"Congratulations! You have purchased bonus module {testModule.Title}, {testModule.Cost} coins have been deducted from your balance.",
                 _viewModel.NotificationMessage);
             Assert.True(_viewModel.ShowNotification);
-            _mockCoinsService.Verify(x => x.SpendCoins(It.IsAny<int>(), testModule.Cost), Times.Once);
+            _mockCoinsService.Verify(x => x.TrySpendingCoins(It.IsAny<int>(), testModule.Cost), Times.Once);
         }
 
         [Theory]
@@ -243,7 +243,7 @@
             // Arrange
             var testModule = new Module { ModuleId = 1, Title = "Bonus", IsBonus = true, Cost = 50, Description = "Bonus Module Description", ImageUrl = "Bonus Image URL" };
             _mockCourseService.Setup(x => x.BuyBonusModule(It.IsAny<int>(), It.IsAny<int>())).Returns(false);
-            _mockCoinsService.Setup(x => x.GetUserCoins(It.IsAny<int>())).Returns(200);
+            _mockCoinsService.Setup(x => x.GetCoinBalance(It.IsAny<int>())).Returns(200);
 
             // Act
             _viewModel.AttemptBonusModulePurchase(testModule);

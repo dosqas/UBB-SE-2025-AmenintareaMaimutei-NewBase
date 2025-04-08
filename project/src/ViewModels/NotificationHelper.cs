@@ -1,6 +1,6 @@
-﻿using CourseApp.Services;
+﻿using System;
+using CourseApp.Services;
 using CourseApp.ViewModels;
-using System;
 
 internal class NotificationHelper : IDisposable
 {
@@ -14,12 +14,19 @@ internal class NotificationHelper : IDisposable
         this.timer.Tick += OnNotificationTimerTick;
     }
 
-    public void ShowTemporaryNotification(string message)
+    public virtual void ShowTemporaryNotification(string message)
     {
         parentViewModel.NotificationMessage = message;
         parentViewModel.ShowNotification = true;
         timer.Interval = TimeSpan.FromSeconds(CourseViewModel.NotificationDisplayDurationInSeconds);
-        timer.Start();
+
+        try
+        {
+            timer.Start();
+        }
+        catch (InvalidOperationException)
+        {
+        }
     }
 
     private void OnNotificationTimerTick(object sender, EventArgs eventArgs)

@@ -19,7 +19,7 @@ namespace CourseApp.ViewModels
         #region Constants
 
         /// <summary>Duration for which notifications are displayed (in seconds)</summary>
-        private const int NotificationDisplayDurationInSeconds = 3;
+        internal const int NotificationDisplayDurationInSeconds = 3;
 
         /// <summary>Coin reward for completing all required modules</summary>
         private const int CourseCompletionRewardCoins = 50;
@@ -38,15 +38,15 @@ namespace CourseApp.ViewModels
         #endregion
 
         #region Fields
-        private DispatcherTimer? courseProgressTimer;
+        private ITimerService? courseProgressTimer;
         private int totalSecondsSpentOnCourse;
         private int courseCompletionTimeLimitInSeconds;
         private string? formattedTimeRemaining;
         private bool isCourseTimerRunning;
         private int lastSavedTimeInSeconds = 0;
 
-        private readonly CourseService courseService;
-        private readonly CoinsService coinsService;
+        private readonly ICourseService courseService;
+        private readonly ICoinsService coinsService;
         private readonly NotificationHelper notificationHelper;
 
         private string notificationMessageText = string.Empty;
@@ -91,7 +91,7 @@ namespace CourseApp.ViewModels
         }
 
         /// <summary>Gets or sets the notification message to display</summary>
-        public string NotificationMessage
+        public virtual string NotificationMessage
         {
             get => notificationMessageText;
             set
@@ -102,7 +102,7 @@ namespace CourseApp.ViewModels
         }
 
         /// <summary>Gets or sets whether notification should be visible</summary>
-        public bool ShowNotification
+        public virtual bool ShowNotification
         {
             get => shouldShowNotification;
             set
