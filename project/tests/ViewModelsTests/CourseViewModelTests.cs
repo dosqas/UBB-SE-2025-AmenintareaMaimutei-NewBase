@@ -2,33 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
-    using Xunit;
-    using Moq;
+    using System.Reflection;
     using CourseApp.Models;
     using CourseApp.Services;
     using CourseApp.ViewModels;
-    using static CourseApp.ViewModels.CourseViewModel;
-    using System.Reflection;
-
-    public class MockTimerService : ITimerService
-    {
-        public event EventHandler Tick;
-        public TimeSpan Interval { get; set; }
-
-        public void Start() { IsRunning = true; }
-        public void Stop() { IsRunning = false; }
-
-        public bool IsRunning { get; private set; }
-
-        // Helper method to simulate ticks in tests
-        public void SimulateTick()
-        {
-            if (IsRunning)
-            {
-                Tick?.Invoke(this, EventArgs.Empty);
-            }
-        }
-    }
+    using Moq;
+    using Xunit;
+    using TestInfrastructure;
 
     public class CourseViewModelTests
     {
@@ -68,11 +48,11 @@
 
             // Setup modules
             var modules = new List<CourseApp.Models.Module>
-            {
-                new CourseApp.Models.Module { ModuleId = 1, Position = 1, IsBonus = false, Title = "Module 1", Description = "Description 1", ImageUrl = "ImageUrl 1" },
-                new CourseApp.Models.Module { ModuleId = 2, Position = 2, IsBonus = false, Title = "Module 2", Description = "Description 2", ImageUrl = "ImageUrl 2" },
-                new CourseApp.Models.Module { ModuleId = 3, Position = 3, IsBonus = true, Title = "Module 3", Description = "Description 3", ImageUrl = "ImageUrl 3" }
-            };
+                    {
+                        new CourseApp.Models.Module { ModuleId = 1, Position = 1, IsBonus = false, Title = "Module 1", Description = "Description 1", ImageUrl = "ImageUrl 1" },
+                        new CourseApp.Models.Module { ModuleId = 2, Position = 2, IsBonus = false, Title = "Module 2", Description = "Description 2", ImageUrl = "ImageUrl 2" },
+                        new CourseApp.Models.Module { ModuleId = 3, Position = 3, IsBonus = true, Title = "Module 3", Description = "Description 3", ImageUrl = "ImageUrl 3" }
+                    };
             _mockCourseService.Setup(x => x.GetModules(It.IsAny<int>())).Returns(modules);
 
             _viewModel = new CourseViewModel(
@@ -128,22 +108,9 @@
                 Description = "Bonus Module Description",
                 ImageUrl = "Bonus Image URL"
             };
-            var newCourse = new Course
-            {
-                CourseId = 1,
-                Title = "Test Course",
-                Description = "Test Description",
-                ImageUrl = "Test Image URL",
-                Difficulty = "Test Difficulty",
-                IsPremium = true,
-                Cost = 100,
-                TimeToComplete = 3600 // 1 hour
-            };
 
-            // Use reflection to set the private property
-            typeof(CourseViewModel).GetProperty("CurrentCourse", BindingFlags.NonPublic | BindingFlags.Instance)
-                .SetValue(_viewModel, newCourse);
-
+            // Setup mocks
+            _mockCoinsService.Setup(x => x.GetCoinBalance(It.IsAny<int>())).Returns(200);
             _mockCoinsService.Setup(x => x.TrySpendingCoins(1, 100)).Returns(true);
             _mockCourseService.Setup(x => x.EnrollInCourse(1)).Returns(true);
 
@@ -152,6 +119,8 @@
 
             // Assert
             _mockCoinsService.Verify(x => x.TrySpendingCoins(1, 100), Times.Once);
+            _mockCourseService.Verify(x => x.EnrollInCourse(1), Times.Once);
+            Assert.True(_viewModel.IsEnrolled);
         }
 
 
@@ -331,19 +300,19 @@
             _mockCourseService.Verify(x => x.ClaimTimedReward(_testCourse.CourseId, 1800), Times.Once);
         }
 
-/*        [Fact]
-        public void NotificationHelper_HidesNotification_AfterTimeout()
-        {
-            // Arrange
-            var testMessage = "Test notification";
-            _viewModel.NotificationMessage = testMessage;
-            _viewModel.ShowNotification = true;
+        /*        [Fact]
+                public void NotificationHelper_HidesNotification_AfterTimeout()
+                {
+                    // Arrange
+                    var testMessage = "Test notification";
+                    _viewModel.NotificationMessage = testMessage;
+                    _viewModel.ShowNotification = true;
 
-            // Act - Simulate timer tick
-            _mockNotificationTimer.SimulateTick();
+                    // Act - Simulate timer tick
+                    _mockNotificationTimer.SimulateTick();
 
-            // Assert
-            Assert.False(_viewModel.ShowNotification);
-        }*/
+                    // Assert
+                    Assert.False(_viewModel.ShowNotification);
+                }*/
     }
 }

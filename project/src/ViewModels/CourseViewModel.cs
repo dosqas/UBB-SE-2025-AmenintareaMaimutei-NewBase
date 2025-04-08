@@ -295,11 +295,17 @@ namespace CourseApp.ViewModels
         /// </summary>
         private void EnrollUserInCourse(object? parameter)
         {
+            if (!coinsService.TrySpendingCoins(CurrentCourse.CourseId, CurrentCourse.Cost))
+            {
+                return;
+            }
+
             if (!courseService.EnrollInCourse(CurrentCourse.CourseId))
             {
                 return;
             }
 
+            // 3. Update UI state
             IsEnrolled = true;
             ResetCourseProgressTracking();
             OnPropertyChanged(nameof(IsEnrolled));
