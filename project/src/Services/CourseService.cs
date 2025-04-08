@@ -12,12 +12,18 @@ namespace CourseApp.Services
         {
             return repository.GetTagsForCourse(courseId);
         }
-        private readonly CourseRepository repository;
-        private readonly CoinsRepository coinsRepository = new CoinsRepository();
+        private readonly ICourseRepository repository;
+        private readonly ICoinsRepository coinsRepository = new CoinsRepository();
         private const int UserId = 0;
         public CourseService()
         {
             repository = new CourseRepository();
+        }
+
+        public CourseService(ICourseRepository repository, ICoinsRepository coinsRepository)
+        {
+            this.repository = repository;
+            this.coinsRepository = coinsRepository;
         }
 
         public void OpenModule(int moduleId)
@@ -227,8 +233,7 @@ namespace CourseApp.Services
             bool claimed = repository.ClaimCompletionReward(UserId, courseId);
             if (claimed)
             {
-                var coinsService = new CoinsService();
-                coinsService.AddCoins(UserId, 50);
+                coinsRepository.AddCoinsToUserWallet(UserId, 50);
             }
             return claimed;
         }
@@ -241,8 +246,7 @@ namespace CourseApp.Services
             if (claimed)
             {
                 int rewardAmount = 300; // hardcoded reward for timed completion
-                var coinsService = new CoinsService();
-                coinsService.AddCoins(UserId, rewardAmount);
+                coinsRepository.AddCoinsToUserWallet(UserId, rewardAmount);
             }
 
             return claimed;
