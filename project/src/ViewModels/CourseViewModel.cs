@@ -94,10 +94,10 @@ namespace CourseApp.ViewModels
         public string NotificationMessage
         {
             get => notificationMessageText;
-            private set
+            set
             {
                 notificationMessageText = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(NotificationMessage));
             }
         }
 
@@ -105,10 +105,10 @@ namespace CourseApp.ViewModels
         public bool ShowNotification
         {
             get => shouldShowNotification;
-            private set
+            set
             {
                 shouldShowNotification = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(ShowNotification));
             }
         }
 
@@ -150,43 +150,6 @@ namespace CourseApp.ViewModels
             /// <summary>Gets or sets whether the module is completed</summary>
             public bool IsCompleted { get; set; }
         }
-
-        /// <summary>
-        /// Helper class for managing temporary notifications
-        /// </summary>
-        /// <remarks>
-        /// Initializes a new instance of the NotificationHelper class
-        /// </remarks>
-        private class NotificationHelper(CourseViewModel parentViewModel)
-        {
-            private readonly CourseViewModel parent = parentViewModel;
-            private DispatcherTimer? notificationTimer;
-
-            /// <summary>
-            /// Displays a temporary notification message
-            /// </summary>
-            /// <param name="message">The message to display</param>
-            public void ShowTemporaryNotification(string message)
-            {
-                parent.NotificationMessage = message;
-                parent.ShowNotification = true;
-
-                notificationTimer = new DispatcherTimer
-                {
-                    Interval = TimeSpan.FromSeconds(NotificationDisplayDurationInSeconds)
-                };
-                notificationTimer.Tick += OnNotificationTimerTick!;
-                notificationTimer.Start();
-            }
-
-            private void OnNotificationTimerTick(object sender, object e)
-            {
-                parent.ShowNotification = false;
-                notificationTimer!.Tick -= OnNotificationTimerTick!;
-                notificationTimer.Stop();
-                notificationTimer = null;
-            }
-        }
         #endregion
 
         #region Constructor and Initialization
@@ -194,17 +157,36 @@ namespace CourseApp.ViewModels
         /// <summary>
         /// Initializes a new instance of the CourseViewModel class
         /// </summary>
+        public CourseViewModel()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CourseViewModel class
+        /// </summary>
         /// <param name="course">The course to display and manage</param>
+        /// <param name="courseService">The service for course-related operations (optional)</param>
+        /// <param name="coinsService">The service for coin-related operations (optional)</param>
+        /// <param name="timerService">The timer service for course progress tracking (optional)</param>
+        /// <param name="notificationTimerService">The timer service for notifications (optional)</param>
         /// <exception cref="ArgumentNullException">Thrown when course is null</exception>
-        public CourseViewModel(Course course, CourseService? courseService = null, CoinsService? coinsService = null)
+        public CourseViewModel(Course course, ICourseService? courseService = null,
+            ICoinsService? coinsService = null, ITimerService? timerService = null,
+            ITimerService? notificationTimerService = null)
         {
             CurrentCourse = course ?? throw new ArgumentNullException(nameof(course));
             this.courseService = courseService ?? new CourseService();
             this.coinsService = coinsService ?? new CoinsService();
-            notificationHelper = new NotificationHelper(this);
+
+            // Use separate timers for course progress and notifications
+            courseProgressTimer = timerService ?? new DispatcherTimerService();
+            var notificationTimer = notificationTimerService ?? new DispatcherTimerService();
+
+            notificationHelper = new NotificationHelper(this, notificationTimer);
+
+            courseProgressTimer.Tick += OnCourseTimerTick;
 
             InitializeProperties();
-            SetupCourseTimer();
             LoadInitialData();
         }
 
@@ -212,15 +194,6 @@ namespace CourseApp.ViewModels
         {
             IsEnrolled = courseService.IsUserEnrolled(CurrentCourse.CourseId);
             EnrollCommand = new RelayCommand(EnrollUserInCourse, CanUserEnrollInCourse);
-        }
-
-        private void SetupCourseTimer()
-        {
-            courseProgressTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(SecondsInOneSecond)
-            };
-            courseProgressTimer.Tick += OnCourseTimerTick!;
         }
 
         private void LoadInitialData()
@@ -239,7 +212,7 @@ namespace CourseApp.ViewModels
         #endregion
 
         #region Timer Methods
-        private void OnCourseTimerTick(object sender, object e)
+        private void OnCourseTimerTick(object? sender, EventArgs e)
         {
             totalSecondsSpentOnCourse++;
             UpdateTimeDisplay();
@@ -388,7 +361,7 @@ namespace CourseApp.ViewModels
         /// </summary>
         /// <param name="totalSeconds">Total seconds to format</param>
         /// <returns>Formatted time string</returns>
-        private static string FormatTimeRemainingDisplay(int totalSeconds)
+        internal static string FormatTimeRemainingDisplay(int totalSeconds)
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(totalSeconds);
             int totalMinutes = timeSpan.Minutes + (timeSpan.Hours * MinutesInAnHour);
