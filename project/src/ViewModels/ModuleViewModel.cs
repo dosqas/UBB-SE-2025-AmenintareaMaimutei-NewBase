@@ -55,7 +55,7 @@ namespace CourseApp.ViewModels
 
         public int CoinBalance
         {
-            get => coinsService.GetCoinBalance(0);
+            get => coinsService.GetUserCoins(0);
         }
 
         private bool CanCompleteModule(object parameter)

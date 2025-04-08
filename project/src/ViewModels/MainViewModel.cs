@@ -23,7 +23,7 @@ namespace CourseApp.ViewModels
         public ObservableCollection<Course> DisplayedCourses { get; private set; }
         public ObservableCollection<Tag> AvailableTags { get; private set; }
 
-        public int UserCoinBalance => coinsService.GetCoinBalance(CurrentUserId);
+        public int UserCoinBalance => coinsService.GetUserCoins(CurrentUserId);
 
         public string SearchQuery
         {
@@ -115,7 +115,7 @@ namespace CourseApp.ViewModels
 
         public bool TryDailyLoginReward()
         {
-            bool loginRewardGranted = coinsService.ApplyDailyLoginBonu();
+            bool loginRewardGranted = coinsService.CheckUserDailyLogin();
             OnPropertyChanged(nameof(UserCoinBalance));
             return loginRewardGranted;
         }
