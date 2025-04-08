@@ -70,7 +70,6 @@ namespace CourseApp.ViewModels
             OnPropertyChanged(nameof(IsCompleted));
             courseViewModel.RefreshCourseModulesDisplay();
         }
-
         public void ExecuteModuleImageClick(object? obj)
         {
             if (courseService.ClickModuleImage(CurrentModule.ModuleId))
