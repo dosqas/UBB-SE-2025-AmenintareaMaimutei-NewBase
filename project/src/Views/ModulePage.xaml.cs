@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using CourseApp.Models;
 using CourseApp.ViewModels;
+using CourseApp.Services;
 
 namespace CourseApp.Views
 {
@@ -19,7 +20,11 @@ namespace CourseApp.Views
             if (e.Parameter is ValueTuple<Module, CourseViewModel> tuple)
             {
                 var (module, courseVM) = tuple;
-                viewModel = new ModuleViewModel(module, courseVM);
+                viewModel = new ModuleViewModel(
+                            module,
+                            courseVM,
+                            new CourseService(),          // as IModuleCompletionService
+                            new CoinsService());         // as ICoinsService
                 this.DataContext = viewModel;
             }
         }
