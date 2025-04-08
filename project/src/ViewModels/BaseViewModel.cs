@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace CourseApp.ViewModels
 {
-    public class BaseViewModel : INotifyPropertyChanged
+    public class BaseViewModel : IBaseViewModel
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -23,6 +23,16 @@ namespace CourseApp.ViewModels
             field = value;
             OnPropertyChanged(propertyName);
             return true;
+        }
+
+        void IBaseViewModel.OnPropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(propertyName);
+        }
+
+        bool IBaseViewModel.SetProperty<T>(ref T field, T value, string propertyName)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -14,12 +14,12 @@ namespace CourseApp.ViewModels
     /// <summary>
     /// ViewModel for handling course presentation, progress tracking, and user interactions
     /// </summary>
-    public partial class CourseViewModel : BaseViewModel
+    public partial class CourseViewModel : BaseViewModel, ICourseViewModel
     {
         #region Constants
 
         /// <summary>Duration for which notifications are displayed (in seconds)</summary>
-        public const int NotificationDisplayDurationInSeconds = 3;
+        private const int NotificationDisplayDurationInSeconds = 3;
 
         /// <summary>Coin reward for completing all required modules</summary>
         private const int CourseCompletionRewardCoins = 50;
@@ -33,18 +33,20 @@ namespace CourseApp.ViewModels
         /// <summary>Number of minutes in one hour</summary>
         private const int MinutesInAnHour = 60;
 
+        /// <summary>Base interval for timer ticks (1 second)</summary>
+        private const int SecondsInOneSecond = 1;
         #endregion
 
         #region Fields
-        private readonly ITimerService courseProgressTimer;
+        private DispatcherTimer? courseProgressTimer;
         private int totalSecondsSpentOnCourse;
         private int courseCompletionTimeLimitInSeconds;
         private string? formattedTimeRemaining;
         private bool isCourseTimerRunning;
         private int lastSavedTimeInSeconds = 0;
 
-        private readonly ICourseService courseService;
-        private readonly ICoinsService coinsService;
+        private readonly CourseService courseService;
+        private readonly CoinsService coinsService;
         private readonly NotificationHelper notificationHelper;
 
         private string notificationMessageText = string.Empty;
@@ -69,7 +71,7 @@ namespace CourseApp.ViewModels
         public bool CoinVisibility => CurrentCourse.IsPremium && !IsEnrolled;
 
         /// <summary>Gets the current coin balance of the user</summary>
-        public int CoinBalance => coinsService.GetUserCoins(0);
+        public int CoinBalance => coinsService.GetCoinBalance(0);
 
         /// <summary>Gets the tags associated with this course</summary>
         public ObservableCollection<Tag> Tags => new (courseService.GetCourseTags(CurrentCourse.CourseId));
@@ -320,7 +322,7 @@ namespace CourseApp.ViewModels
             if (!isCourseTimerRunning && IsEnrolled)
             {
                 isCourseTimerRunning = true;
-                courseProgressTimer.Start();
+                courseProgressTimer!.Start();
             }
         }
 
@@ -331,7 +333,7 @@ namespace CourseApp.ViewModels
         {
             if (isCourseTimerRunning)
             {
-                courseProgressTimer.Stop();
+                courseProgressTimer!.Stop();
                 SaveCourseProgressTime();
                 isCourseTimerRunning = false;
             }

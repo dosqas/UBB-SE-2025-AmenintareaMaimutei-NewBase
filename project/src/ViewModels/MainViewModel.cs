@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
@@ -23,7 +23,7 @@ namespace CourseApp.ViewModels
         public ObservableCollection<Course> DisplayedCourses { get; private set; }
         public ObservableCollection<Tag> AvailableTags { get; private set; }
 
-        public int UserCoinBalance => coinsService.GetUserCoins(CurrentUserId);
+        public int UserCoinBalance => coinsService.GetCoinBalance(CurrentUserId);
 
         public string SearchQuery
         {
@@ -97,10 +97,10 @@ namespace CourseApp.ViewModels
 
         public ICommand ResetAllFiltersCommand { get; private set; }
 
-        public MainViewModel()
+        public MainViewModel(CourseService? courseService = null, CoinsService? coinsService = null, CourseService? courseService1 = null)
         {
-            courseService = new CourseService();
-            coinsService = new CoinsService();
+            this.courseService = new CourseService();
+            this.coinsService = new CoinsService();
 
             DisplayedCourses = new ObservableCollection<Course>(courseService.GetCourses());
             AvailableTags = new ObservableCollection<Tag>(courseService.GetTags());
@@ -111,11 +111,13 @@ namespace CourseApp.ViewModels
             }
 
             ResetAllFiltersCommand = new RelayCommand(ResetAllFilters);
+            this.courseService = courseService;
+            this.coinsService = coinsService;
         }
 
         public bool TryDailyLoginReward()
         {
-            bool loginRewardGranted = coinsService.CheckUserDailyLogin();
+            bool loginRewardGranted = coinsService.ApplyDailyLoginBonus();
             OnPropertyChanged(nameof(UserCoinBalance));
             return loginRewardGranted;
         }
