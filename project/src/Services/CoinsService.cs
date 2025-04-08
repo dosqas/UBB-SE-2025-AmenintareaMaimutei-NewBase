@@ -7,10 +7,11 @@ namespace CourseApp.Services
     {
         private const int UserId = 0;
 
-        private readonly CoinsRepository coinsRepository = new CoinsRepository();
+        private readonly ICoinsRepository coinsRepository;
 
-        public CoinsService()
+        public CoinsService(ICoinsRepository coinsRepository = null)
         {
+            this.coinsRepository = coinsRepository ?? new CoinsRepository();
         }
 
         public int GetCoinBalance(int userId)

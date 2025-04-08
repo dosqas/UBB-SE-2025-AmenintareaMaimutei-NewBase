@@ -39,7 +39,7 @@ namespace CourseApp.Tests
             var fakeRepo = new FakeCoinsRepository();
             var coinsService = new CoinsService(fakeRepo);
 
-            bool result = coinsService.ApplyDailyLoginBonu(0);
+            bool result = coinsService.ApplyDailyLoginBonus(0);
 
             Assert.True(result);
             Assert.Equal(200, coinsService.GetCoinBalance(0));
