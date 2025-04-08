@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+using System.Windows.Input;
 using CourseApp.Models;
 using CourseApp.Services;
 
@@ -16,8 +16,8 @@ namespace CourseApp.ViewModels
         public ICommand ModuleImageClickCommand { get; set; }
 
         public ModuleViewModel(Models.Module module, CourseViewModel courseVM,
-            ICourseService? courseServiceOverride = null,
-            ICoinsService? coinsServiceOverride = null)
+            CourseService? courseServiceOverride = null,
+            CoinsService? coinsServiceOverride = null)
         {
             // Corrected initialization: Use the proper concrete service classes
             courseService = courseService ?? new CourseService();
@@ -33,7 +33,7 @@ namespace CourseApp.ViewModels
 
             courseViewModel.PropertyChanged += (s, e) =>
             {
-                if (e.PropertyName == nameof(ICourseViewModel.FormattedTimeRemaining))
+                if (e.PropertyName == nameof(courseViewModel.FormattedTimeRemaining))
                 {
                     OnPropertyChanged(nameof(TimeSpent));
                 }
@@ -68,13 +68,14 @@ namespace CourseApp.ViewModels
             courseViewModel.MarkModuleAsCompletedAndCheckRewards(CurrentModule.ModuleId);
             IsCompleted = true;
             OnPropertyChanged(nameof(IsCompleted));
+            courseViewModel.RefreshCourseModulesDisplay();
         }
-
         public void ExecuteModuleImageClick(object? obj)
         {
             if (courseService.ClickModuleImage(CurrentModule.ModuleId))
             {
                 OnPropertyChanged(nameof(CoinBalance));
+                courseViewModel.RefreshCourseModulesDisplay();
             }
         }
     }
