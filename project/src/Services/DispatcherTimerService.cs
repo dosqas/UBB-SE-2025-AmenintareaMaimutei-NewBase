@@ -10,8 +10,10 @@ namespace CourseApp.Services
 
         public DispatcherTimerService()
         {
-            timer = new ();
-            timer.Interval = TimeSpan.FromMilliseconds(DefaultIntervalMilliseconds);
+            timer = new ()
+            {
+                Interval = TimeSpan.FromMilliseconds(DefaultIntervalMilliseconds)
+            };
             timer.Tick += OnTimerTick!;
         }
 
