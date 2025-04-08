@@ -7,7 +7,7 @@ using CourseApp.Services;
 
 namespace CourseApp.ViewModels
 {
-    public class MainViewModel : BaseViewModel
+    public class MainViewModel : BaseViewModel, IMainViewModel
     {
         private const int CurrentUserId = 0;
 
