@@ -356,10 +356,15 @@ namespace CourseApp.ViewModels
         /// </summary>
         private void SaveCourseProgressTime()
         {
-            int secondsToSave = (totalSecondsSpentOnCourse - lastSavedTimeInSeconds) / TimeTrackingDatabaseAdjustmentDivisor;
+            int secondsToSave = (totalSecondsSpentOnCourse - lastSavedTimeInSeconds) /
+                               TimeTrackingDatabaseAdjustmentDivisor;
+
+            Console.WriteLine($"Attempting to save: Current={totalSecondsSpentOnCourse}, " +
+                             $"LastSaved={lastSavedTimeInSeconds}, ToSave={secondsToSave}");
 
             if (secondsToSave > 0)
             {
+                Console.WriteLine($"Saving {secondsToSave} seconds");
                 courseService.UpdateTimeSpent(CurrentCourse.CourseId, secondsToSave);
                 lastSavedTimeInSeconds = totalSecondsSpentOnCourse;
             }

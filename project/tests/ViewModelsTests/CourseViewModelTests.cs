@@ -129,13 +129,25 @@
         {
             // Arrange
             _mockCourseService.Setup(x => x.IsUserEnrolled(It.IsAny<int>())).Returns(true);
-            _viewModel.EnrollCommand.Execute(null); // Enroll first
+            _mockCoinsService.Setup(x => x.TrySpendingCoins(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+            _mockCourseService.Setup(x => x.EnrollInCourse(It.IsAny<int>())).Returns(true);
 
-            // Act
+            // Verify initial state
+            Assert.False(_viewModel.IsEnrolled, "Should not be enrolled initially");
+
+            // Act - enroll
+            _viewModel.EnrollCommand.Execute(null);
+
+            // Verify post-enrollment state
+            Assert.True(_viewModel.IsEnrolled, "Should be enrolled after executing enroll command");
+            _mockCoinsService.Verify(x => x.TrySpendingCoins(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _mockCourseService.Verify(x => x.EnrollInCourse(It.IsAny<int>()), Times.Once);
+
+            // Act - start timer
             _viewModel.StartCourseProgressTimer();
 
             // Assert
-            Assert.True(_mockCourseTimer.IsRunning);
+            Assert.True(_mockCourseTimer.IsRunning, "Timer should be running after start");
         }
 
         [Fact]
@@ -143,17 +155,37 @@
         {
             // Arrange
             _mockCourseService.Setup(x => x.IsUserEnrolled(It.IsAny<int>())).Returns(true);
+            _mockCourseService.Setup(x => x.GetTimeSpent(It.IsAny<int>())).Returns(0); // Ensure initial 0
+
             _viewModel.EnrollCommand.Execute(null);
+
+            // Verify initial state
+            Assert.Equal(0, GetPrivateField<int>("totalSecondsSpentOnCourse"));
+            Assert.Equal(0, GetPrivateField<int>("lastSavedTimeInSeconds"));
+
             _viewModel.StartCourseProgressTimer();
+
+            // Simulate exactly 2 ticks to get 1 saved second (2/2=1)
+            _mockCourseTimer.SimulateTick();
+            _mockCourseTimer.SimulateTick();
 
             // Act
             _viewModel.PauseCourseProgressTimer();
 
             // Assert
             Assert.False(_mockCourseTimer.IsRunning);
-            _mockCourseService.Verify(x => x.UpdateTimeSpent(
-                _testCourse.CourseId,
-                It.IsAny<int>()), Times.Once);
+            _mockCourseService.Verify(
+                x => x.UpdateTimeSpent(
+                    _testCourse.CourseId,
+                    1), // Expecting 2 ticks / 2 divisor = 1 second
+                Times.Once);
+        }
+
+        private T GetPrivateField<T>(string fieldName)
+        {
+            return (T)typeof(CourseViewModel)
+                .GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(_viewModel);
         }
 
         [Fact]
