@@ -9,7 +9,9 @@ namespace CourseApp.ViewModels
         private readonly Predicate<object?>? canExecutePredicate;
         public event EventHandler? CanExecuteChanged;
 
-        public RelayCommand(Action<object?> execute) : this(execute, null) { }
+        public RelayCommand(Action<object?> execute) : this(execute, null)
+        {
+        }
 
         public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute)
         {

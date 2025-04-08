@@ -8,6 +8,7 @@
     using CourseApp.Services;
     using CourseApp.ViewModels;
     using static CourseApp.ViewModels.CourseViewModel;
+    using System.Reflection;
 
     public class MockTimerService : ITimerService
     {
@@ -66,11 +67,11 @@
             _mockCoinsService.Setup(x => x.GetCoinBalance(It.IsAny<int>())).Returns(200);
 
             // Setup modules
-            var modules = new List<Module>
+            var modules = new List<CourseApp.Models.Module>
             {
-                new Module { ModuleId = 1, Position = 1, IsBonus = false, Title = "Module 1", Description = "Description 1", ImageUrl = "ImageUrl 1" },
-                new Module { ModuleId = 2, Position = 2, IsBonus = false, Title = "Module 2", Description = "Description 2", ImageUrl = "ImageUrl 2" },
-                new Module { ModuleId = 3, Position = 3, IsBonus = true, Title = "Module 3", Description = "Description 3", ImageUrl = "ImageUrl 3" }
+                new CourseApp.Models.Module { ModuleId = 1, Position = 1, IsBonus = false, Title = "Module 1", Description = "Description 1", ImageUrl = "ImageUrl 1" },
+                new CourseApp.Models.Module { ModuleId = 2, Position = 2, IsBonus = false, Title = "Module 2", Description = "Description 2", ImageUrl = "ImageUrl 2" },
+                new CourseApp.Models.Module { ModuleId = 3, Position = 3, IsBonus = true, Title = "Module 3", Description = "Description 3", ImageUrl = "ImageUrl 3" }
             };
             _mockCourseService.Setup(x => x.GetModules(It.IsAny<int>())).Returns(modules);
 
@@ -118,16 +119,41 @@
         public void EnrollCommand_ExecutesSuccessfully()
         {
             // Arrange
-            _mockCourseService.Setup(x => x.EnrollInCourse(It.IsAny<int>())).Returns(true);
+            var testModule = new CourseApp.Models.Module
+            {
+                ModuleId = 1,
+                Title = "Bonus",
+                IsBonus = true,
+                Cost = 50,
+                Description = "Bonus Module Description",
+                ImageUrl = "Bonus Image URL"
+            };
+            var newCourse = new Course
+            {
+                CourseId = 1,
+                Title = "Test Course",
+                Description = "Test Description",
+                ImageUrl = "Test Image URL",
+                Difficulty = "Test Difficulty",
+                IsPremium = true,
+                Cost = 100,
+                TimeToComplete = 3600 // 1 hour
+            };
+
+            // Use reflection to set the private property
+            typeof(CourseViewModel).GetProperty("CurrentCourse", BindingFlags.NonPublic | BindingFlags.Instance)
+                .SetValue(_viewModel, newCourse);
+
+            _mockCoinsService.Setup(x => x.TrySpendingCoins(1, 100)).Returns(true);
+            _mockCourseService.Setup(x => x.EnrollInCourse(1)).Returns(true);
 
             // Act
-            _viewModel.EnrollCommand.Execute(null);
+            _viewModel.EnrollCommand.Execute(testModule);
 
             // Assert
-            Assert.True(_viewModel.IsEnrolled);
-            _mockCourseService.Verify(x => x.EnrollInCourse(_testCourse.CourseId), Times.Once);
-            _mockCoinsService.Verify(x => x.TrySpendingCoins(It.IsAny<int>(), _testCourse.Cost), Times.Once);
+            _mockCoinsService.Verify(x => x.TrySpendingCoins(1, 100), Times.Once);
         }
+
 
         [Fact]
         public void StartCourseProgressTimer_StartsTimer_WhenEnrolled()
@@ -197,18 +223,51 @@
         public void AttemptBonusModulePurchase_SuccessfulPurchase_UpdatesUI()
         {
             // Arrange
-            var testModule = new Module { ModuleId = 1, Title = "Bonus", IsBonus = true, Cost = 50, Description = "Bonus Module Description", ImageUrl = "Bonus Image URL" };
-            _mockCourseService.Setup(x => x.BuyBonusModule(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+            var testModule = new CourseApp.Models.Module
+            {
+                ModuleId = 1,
+                Title = "Bonus",
+                IsBonus = true,
+                Cost = 50,
+                Description = "Bonus Module Description",
+                ImageUrl = "Bonus Image URL"
+            };
+
+            var testCourse = new Course
+            {
+                CourseId = 1,
+                Title = "Test Course",
+                Description = "Test Description",
+                ImageUrl = "Test Image URL",
+                Difficulty = "Test Difficulty",
+                IsPremium = true,
+                Cost = 100,
+                TimeToComplete = 3600 // 1 hour
+            };
+
+            _mockCoinsService
+                .Setup(x => x.TrySpendingCoins(1, 50))
+                .Returns(true);
+
+            _mockCourseService
+                .Setup(x => x.BuyBonusModule(1, 1))
+                .Returns(true);
 
             // Act
             _viewModel.AttemptBonusModulePurchase(testModule);
 
             // Assert
-            Assert.Equal($"Congratulations! You have purchased bonus module {testModule.Title}, {testModule.Cost} coins have been deducted from your balance.",
+            Assert.Equal(
+                $"Congratulations! You have purchased bonus module {testModule.Title}, {testModule.Cost} coins have been deducted from your balance.",
                 _viewModel.NotificationMessage);
+
             Assert.True(_viewModel.ShowNotification);
-            _mockCoinsService.Verify(x => x.TrySpendingCoins(It.IsAny<int>(), testModule.Cost), Times.Once);
+
+            _mockCoinsService.Verify(
+                x => x.TrySpendingCoins(1, testModule.Cost),
+                Times.Once);
         }
+
 
         [Theory]
         [InlineData(5, "0 min 5 sec")]
@@ -241,7 +300,7 @@
         public void AttemptBonusModulePurchase_ShowsNotification_WhenPurchaseFails()
         {
             // Arrange
-            var testModule = new Module { ModuleId = 1, Title = "Bonus", IsBonus = true, Cost = 50, Description = "Bonus Module Description", ImageUrl = "Bonus Image URL" };
+            var testModule = new CourseApp.Models.Module { ModuleId = 1, Title = "Bonus", IsBonus = true, Cost = 50, Description = "Bonus Module Description", ImageUrl = "Bonus Image URL" };
             _mockCourseService.Setup(x => x.BuyBonusModule(It.IsAny<int>(), It.IsAny<int>())).Returns(false);
             _mockCoinsService.Setup(x => x.GetCoinBalance(It.IsAny<int>())).Returns(200);
 

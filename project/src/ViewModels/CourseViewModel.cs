@@ -43,7 +43,7 @@ namespace CourseApp.ViewModels
 
         private readonly ICourseService courseService;
         private readonly ICoinsService coinsService;
-        private readonly NotificationHelper notificationHelper;
+        private readonly NotificationHelper? notificationHelper;
 
         private string notificationMessageText = string.Empty;
         private bool shouldShowNotification = false;
@@ -164,7 +164,7 @@ namespace CourseApp.ViewModels
             };
             courseService = new CourseService();
             coinsService = new CoinsService();
-            notificationHelper = new NotificationHelper(this, new DispatcherTimerService());
+            notificationHelper = null;
         }
 
         /// <summary>
@@ -453,7 +453,7 @@ namespace CourseApp.ViewModels
         private void ShowCourseCompletionRewardNotification()
         {
             string message = $"Congratulations! You have completed all required modules in this course. {CourseCompletionRewardCoins} coins have been added to your balance.";
-            notificationHelper.ShowTemporaryNotification(message);
+            notificationHelper!.ShowTemporaryNotification(message);
         }
 
         /// <summary>
@@ -462,7 +462,7 @@ namespace CourseApp.ViewModels
         private void ShowTimedCompletionRewardNotification()
         {
             string message = $"Congratulations! You completed the course within the time limit. {TimedCompletionRewardCoins} coins have been added to your balance.";
-            notificationHelper.ShowTemporaryNotification(message);
+            notificationHelper!.ShowTemporaryNotification(message);
         }
 
         /// <summary>
@@ -472,7 +472,7 @@ namespace CourseApp.ViewModels
         private void ShowModulePurchaseNotification(Module module)
         {
             string message = $"Congratulations! You have purchased bonus module {module.Title}, {module.Cost} coins have been deducted from your balance.";
-            notificationHelper.ShowTemporaryNotification(message);
+            notificationHelper!.ShowTemporaryNotification(message);
             RefreshCourseModulesDisplay();
         }
         #endregion
@@ -489,6 +489,12 @@ namespace CourseApp.ViewModels
 
             if (courseService.IsModuleCompleted(module.ModuleId))
             {
+                return;
+            }
+
+            if (!coinsService.TrySpendingCoins(CurrentCourse.CourseId, module.Cost))
+            {
+                ShowPurchaseFailedNotification();
                 return;
             }
 
@@ -527,7 +533,7 @@ namespace CourseApp.ViewModels
         /// </summary>
         private void ShowPurchaseFailedNotification()
         {
-            notificationHelper.ShowTemporaryNotification("You do not have enough coins to buy this module.");
+            notificationHelper!.ShowTemporaryNotification("You do not have enough coins to buy this module.");
         }
         #endregion
     }
