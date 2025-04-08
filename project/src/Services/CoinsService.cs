@@ -13,22 +13,22 @@ namespace CourseApp.Services
         {
         }
 
-        public int GetUserCoins(int userId)
+        public int GetCoinBalance(int userId)
         {
             return coinsRepository.GetUserCoinBalance(userId);
         }
 
-        public bool SpendCoins(int userId, int cost)
+        public bool TrySpendingCoins(int userId, int cost)
         {
             return coinsRepository.TryDeductCoinsFromUserWallet(userId, cost);
         }
 
-        public void EarnCoins(int userId, int amount)
+        public void AddCoins(int userId, int amount)
         {
             coinsRepository.AddCoinsToUserWallet(userId, amount);
         }
 
-        public bool CheckUserDailyLogin(int userId = 0)
+        public bool ApplyDailyLoginBonus(int userId = 0)
         {
             DateTime lastLogin = coinsRepository.GetUserLastLoginTime(userId);
             DateTime today = DateTime.Now;

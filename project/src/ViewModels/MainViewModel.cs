@@ -115,7 +115,7 @@ namespace CourseApp.ViewModels
 
         public bool TryDailyLoginReward()
         {
-            bool loginRewardGranted = coinsService.ApplyDailyLoginBonu();
+            bool loginRewardGranted = coinsService.ApplyDailyLoginBonus();
             OnPropertyChanged(nameof(UserCoinBalance));
             return loginRewardGranted;
         }
