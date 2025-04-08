@@ -76,6 +76,95 @@
         }
 
         /// <summary>
+        /// Tests that GetFilteredCourses returns only free courses when free filter is enabled.
+        /// </summary>
+        [Fact]
+        public void GetFilteredCourses_WithFreeFilter_ReturnsOnlyFreeCourses()
+        {
+            // Arrange
+            var courses = new List<Course>
+    {
+        this.CreateTestCourse(1, "Free Course", false),
+        this.CreateTestCourse(2, "Premium Course", true, 100),
+    };
+            this.mockRepository.Setup(r => r.GetAllCourses()).Returns(courses);
+
+            // Act
+            var result = this.service.GetFilteredCourses(string.Empty, false, true, false, false, new List<int>());
+
+            // Assert
+            Assert.Single(result);
+            Assert.Equal("Free Course", result[0].Title);
+            Assert.False(result[0].IsPremium);
+        }
+
+        /// <summary>
+        /// Tests that GetFilteredCourses returns only not-enrolled courses when not-enrolled filter is enabled.
+        /// </summary>
+        [Fact]
+        public void GetFilteredCourses_WithNotEnrolledFilter_ReturnsOnlyNotEnrolledCourses()
+        {
+            // Arrange
+            var courses = new List<Course>
+    {
+        this.CreateTestCourse(1, "Course 1"),
+        this.CreateTestCourse(2, "Course 2"),
+    };
+            this.mockRepository.Setup(r => r.GetAllCourses()).Returns(courses);
+            this.mockRepository.Setup(r => r.IsUserEnrolled(UserId, 1)).Returns(true);
+            this.mockRepository.Setup(r => r.IsUserEnrolled(UserId, 2)).Returns(false);
+
+            // Act
+            var result = this.service.GetFilteredCourses(string.Empty, false, false, false, true, new List<int>());
+
+            // Assert
+            Assert.Single(result);
+            Assert.Equal("Course 2", result[0].Title);
+        }
+
+        /// <summary>
+        /// Tests that GetFilteredCourses returns empty list when both enrolled and not-enrolled filters are applied.
+        /// </summary>
+        [Fact]
+        public void GetFilteredCourses_WithBothEnrollmentFilters_ReturnsEmptyList()
+        {
+            // Arrange
+            var courses = new List<Course>
+    {
+        this.CreateTestCourse(1, "Course 1"),
+        this.CreateTestCourse(2, "Course 2"),
+    };
+            this.mockRepository.Setup(r => r.GetAllCourses()).Returns(courses);
+
+            // Act
+            var result = this.service.GetFilteredCourses(string.Empty, false, false, true, true, new List<int>());
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+        /// <summary>
+        /// Tests that GetFilteredCourses returns empty list when both premium and free filters are applied.
+        /// </summary>
+        [Fact]
+        public void GetFilteredCourses_WithBothTypeFilters_ReturnsEmptyList()
+        {
+            // Arrange
+            var courses = new List<Course>
+    {
+        this.CreateTestCourse(1, "Course 1", true),
+        this.CreateTestCourse(2, "Course 2", false),
+    };
+            this.mockRepository.Setup(r => r.GetAllCourses()).Returns(courses);
+
+            // Act
+            var result = this.service.GetFilteredCourses(string.Empty, true, true, false, false, new List<int>());
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+        /// <summary>
         /// Tests that GetFilteredCourses returns only premium courses when premium filter is enabled.
         /// </summary>
         [Fact]
