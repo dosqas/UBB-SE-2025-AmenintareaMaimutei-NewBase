@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows.Input;
 using CourseApp.Models;
 using CourseApp.Services;
-using Microsoft.UI.Xaml;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SA1010 // Opening square brackets should be spaced correctly
@@ -32,13 +31,10 @@ namespace CourseApp.ViewModels
 
         /// <summary>Number of minutes in one hour</summary>
         private const int MinutesInAnHour = 60;
-
-        /// <summary>Base interval for timer ticks (1 second)</summary>
-        private const int SecondsInOneSecond = 1;
         #endregion
 
         #region Fields
-        private ITimerService? courseProgressTimer;
+        private readonly ITimerService? courseProgressTimer;
         private int totalSecondsSpentOnCourse;
         private int courseCompletionTimeLimitInSeconds;
         private string? formattedTimeRemaining;
@@ -159,6 +155,16 @@ namespace CourseApp.ViewModels
         /// </summary>
         public CourseViewModel()
         {
+            CurrentCourse = new Course
+            {
+                Title = string.Empty,
+                Description = string.Empty,
+                ImageUrl = string.Empty,
+                Difficulty = string.Empty
+            };
+            courseService = new CourseService();
+            coinsService = new CoinsService();
+            notificationHelper = new NotificationHelper(this, new DispatcherTimerService());
         }
 
         /// <summary>
