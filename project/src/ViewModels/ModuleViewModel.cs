@@ -33,7 +33,7 @@ namespace CourseApp.ViewModels
 
             courseViewModel.PropertyChanged += (s, e) =>
             {
-                if (e.PropertyName == nameof(courseViewModel.FormattedTimeRemaining))
+                if (e.PropertyName == nameof(ICourseViewModel.FormattedTimeRemaining))
                 {
                     OnPropertyChanged(nameof(TimeSpent));
                 }
@@ -65,11 +65,17 @@ namespace CourseApp.ViewModels
 
         private void ExecuteCompleteModule(object parameter)
         {
-            // Mark module as complete in the database.
-            this.courseViewModel.MarkModuleAsCompletedAndCheckRewards(CurrentModule.ModuleId);
+            courseViewModel.MarkModuleAsCompletedAndCheckRewards(CurrentModule.ModuleId);
             IsCompleted = true;
             OnPropertyChanged(nameof(IsCompleted));
-            courseViewModel.RefreshCourseModulesDisplay(); // Refresh roadmap to unlock the next module
+        }
+
+        public void ExecuteModuleImageClick(object? obj)
+        {
+            if (courseService.ClickModuleImage(CurrentModule.ModuleId))
+            {
+                OnPropertyChanged(nameof(CoinBalance));
+            }
         }
     }
 }

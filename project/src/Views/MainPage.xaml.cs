@@ -4,6 +4,8 @@ using CourseApp.Models;
 using CourseApp.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Navigation;
+using CourseApp.Repository;
+using CourseApp.Services;
 
 namespace CourseApp.Views
 {
@@ -15,7 +17,11 @@ namespace CourseApp.Views
         public MainPage()
         {
             this.InitializeComponent();
-            this.DataContext = new MainViewModel();
+            var courseService = new CourseService();
+            this.DataContext = new MainViewModel(
+                courseService,
+                new CoinsService(),
+                courseService); // as ICourseFilterService
             CoursesListView.ItemClick += CoursesListView_ItemClick;
         }
 

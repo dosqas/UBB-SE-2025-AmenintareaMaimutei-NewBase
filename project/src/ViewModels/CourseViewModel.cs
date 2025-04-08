@@ -14,7 +14,7 @@ namespace CourseApp.ViewModels
     /// <summary>
     /// ViewModel for handling course presentation, progress tracking, and user interactions
     /// </summary>
-    public partial class CourseViewModel : BaseViewModel
+    public partial class CourseViewModel : BaseViewModel, ICourseViewModel
     {
         #region Constants
 
