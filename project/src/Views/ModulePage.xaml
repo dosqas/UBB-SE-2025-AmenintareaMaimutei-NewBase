@@ -37,7 +37,7 @@
                 <TextBlock Text="{Binding CurrentModule.Description}" TextWrapping="Wrap" Margin="0,0,0,24" 
                        Foreground="#DADADA" FontSize="16" LineHeight="24"/>
                 <!-- Image section -->
-                <Button Command="{Binding OnModuleImageClick}" 
+                <Button Command="{Binding ModuleImageClickCommand}" 
                        HorizontalAlignment="Center" 
                        Background="Transparent" 
                        BorderThickness="0" 
