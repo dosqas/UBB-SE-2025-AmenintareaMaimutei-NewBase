@@ -52,7 +52,6 @@ namespace CourseApp.ViewModels
         }
 
         public string TimeSpent => courseViewModel.FormattedTimeRemaining;
-        public int CoinBalance => coinsService.GetUserCoins(0);
 
         public int CoinBalance
         {
@@ -73,7 +72,7 @@ namespace CourseApp.ViewModels
 
         public void ExecuteModuleImageClick(object? obj)
         {
-            if (moduleCompletionService.ClickModuleImage(CurrentModule.ModuleId))
+            if (courseService.ClickModuleImage(CurrentModule.ModuleId))
             {
                 OnPropertyChanged(nameof(CoinBalance));
             }
