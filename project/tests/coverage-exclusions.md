@@ -44,7 +44,13 @@ Method-level exclusion is supported and used, and it follows the same rationale.
 | `TagModelView`					   | This class tightly couples SQL logic and database connections, making it unsuitable for unit testing. |
 | `UserWalletModelView` 			   | This class tightly couples SQL logic and database connections, making it unsuitable for unit testing. |
 | `FakeCoinsRepository`				   | This class is a mock implementation of a repository for testing purposes. Is not intended for production use. |
-## List of Excluded Methods
+| `AvailabilityColorConverter`		   | This class only maps a boolean to a visual brush (SolidColorBrush). This is not business logic and is not suitable for unit testing. |
+| `CoinsRepository`					   | This class is a wrapper around the UserWalletModelView class and provides no additional logic. It is tightly coupled to the SQL database and cannot be tested in isolation. |
+| `CourseRepository`				   | This class is a wrapper around the CourseModelView, ModuleModelView, EnrollmentModelView, TagModelView, ProgressModelView, RewardModelView classess and provides no additional logic. It is tightly coupled to the SQL database and cannot be tested in isolation. |
+| `Enrollment`                         | The Enrollment class is a simple data model representing user course enrollments and doesn't contain business logic, so it doesn't require unit tests at this stage.|
+| `CourseCompletion` 				   | The CourseCompletion class is a simple data model representing course completion status and doesn't contain business logic, so it doesn't require unit tests at this stage.|
+| `User`							   | The User class is a simple data model representing user information and doesn't contain business logic, so it doesn't require unit tests at this stage.|
+## List of Excluded 
 
 > *None listed individually at this time. All exclusions are at the class level.*
 

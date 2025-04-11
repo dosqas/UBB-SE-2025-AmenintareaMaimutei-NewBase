@@ -268,6 +268,23 @@
             // Assert
             Assert.True(timeSpentChanged);
         }
+        [Fact]
+        public void ShortDescription_ShouldReturnShortenedDescription_WhenDescriptionIsLongerThan23Characters()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "This is a longer description for the module.",
+                ImageUrl = "test_image.jpg"
+            };
 
+            // Act
+            var result = module.ShortDescription;
+
+            // Assert
+            Assert.Equal("This is a longer descri...", result);
+        }
     }
 }

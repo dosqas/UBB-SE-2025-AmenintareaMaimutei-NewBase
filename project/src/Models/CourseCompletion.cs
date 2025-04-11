@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CourseApp.Models
 {
+    [ExcludeFromCodeCoverage]
     public class CourseCompletion
     {
         public int UserId { get; set; }

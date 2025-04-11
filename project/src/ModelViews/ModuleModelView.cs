@@ -7,9 +7,9 @@ using CourseApp.Data;
 
 namespace CourseApp.Repository
 {
+    [ExcludeFromCodeCoverage]
     public class ModuleModelView : DataLink
     {
-        [ExcludeFromCodeCoverage]
         public Module? GetModule(int moduleId)
         {
             using (var connection = GetConnection())
