@@ -7,6 +7,7 @@ namespace Tests.ViewModelsTests
     using System;
     using CourseApp.Services;
     using CourseApp.ViewModels;
+    using CourseApp.ViewModels.Helpers;
     using Moq;
     using Xunit;
 
@@ -16,7 +17,7 @@ namespace Tests.ViewModelsTests
     public class NotificationHelperTests
     {
         private readonly Mock<CourseViewModel> mockParentViewModel;
-        private readonly Mock<ITimerService> mockTimerService;
+        private readonly Mock<IDispatcherTimerService> mockTimerService;
         private readonly NotificationHelper notificationHelper;
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace Tests.ViewModelsTests
         public NotificationHelperTests()
         {
             this.mockParentViewModel = new Mock<CourseViewModel>();
-            this.mockTimerService = new Mock<ITimerService>();
+            this.mockTimerService = new Mock<IDispatcherTimerService>();
             this.notificationHelper = new NotificationHelper(this.mockParentViewModel.Object, this.mockTimerService.Object);
         }
 
@@ -51,7 +52,7 @@ namespace Tests.ViewModelsTests
         public void Constructor_ThrowsArgumentNullException_WhenTimerServiceIsNull()
         {
             // Arrange
-            ITimerService? nullTimerService = null;
+            IDispatcherTimerService? nullTimerService = null;
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(
@@ -65,7 +66,7 @@ namespace Tests.ViewModelsTests
         public void Constructor_SubscribesToTimerTickEvent()
         {
             // Arrange
-            var timerMock = new Mock<ITimerService>();
+            var timerMock = new Mock<IDispatcherTimerService>();
 
             // Act
             var helper = new NotificationHelper(this.mockParentViewModel.Object, timerMock.Object);
@@ -135,7 +136,7 @@ namespace Tests.ViewModelsTests
         {
             // Arrange
             var eventArgs = EventArgs.Empty;
-            var timerMock = new Mock<ITimerService>();
+            var timerMock = new Mock<IDispatcherTimerService>();
             var helper = new NotificationHelper(this.mockParentViewModel.Object, timerMock.Object);
 
             // This test ensures we don't get NullReferenceException if parent is null
@@ -166,7 +167,7 @@ namespace Tests.ViewModelsTests
         public void Dispose_CleansUpEventHandlers()
         {
             // Arrange
-            var timerMock = new Mock<ITimerService>();
+            var timerMock = new Mock<IDispatcherTimerService>();
             var helper = new NotificationHelper(this.mockParentViewModel.Object, timerMock.Object);
 
             // Act

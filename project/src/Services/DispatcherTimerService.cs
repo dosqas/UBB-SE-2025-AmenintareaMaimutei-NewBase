@@ -1,20 +1,24 @@
-﻿using System;
-using Microsoft.UI.Xaml;
-
-namespace CourseApp.Services
+﻿namespace CourseApp.Services
 {
-    public class DispatcherTimerService : ITimerService
+    using System;
+    using CourseApp.Services.Helpers;
+
+    public class DispatcherTimerService : IDispatcherTimerService
     {
-        private readonly DispatcherTimer timer;
+        private readonly IDispatcherTimer timer;
         private const int DefaultIntervalMilliseconds = 1000; // 1 second default
 
-        public DispatcherTimerService()
+        // Constructor accepts an optional IDispatcherTimer parameter
+        public DispatcherTimerService(IDispatcherTimer? timer = null)
         {
-            timer = new ()
+            // If the provided timer is null, initialize the internal timer
+            this.timer = timer ?? new RealDispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(DefaultIntervalMilliseconds)
             };
-            timer.Tick += OnTimerTick!;
+
+            // Subscribe to the Tick event
+            this.timer.Tick += OnTimerTick!;
         }
 
         public event EventHandler? Tick;
@@ -28,7 +32,7 @@ namespace CourseApp.Services
         public void Start() => timer.Start();
         public void Stop() => timer.Stop();
 
-        private void OnTimerTick(object sender, object e) => Tick?.Invoke(this, EventArgs.Empty);
+        private void OnTimerTick(object sender, object e) => Tick!.Invoke(this, EventArgs.Empty);
 
         public void Dispose()
         {

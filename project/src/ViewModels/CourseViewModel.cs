@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using CourseApp.Models;
 using CourseApp.Services;
+using CourseApp.ViewModels.Helpers;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SA1010 // Opening square brackets should be spaced correctly
@@ -34,7 +35,7 @@ namespace CourseApp.ViewModels
         #endregion
 
         #region Fields
-        private readonly ITimerService? courseProgressTimer;
+        private readonly IDispatcherTimerService? courseProgressTimer;
         private int totalSecondsSpentOnCourse;
         private int courseCompletionTimeLimitInSeconds;
         private string? formattedTimeRemaining;
@@ -177,8 +178,8 @@ namespace CourseApp.ViewModels
         /// <param name="notificationTimerService">The timer service for notifications (optional)</param>
         /// <exception cref="ArgumentNullException">Thrown when course is null</exception>
         public CourseViewModel(Course course, ICourseService? courseService = null,
-            ICoinsService? coinsService = null, ITimerService? timerService = null,
-            ITimerService? notificationTimerService = null)
+            ICoinsService? coinsService = null, IDispatcherTimerService? timerService = null,
+            IDispatcherTimerService? notificationTimerService = null)
         {
             CurrentCourse = course ?? throw new ArgumentNullException(nameof(course));
             this.courseService = courseService ?? new CourseService();
