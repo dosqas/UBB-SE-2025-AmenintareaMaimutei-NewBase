@@ -253,5 +253,28 @@
             // Assert
             Assert.Equal(initialSearchQuery, this.viewModel.SearchQuery);
         }
+
+        [Fact]
+        public void UserCoinBalance_ShouldReturnCorrectBalance_FromCoinsService()
+        {
+            // Arrange
+            var expectedBalance = 42;
+            var coinsServiceMock = new Mock<ICoinsService>();
+            coinsServiceMock
+                .Setup(cs => cs.GetCoinBalance(It.IsAny<int>()))
+                .Returns(expectedBalance);
+
+            var courseServiceMock = new Mock<ICourseService>();
+            courseServiceMock.Setup(cs => cs.GetCourses()).Returns(new List<Course>());
+            courseServiceMock.Setup(cs => cs.GetTags()).Returns(new List<Tag>());
+
+            var viewModel = new MainViewModel(courseServiceMock.Object, coinsServiceMock.Object);
+
+            // Act
+            var actualBalance = viewModel.UserCoinBalance;
+
+            // Assert
+            Assert.Equal(expectedBalance, actualBalance);
+        }
     }
 }
