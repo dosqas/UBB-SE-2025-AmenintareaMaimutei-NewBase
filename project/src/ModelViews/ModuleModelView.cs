@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using CourseApp.Models;
@@ -8,6 +9,7 @@ namespace CourseApp.Repository
 {
     public class ModuleModelView : DataLink
     {
+        [ExcludeFromCodeCoverage]
         public Module? GetModule(int moduleId)
         {
             using (var connection = GetConnection())

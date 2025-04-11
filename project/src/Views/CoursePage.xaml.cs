@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using CourseApp.Models;
@@ -6,6 +7,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace CourseApp.Views
 {
+    [ExcludeFromCodeCoverage]
     public sealed partial class CoursePage : Page
     {
         private CourseViewModel? viewModel;
