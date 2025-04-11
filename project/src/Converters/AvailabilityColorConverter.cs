@@ -10,7 +10,7 @@ namespace CourseApp.Converters
     /// If the value is true, the brush will be blue (indicating available);
     /// if false, the brush will be gray (indicating unavailable).
     /// </summary>
-    public partial class AvailabilityColorConverter : IValueConverter
+    public partial class AvailabilityColorConverter : IAppValueConverter
     {
         // Static color values for available and unavailable states.
         private static readonly Windows.UI.Color AvailableColor = Windows.UI.Color.FromArgb(255, 79, 79, 176);
