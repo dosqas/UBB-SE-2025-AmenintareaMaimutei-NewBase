@@ -2,11 +2,63 @@
 
 namespace CourseApp.Services
 {
+    /// <summary>
+    /// Defines a service contract for a dispatcher timer that raises events at specified intervals.
+    /// Provides platform-agnostic timer functionality suitable for UI and background operations.
+    /// </summary>
+    /// <remarks>
+    /// This interface abstracts timer implementations to enable:
+    /// - Testability through mocking
+    /// - Dependency injection
+    /// - Consistent behavior across platforms
+    /// </remarks>
     public interface IDispatcherTimerService
     {
-        void Start();
-        void Stop();
+        #region Events
+
+        /// <summary>
+        /// Occurs when the timer interval has elapsed.
+        /// </summary>
+        /// <remarks>
+        /// Event handlers will be invoked on the thread/context appropriate for the implementation.
+        /// For UI timers, this typically means the UI thread.
+        /// </remarks>
         event EventHandler Tick;
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the time interval between timer ticks.
+        /// </summary>
+        /// <value>
+        /// A <see cref="TimeSpan"/> representing the duration between ticks.
+        /// Set to <see cref="TimeSpan.Zero"/> to disable periodic ticking.
+        /// </value>
         TimeSpan Interval { get; set; }
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Starts the timer.
+        /// </summary>
+        /// <remarks>
+        /// - If the timer is already running, has no effect.
+        /// - The first tick will occur after <see cref="Interval"/> elapses.
+        /// - Subsequent ticks occur at each <see cref="Interval"/> period.
+        /// </remarks>
+        void Start();
+
+        /// <summary>
+        /// Stops the timer.
+        /// </summary>
+        /// <remarks>
+        /// - If the timer is not running, has no effect.
+        /// - No more ticks will occur until <see cref="Start"/> is called again.
+        /// - Does not reset the <see cref="Interval"/> value.
+        /// </remarks>
+        void Stop();
+        #endregion
     }
 }
