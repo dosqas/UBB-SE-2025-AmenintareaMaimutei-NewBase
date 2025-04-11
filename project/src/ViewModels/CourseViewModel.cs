@@ -40,7 +40,7 @@ namespace CourseApp.ViewModels
         private int totalSecondsSpentOnCourse;
         private int courseCompletionTimeLimitInSeconds;
         private string? formattedTimeRemaining;
-        private bool isCourseTimerRunning;
+        internal bool IsCourseTimerRunning;
         private int lastSavedTimeInSeconds = 0;
 
         private readonly ICourseService courseService;
@@ -63,7 +63,7 @@ namespace CourseApp.ViewModels
         public ICommand? EnrollCommand { get; private set; }
 
         /// <summary>Gets a value indicating whether the user is enrolled in this course</summary>
-        public bool IsEnrolled { get; private set; }
+        public bool IsEnrolled { get; set; }
 
         /// <summary>Gets whether coin information should be visible</summary>
         public bool CoinVisibility => CurrentCourse.IsPremium && !IsEnrolled;
@@ -339,9 +339,9 @@ namespace CourseApp.ViewModels
         /// </summary>
         public void StartCourseProgressTimer()
         {
-            if (!isCourseTimerRunning && IsEnrolled)
+            if (!IsCourseTimerRunning && IsEnrolled)
             {
-                isCourseTimerRunning = true;
+                IsCourseTimerRunning = true;
                 courseProgressTimer!.Start();
             }
         }
@@ -351,11 +351,11 @@ namespace CourseApp.ViewModels
         /// </summary>
         public void PauseCourseProgressTimer()
         {
-            if (isCourseTimerRunning)
+            if (IsCourseTimerRunning)
             {
                 courseProgressTimer!.Stop();
                 SaveCourseProgressTime();
-                isCourseTimerRunning = false;
+                IsCourseTimerRunning = false;
             }
         }
 

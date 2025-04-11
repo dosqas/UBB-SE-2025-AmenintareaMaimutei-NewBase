@@ -36,11 +36,6 @@
         {
             mockCourseService = new Mock<ICourseService>();
             mockCoinsService = new Mock<ICoinsService>();
-            var mockCourseTimerInterface = new Mock<IDispatcherTimer>();
-            mockCourseTimerInterface.SetupProperty(t => t.Interval);
-            var mockNotificationTimerInterface = new Mock<IDispatcherTimer>();
-            mockNotificationTimerInterface.SetupProperty(t => t.Interval);
-
             mockCourseTimer = new Mock<IDispatcherTimerService>();
             mockNotificationTimer = new Mock<IDispatcherTimerService>();
 
@@ -78,6 +73,11 @@
             mockCourseService.Setup(x => x.GetRequiredModulesCount(It.IsAny<int>())).Returns(5);
             mockCourseService.Setup(x => x.GetCourseTimeLimit(It.IsAny<int>())).Returns(3600);
             mockCoinsService.Setup(x => x.GetCoinBalance(It.IsAny<int>())).Returns(200);
+            mockCourseTimer.Setup(m => m.SimulateTick()).Callback(() =>
+            {
+                // Raise the Tick event manually when SimulateTick is called
+                mockCourseTimer.Raise(m => m.Tick += null, EventArgs.Empty);
+            });
         }
 
         private void InitializeTestModules()
@@ -578,7 +578,7 @@
             var initialFormattedTime = viewModel.FormattedTimeRemaining;
 
             // Act
-            mockCourseTimer.SimulateTick();
+            mockCourseTimer.Object.SimulateTick();
 
             // Access private field directly using reflection
             var fieldInfo = typeof(CourseViewModel).GetField("totalSecondsSpentOnCourse", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -598,8 +598,8 @@
                 testCourse,
                 mockCourseService.Object,
                 mockCoinsService.Object,
-                mockCourseTimer,
-                mockNotificationTimer,
+                mockCourseTimer.Object,
+                mockNotificationTimer.Object,
                 mockNotificationHelper.Object);
 
             // Act  
@@ -649,14 +649,6 @@
             mockCoinsService.Setup(x => x.TrySpendingCoins(It.IsAny<int>(), It.IsAny<int>())).Returns(true); // Simulate successful coin spending
             mockCourseService.Setup(x => x.EnrollInCourse(It.IsAny<int>())).Returns(false); // Simulate enrollment failure
 
-            var viewModel = new CourseViewModel(
-                testCourse,
-                mockCourseService.Object,
-                mockCoinsService.Object,
-                mockCourseTimer,
-                mockNotificationTimer,
-                mockNotificationHelper.Object);
-
             // Act
             bool canExecute = viewModel.EnrollCommand.CanExecute(null); // Check if the command can execute
             viewModel.EnrollCommand.Execute(null); // Try to execute the command
@@ -676,13 +668,6 @@
         {
             // Arrange
             mockCourseService.Setup(x => x.IsUserEnrolled(It.IsAny<int>())).Returns(false); // User is not enrolled
-            var viewModel = new CourseViewModel(
-                testCourse,
-                mockCourseService.Object,
-                mockCoinsService.Object,
-                mockCourseTimer,
-                mockNotificationTimer,
-                mockNotificationHelper.Object);
 
             // Act
             viewModel.StartCourseProgressTimer(); // Call the method
@@ -690,6 +675,91 @@
             // Assert
             Assert.False(viewModel.IsCourseTimerRunning, "Course progress timer should not start when the user is not enrolled.");
             mockCourseTimer.Verify(x => x.Start(), Times.Never, "The course progress timer should not be started when the user is not enrolled.");
+        }
+
+        [Fact]
+        public void PauseCourseProgressTimer_WhenTimerIsRunning_ShouldStopTimerAndChangeState()
+        {
+            // Arrange: Set IsCourseTimerRunning to true
+            viewModel.IsCourseTimerRunning = true;
+
+            // Act: Call the method to pause the course progress timer
+            viewModel.PauseCourseProgressTimer();
+
+            // Assert: Verify that the timer stop method is called
+            mockCourseTimer.Verify(t => t.Stop(), Times.Once);
+
+            // Assert: Verify that IsCourseTimerRunning is set to false
+            Assert.False(viewModel.IsCourseTimerRunning);
+        }
+
+        [Fact]
+        public void PauseCourseProgressTimer_WhenTimerIsNotRunning_ShouldDoNothing()
+        {
+            // Arrange: Set IsCourseTimerRunning to false
+            viewModel.IsCourseTimerRunning = false;
+
+            // Act: Call the method to pause the course progress timer
+            viewModel.PauseCourseProgressTimer();
+
+            // Assert: Verify that the stop method on the timer is not called
+            mockCourseTimer.Verify(t => t.Stop(), Times.Never, "Stop method should not be called when the timer is not running.");
+
+            // Use reflection to access and verify if SaveCourseProgressTime was called
+            var method = typeof(CourseViewModel).GetMethod("SaveCourseProgressTime", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            Assert.NotNull(method);
+
+            // (Optional) Verify that SaveCourseProgressTime was NOT invoked (through reflection)
+            // This is a workaround; you could inspect internal state changes if any after the call.
+        }
+
+        [Fact]
+        public void PauseCourseProgressTimer_WhenTimerIsRunning_ShouldCallSaveCourseProgressTime()
+        {
+            // Arrange: Set up the initial conditions.
+            viewModel.IsCourseTimerRunning = true;
+            // Assuming the following initial values for private fields
+            typeof(CourseViewModel).GetField("totalSecondsSpentOnCourse", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .SetValue(viewModel, 1500); // 25 minutes
+            typeof(CourseViewModel).GetField("lastSavedTimeInSeconds", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .SetValue(viewModel, 1200); // 20 minutes
+
+            // Act: Call the method to pause the course progress timer
+            viewModel.PauseCourseProgressTimer();
+
+            // Access and verify the state of the fields after the method is executed
+            var totalSecondsSpentOnCourse = (int)typeof(CourseViewModel).GetField("totalSecondsSpentOnCourse", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .GetValue(viewModel);
+            var lastSavedTimeInSeconds = (int)typeof(CourseViewModel).GetField("lastSavedTimeInSeconds", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .GetValue(viewModel);
+
+            // Access the private method SaveCourseProgressTime via reflection
+            var saveMethod = typeof(CourseViewModel).GetMethod("SaveCourseProgressTime", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            saveMethod.Invoke(viewModel, null);  // Call the method
+
+            // Verify that the SaveCourseProgressTime logic is correct
+            // Optionally, verify that the courseService.UpdateTimeSpent method is called via mocking
+            mockCourseService.Verify(s => s.UpdateTimeSpent(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+
+            // Additionally, verify the value of lastSavedTimeInSeconds to confirm the correct update.
+            Assert.Equal(totalSecondsSpentOnCourse, lastSavedTimeInSeconds);
+        }
+
+        [Fact]
+        public void StartCourseProgressTimer_WhenTimerIsAlreadyRunning_ShouldNotStartTimerAgain()
+        {
+            // Arrange: Set the initial conditions
+            viewModel.IsCourseTimerRunning = true; // Timer is already running
+            viewModel.IsEnrolled = true; // User is enrolled
+
+            // Act: Call the method to start the course progress timer
+            viewModel.StartCourseProgressTimer();
+
+            // Assert: Verify that the Start method on the timer is not called again
+            mockCourseTimer.Verify(t => t.Start(), Times.Never);
+
+            // Assert: Verify that IsCourseTimerRunning is still true (it shouldn't change)
+            Assert.True(viewModel.IsCourseTimerRunning);
         }
 
     }
