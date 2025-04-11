@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CourseApp.Repository
 {
+    [ExcludeFromCodeCoverage]
     public class CoinsRepository : ICoinsRepository
     {
         private readonly UserWalletModelView walletModelView;
