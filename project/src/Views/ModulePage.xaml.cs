@@ -9,7 +9,7 @@ namespace CourseApp.Views
 {
     public sealed partial class ModulePage : Page
     {
-        private ModuleViewModel viewModel = null!;
+        private IModuleViewModel viewModel = null!;
         public ModulePage()
         {
             this.InitializeComponent();
