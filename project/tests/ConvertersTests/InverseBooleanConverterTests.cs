@@ -28,13 +28,13 @@
         /// Tests that Convert returns false when the input is true.
         /// </summary>
         [Fact]
-        public void ConvertShouldReturnFalseWhenTrue()
+        public void ConvertSafeShouldReturnFalseWhenTrue()
         {
             // Arrange
             var input = true;
 
             // Act
-            var result = this.testConverter.Convert(input, typeof(bool), null!, string.Empty);
+            var result = this.testConverter.ConvertSafe(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.False((bool)result);
@@ -44,13 +44,13 @@
         /// Tests that Convert returns true when the input is false.
         /// </summary>
         [Fact]
-        public void ConvertShouldReturnTrueWhenFalse()
+        public void ConvertSafeShouldReturnTrueWhenFalse()
         {
             // Arrange
             var input = false;
 
             // Act
-            var result = this.testConverter.Convert(input, typeof(bool), null!, string.Empty);
+            var result = this.testConverter.ConvertSafe(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.True((bool)result);
@@ -60,13 +60,13 @@
         /// Tests that Convert returns the original value when the input is not a boolean.
         /// </summary>
         [Fact]
-        public void ConvertShouldReturnOriginalValueWhenInputIsNotBoolean()
+        public void ConvertSafeShouldReturnOriginalValueWhenInputIsNotBoolean()
         {
             // Arrange
             var input = "string";
 
             // Act
-            var result = this.testConverter.Convert(input, typeof(bool), null!, string.Empty);
+            var result = this.testConverter.ConvertSafe(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.Equal(input, result);
@@ -76,13 +76,13 @@
         /// Tests that ConvertBack returns false when the input is true.
         /// </summary>
         [Fact]
-        public void ConvertBackShouldReturnFalseWhenTrue()
+        public void ConvertBackSafeShouldReturnFalseWhenTrue()
         {
             // Arrange
             var input = true;
 
             // Act
-            var result = this.testConverter.ConvertBack(input, typeof(bool), null!, string.Empty);
+            var result = this.testConverter.ConvertBackSafe(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.False((bool)result);
@@ -92,13 +92,13 @@
         /// Tests that ConvertBack returns true when the input is false.
         /// </summary>
         [Fact]
-        public void ConvertBackShouldReturnTrueWhenFalse()
+        public void ConvertBackSafeShouldReturnTrueWhenFalse()
         {
             // Arrange
             var input = false;
 
             // Act
-            var result = this.testConverter.ConvertBack(input, typeof(bool), null!, string.Empty);
+            var result = this.testConverter.ConvertBackSafe(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.True((bool)result);
@@ -108,13 +108,13 @@
         /// Tests that ConvertBack returns the original value when the input is not a boolean.
         /// </summary>
         [Fact]
-        public void ConvertBackShouldReturnOriginalValueWhenInputIsNotBoolean()
+        public void ConvertBackSafeShouldReturnOriginalValueWhenInputIsNotBoolean()
         {
             // Arrange
             var input = "string";
 
             // Act
-            var result = this.testConverter.ConvertBack(input, typeof(bool), null!, string.Empty);
+            var result = this.testConverter.ConvertBackSafe(input, typeof(bool), null!, string.Empty);
 
             // Assert
             Assert.Equal(input, result);
