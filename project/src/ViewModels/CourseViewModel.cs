@@ -314,7 +314,6 @@ namespace CourseApp.ViewModels
                 return;
             }
 
-            // 3. Update UI state
             IsEnrolled = true;
             ResetCourseProgressTracking();
             OnPropertyChanged(nameof(IsEnrolled));

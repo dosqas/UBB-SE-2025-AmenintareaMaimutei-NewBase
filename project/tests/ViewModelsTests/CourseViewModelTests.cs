@@ -22,8 +22,8 @@
     {
         private readonly Mock<ICourseService> mockCourseService;
         private readonly Mock<ICoinsService> mockCoinsService;
-        private readonly DispatcherTimerService mockCourseTimer;
-        private readonly DispatcherTimerService mockNotificationTimer;
+        private readonly Mock<IDispatcherTimerService> mockCourseTimer;
+        private readonly Mock<IDispatcherTimerService> mockNotificationTimer;
         private readonly Mock<INotificationHelper> mockNotificationHelper;
         private readonly Course testCourse;
         private readonly CourseViewModel viewModel;
@@ -41,8 +41,8 @@
             var mockNotificationTimerInterface = new Mock<IDispatcherTimer>();
             mockNotificationTimerInterface.SetupProperty(t => t.Interval);
 
-            mockCourseTimer = new DispatcherTimerService(mockCourseTimerInterface.Object);
-            mockNotificationTimer = new DispatcherTimerService(mockNotificationTimerInterface.Object);
+            mockCourseTimer = new Mock<IDispatcherTimerService>();
+            mockNotificationTimer = new Mock<IDispatcherTimerService>();
 
             mockNotificationHelper = new Mock<INotificationHelper>();
 
@@ -65,8 +65,8 @@
                 testCourse,
                 mockCourseService.Object,
                 mockCoinsService.Object,
-                mockCourseTimer,
-                mockNotificationTimer,
+                mockCourseTimer.Object,
+                mockNotificationTimer.Object,
                 mockNotificationHelper.Object);
         }
 
@@ -473,8 +473,8 @@
                 testCourse,
                 mockCourseService.Object,
                 mockCoinsService.Object,
-                mockCourseTimer,
-                mockNotificationTimer,
+                mockCourseTimer.Object,
+                mockNotificationTimer.Object,
                 mockNotificationHelper.Object);
 
             // Act
@@ -495,8 +495,8 @@
                 testCourse,
                 mockCourseService.Object,
                 mockCoinsService.Object,
-                mockCourseTimer,
-                mockNotificationTimer,
+                mockCourseTimer.Object,
+                mockNotificationTimer.Object,
                 mockNotificationHelper.Object);
 
             // Act
@@ -517,8 +517,8 @@
                 testCourse,
                 mockCourseService.Object,
                 mockCoinsService.Object,
-                mockCourseTimer,
-                mockNotificationTimer,
+                mockCourseTimer.Object,
+                mockNotificationTimer.Object,
                 mockNotificationHelper.Object);
 
             // Act
@@ -551,8 +551,8 @@
                     course,
                     null, // courseService
                     null, // coinsService
-                    mockCourseTimer, // can't be null since we cannot mock a DispatcherTimer (which it default to if null)
-                    mockNotificationTimer, // can't be null since we cannot mock a DispatcherTimer (which it default to if null)
+                    mockCourseTimer.Object, // can't be null since we cannot mock a DispatcherTimer (which it default to if null)
+                    mockNotificationTimer.Object, // can't be null since we cannot mock a DispatcherTimer (which it default to if null)
                     null // notificationHelper
                 );
             });
@@ -569,6 +569,127 @@
                 new CourseViewModel(null!)); // using null-forgiving operator to suppress warning
 
             Assert.Equal("course", exception.ParamName);
+        }
+
+        [Fact]
+        public void CourseTimer_Tick_IncrementsTimeAndUpdatesFormattedTime()
+        {
+            // Arrange
+            var initialFormattedTime = viewModel.FormattedTimeRemaining;
+
+            // Act
+            mockCourseTimer.SimulateTick();
+
+            // Access private field directly using reflection
+            var fieldInfo = typeof(CourseViewModel).GetField("totalSecondsSpentOnCourse", BindingFlags.NonPublic | BindingFlags.Instance);
+            var totalSecondsSpent = (int?)fieldInfo?.GetValue(viewModel);
+
+            // Assert
+            Assert.Equal(1, totalSecondsSpent);
+            Assert.NotEqual(initialFormattedTime, viewModel.FormattedTimeRemaining);
+        }
+
+        [Fact]
+        public void EnrollCommand_ShouldNotExecute_WhenUserIsAlreadyEnrolled()
+        {
+            // Arrange  
+            mockCourseService.Setup(x => x.IsUserEnrolled(It.IsAny<int>())).Returns(true);  // Simulate that the user is enrolled
+            var tempViewModel = new CourseViewModel(
+                testCourse,
+                mockCourseService.Object,
+                mockCoinsService.Object,
+                mockCourseTimer,
+                mockNotificationTimer,
+                mockNotificationHelper.Object);
+
+            // Act  
+            bool canExecute = tempViewModel.EnrollCommand.CanExecute(null);
+
+            // Assert  
+            Assert.False(canExecute, "Enroll command should not be executable when the user is already enrolled.");
+        }
+
+        [Fact]
+        public void EnrollCommand_ShouldExecute_WhenUserHasEnoughCoins()
+        {
+            // Arrange
+            mockCoinsService.Setup(x => x.GetCoinBalance(It.IsAny<int>())).Returns(200); // User has enough coins
+
+            // Act
+            bool canExecute = viewModel.EnrollCommand.CanExecute(null);
+
+            // Assert
+            Assert.True(canExecute, "Enroll command should be executable when the user has enough coins.");
+        }
+
+        [Fact]
+        public void EnrollCommand_ShouldNotExecute_WhenUserDoesNotHaveEnoughCoins()
+        {
+            // Arrange
+            mockCoinsService.Setup(x => x.GetCoinBalance(It.IsAny<int>())).Returns(50); // User has insufficient coins (less than the course cost)
+            mockCoinsService.Setup(x => x.TrySpendingCoins(It.IsAny<int>(), It.IsAny<int>())).Returns(false); // Simulate failure to spend coins
+
+            // Act
+            bool canExecute = viewModel.EnrollCommand.CanExecute(null); // Check if the command can execute
+            viewModel.EnrollCommand.Execute(null); // Try to execute the command
+
+            // Assert
+            Assert.False(canExecute, "Enroll command should not be executable when the user does not have enough coins.");
+
+            // Verify that the EnrollInCourse method is not called
+            mockCourseService.Verify(x => x.EnrollInCourse(It.IsAny<int>()), Times.Never); // Ensure EnrollInCourse was not called
+            mockCoinsService.Verify(x => x.TrySpendingCoins(It.IsAny<int>(), It.IsAny<int>()), Times.Once); // Ensure TrySpendingCoins was called once
+            mockCoinsService.Verify(x => x.GetCoinBalance(It.IsAny<int>()), Times.Once); // Ensure GetCoinBalance was called once
+        }
+
+        [Fact]
+        public void EnrollCommand_ShouldNotExecute_WhenCourseEnrollmentFails()
+        {
+            // Arrange
+            mockCoinsService.Setup(x => x.TrySpendingCoins(It.IsAny<int>(), It.IsAny<int>())).Returns(true); // Simulate successful coin spending
+            mockCourseService.Setup(x => x.EnrollInCourse(It.IsAny<int>())).Returns(false); // Simulate enrollment failure
+
+            var viewModel = new CourseViewModel(
+                testCourse,
+                mockCourseService.Object,
+                mockCoinsService.Object,
+                mockCourseTimer,
+                mockNotificationTimer,
+                mockNotificationHelper.Object);
+
+            // Act
+            bool canExecute = viewModel.EnrollCommand.CanExecute(null); // Check if the command can execute
+            viewModel.EnrollCommand.Execute(null); // Try to execute the command
+
+            // Assert
+            Assert.True(canExecute, "Enroll command should be executable when the user has enough coins.");
+
+            mockCourseService.Verify(x => x.EnrollInCourse(It.IsAny<int>()), Times.Once); // Ensure that EnrollInCourse is called
+            mockCoinsService.Verify(x => x.TrySpendingCoins(It.IsAny<int>(), It.IsAny<int>()), Times.Once); // Ensure TrySpendingCoins is called
+
+            // Verify that the UI state is not updated (IsEnrolled should remain false)
+            Assert.False(viewModel.IsEnrolled, "IsEnrolled should remain false when enrollment fails.");
+        }
+
+        [Fact]
+        public void StartCourseProgressTimer_ShouldNotStart_WhenUserIsNotEnrolled()
+        {
+            // Arrange
+            mockCourseService.Setup(x => x.IsUserEnrolled(It.IsAny<int>())).Returns(false); // User is not enrolled
+            var viewModel = new CourseViewModel(
+                testCourse,
+                mockCourseService.Object,
+                mockCoinsService.Object,
+                mockCourseTimer,
+                mockNotificationTimer,
+                mockNotificationHelper.Object);
+
+            // Act
+            viewModel.StartCourseProgressTimer(); // Call the method
+
+            // Assert
+            Assert.False(viewModel.IsCourseTimerRunning, "Course progress timer should not start when the user is not enrolled.");
+            mockCourseTimer.Verify(x => x.Start(), Times.Never, "The course progress timer should not be started when the user is not enrolled.");
         }
 
     }
