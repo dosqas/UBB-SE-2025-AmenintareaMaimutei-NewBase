@@ -1,4 +1,8 @@
-﻿namespace Tests.ConvertersTests
+﻿// <copyright file="InverseBooleanConverterTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace Tests.ConvertersTests
 {
     using CourseApp.Converters;
     using Microsoft.UI;
