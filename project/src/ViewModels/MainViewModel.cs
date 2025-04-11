@@ -4,15 +4,16 @@ using System.Linq;
 using System.Windows.Input;
 using CourseApp.Models;
 using CourseApp.Services;
+using Windows.System.Threading;
 
 namespace CourseApp.ViewModels
 {
-    public class MainViewModel : BaseViewModel
+    public class MainViewModel : BaseViewModel, IMainViewModel
     {
         private const int CurrentUserId = 0;
 
-        private readonly CourseService courseService;
-        private readonly CoinsService coinsService;
+        private readonly ICourseService courseService;
+        private readonly ICoinsService coinsService;
 
         private string searchQuery = string.Empty;
         private bool filterByPremium;
@@ -97,7 +98,7 @@ namespace CourseApp.ViewModels
 
         public ICommand ResetAllFiltersCommand { get; private set; }
 
-        public MainViewModel(CourseService? courseService = null, CoinsService? coinsService = null, CourseService? courseService1 = null)
+        public MainViewModel(ICourseService? courseService = null, ICoinsService? coinsService = null, ICourseService? courseService1 = null)
         {
             this.courseService = courseService;
             this.coinsService = coinsService;

@@ -1,15 +1,23 @@
-﻿using System;
-using Xunit;
-using Moq;
-using CourseApp.Repository;
-using CourseApp.Services;
+﻿// <copyright file="CoinsServiceTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CourseApp.Tests
 {
+    using System;
+    using CourseApp.Repository;
+    using CourseApp.Services;
+    using Moq;
+    using Xunit;
 
-
+    /// <summary>
+    /// Contains unit tests for the <see cref="CoinsService"/> class.
+    /// </summary>
     public class CoinsServiceTests
     {
+        /// <summary>
+        /// Tests that <see cref="CoinsService.GetCoinBalance"/> returns the correct balance.
+        /// </summary>
         [Fact]
         public void GetCoinBalance_ReturnsCorrectBalance()
         {
@@ -21,6 +29,9 @@ namespace CourseApp.Tests
             Assert.Equal(100, balance);
         }
 
+        /// <summary>
+        /// Tests that <see cref="CoinsService.TrySpendingCoins"/> deducts coins successfully.
+        /// </summary>
         [Fact]
         public void TrySpendingCoins_DeductsCoinsSuccessfully()
         {
@@ -33,6 +44,9 @@ namespace CourseApp.Tests
             Assert.Equal(50, coinsService.GetCoinBalance(0));
         }
 
+        /// <summary>
+        /// Tests that <see cref="CoinsService.ApplyDailyLoginBonus"/> adds coins when the login is on a new day.
+        /// </summary>
         [Fact]
         public void ApplyDailyLoginBonus_AddsCoinsWhenLoginIsNewDay()
         {
@@ -45,5 +59,4 @@ namespace CourseApp.Tests
             Assert.Equal(200, coinsService.GetCoinBalance(0));
         }
     }
-
 }
