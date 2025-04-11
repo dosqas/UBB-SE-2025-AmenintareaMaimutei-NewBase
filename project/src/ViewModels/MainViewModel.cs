@@ -7,12 +7,12 @@ using CourseApp.Services;
 
 namespace CourseApp.ViewModels
 {
-    public class MainViewModel : BaseViewModel
+    public class MainViewModel : BaseViewModel, IMainViewModel
     {
         private const int CurrentUserId = 0;
 
-        private readonly CourseService courseService;
-        private readonly CoinsService coinsService;
+        private readonly ICourseService courseService;
+        private readonly ICoinsService coinsService;
 
         private string searchQuery = string.Empty;
         private bool filterByPremium;
@@ -97,10 +97,10 @@ namespace CourseApp.ViewModels
 
         public ICommand ResetAllFiltersCommand { get; private set; }
 
-        public MainViewModel(CourseService? courseService = null, CoinsService? coinsService = null, CourseService? courseService1 = null)
+        public MainViewModel(ICourseService? courseService = null, ICoinsService? coinsService = null, ICourseService? courseService1 = null)
         {
-            this.courseService = new CourseService();
-            this.coinsService = new CoinsService();
+            this.courseService = courseService ?? new CourseService();
+            this.coinsService = coinsService ?? new CoinsService();
 
             DisplayedCourses = new ObservableCollection<Course>(courseService.GetCourses());
             AvailableTags = new ObservableCollection<Tag>(courseService.GetTags());
@@ -111,8 +111,6 @@ namespace CourseApp.ViewModels
             }
 
             ResetAllFiltersCommand = new RelayCommand(ResetAllFilters);
-            this.courseService = courseService;
-            this.coinsService = coinsService;
         }
 
         public bool TryDailyLoginReward()

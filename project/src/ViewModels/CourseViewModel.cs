@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows.Input;
 using CourseApp.Models;
 using CourseApp.Services;
-using Microsoft.UI.Xaml;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SA1010 // Opening square brackets should be spaced correctly
@@ -32,13 +31,10 @@ namespace CourseApp.ViewModels
 
         /// <summary>Number of minutes in one hour</summary>
         private const int MinutesInAnHour = 60;
-
-        /// <summary>Base interval for timer ticks (1 second)</summary>
-        private const int SecondsInOneSecond = 1;
         #endregion
 
         #region Fields
-        private ITimerService? courseProgressTimer;
+        private readonly ITimerService? courseProgressTimer;
         private int totalSecondsSpentOnCourse;
         private int courseCompletionTimeLimitInSeconds;
         private string? formattedTimeRemaining;
@@ -47,7 +43,7 @@ namespace CourseApp.ViewModels
 
         private readonly ICourseService courseService;
         private readonly ICoinsService coinsService;
-        private readonly NotificationHelper notificationHelper;
+        private readonly NotificationHelper? notificationHelper;
 
         private string notificationMessageText = string.Empty;
         private bool shouldShowNotification = false;
@@ -159,6 +155,16 @@ namespace CourseApp.ViewModels
         /// </summary>
         public CourseViewModel()
         {
+            CurrentCourse = new Course
+            {
+                Title = string.Empty,
+                Description = string.Empty,
+                ImageUrl = string.Empty,
+                Difficulty = string.Empty
+            };
+            courseService = new CourseService();
+            coinsService = new CoinsService();
+            notificationHelper = null;
         }
 
         /// <summary>
@@ -289,11 +295,17 @@ namespace CourseApp.ViewModels
         /// </summary>
         private void EnrollUserInCourse(object? parameter)
         {
+            if (!coinsService.TrySpendingCoins(CurrentCourse.CourseId, CurrentCourse.Cost))
+            {
+                return;
+            }
+
             if (!courseService.EnrollInCourse(CurrentCourse.CourseId))
             {
                 return;
             }
 
+            // 3. Update UI state
             IsEnrolled = true;
             ResetCourseProgressTracking();
             OnPropertyChanged(nameof(IsEnrolled));
@@ -344,10 +356,15 @@ namespace CourseApp.ViewModels
         /// </summary>
         private void SaveCourseProgressTime()
         {
-            int secondsToSave = (totalSecondsSpentOnCourse - lastSavedTimeInSeconds) / TimeTrackingDatabaseAdjustmentDivisor;
+            int secondsToSave = (totalSecondsSpentOnCourse - lastSavedTimeInSeconds) /
+                               TimeTrackingDatabaseAdjustmentDivisor;
+
+            Console.WriteLine($"Attempting to save: Current={totalSecondsSpentOnCourse}, " +
+                             $"LastSaved={lastSavedTimeInSeconds}, ToSave={secondsToSave}");
 
             if (secondsToSave > 0)
             {
+                Console.WriteLine($"Saving {secondsToSave} seconds");
                 courseService.UpdateTimeSpent(CurrentCourse.CourseId, secondsToSave);
                 lastSavedTimeInSeconds = totalSecondsSpentOnCourse;
             }
@@ -447,7 +464,7 @@ namespace CourseApp.ViewModels
         private void ShowCourseCompletionRewardNotification()
         {
             string message = $"Congratulations! You have completed all required modules in this course. {CourseCompletionRewardCoins} coins have been added to your balance.";
-            notificationHelper.ShowTemporaryNotification(message);
+            notificationHelper!.ShowTemporaryNotification(message);
         }
 
         /// <summary>
@@ -456,7 +473,7 @@ namespace CourseApp.ViewModels
         private void ShowTimedCompletionRewardNotification()
         {
             string message = $"Congratulations! You completed the course within the time limit. {TimedCompletionRewardCoins} coins have been added to your balance.";
-            notificationHelper.ShowTemporaryNotification(message);
+            notificationHelper!.ShowTemporaryNotification(message);
         }
 
         /// <summary>
@@ -466,7 +483,7 @@ namespace CourseApp.ViewModels
         private void ShowModulePurchaseNotification(Module module)
         {
             string message = $"Congratulations! You have purchased bonus module {module.Title}, {module.Cost} coins have been deducted from your balance.";
-            notificationHelper.ShowTemporaryNotification(message);
+            notificationHelper!.ShowTemporaryNotification(message);
             RefreshCourseModulesDisplay();
         }
         #endregion
@@ -483,6 +500,12 @@ namespace CourseApp.ViewModels
 
             if (courseService.IsModuleCompleted(module.ModuleId))
             {
+                return;
+            }
+
+            if (!coinsService.TrySpendingCoins(CurrentCourse.CourseId, module.Cost))
+            {
+                ShowPurchaseFailedNotification();
                 return;
             }
 
@@ -521,7 +544,7 @@ namespace CourseApp.ViewModels
         /// </summary>
         private void ShowPurchaseFailedNotification()
         {
-            notificationHelper.ShowTemporaryNotification("You do not have enough coins to buy this module.");
+            notificationHelper!.ShowTemporaryNotification("You do not have enough coins to buy this module.");
         }
         #endregion
     }
