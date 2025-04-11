@@ -8,7 +8,7 @@ namespace CourseApp.Converters
     /// If the value is true, it returns false.
     /// if the value is false, it returns true.
     /// </summary>
-    public partial class InverseBooleanConverter : IValueConverter
+    public partial class InverseBooleanConverter : IAppValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
             => ConvertSafe(value, targetType, parameter, language);
