@@ -1,4 +1,8 @@
-﻿namespace Tests.ViewModelsTests
+﻿// <copyright file="MainViewModelTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace Tests.ViewModelsTests
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -8,6 +12,11 @@
     using Moq;
     using Xunit;
 
+    /// <summary>
+    /// Contains unit tests for the MainViewModel class, ensuring that course filtering,
+    /// tag selection, coin balance retrieval, and command execution behave as expected.
+    /// Utilizes mocked ICourseService and ICoinsService dependencies.
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public class MainViewModelTests
     {
@@ -15,6 +24,10 @@
         private readonly Mock<ICoinsService> mockCoinsService;
         private readonly IMainViewModel viewModel;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainViewModelTests"/> class.
+        /// Sets up mocked services and provides default test data for courses and tags.
+        /// </summary>
         public MainViewModelTests()
         {
             this.mockCourseService = new Mock<ICourseService>();
@@ -30,6 +43,9 @@
             this.viewModel = new MainViewModel(this.mockCourseService.Object, this.mockCoinsService.Object);
         }
 
+        /// <summary>
+        /// Verifies that the ViewModel initializes DisplayedCourses and AvailableTags properties.
+        /// </summary>
         [Fact]
         public void Constructor_WhenInitialized_ShouldInitializeDisplayedCoursesAndAvailableTags()
         {
@@ -44,6 +60,9 @@
             Assert.NotNull(viewModel.AvailableTags);
         }
 
+        /// <summary>
+        /// Verifies that tag selection is preserved when initializing with pre-selected tags.
+        /// </summary>
         [Fact]
         public void Constructor_ShouldSubscribeToTagChanges_WhenTagsAreAvailable()
         {
@@ -64,6 +83,9 @@
             Assert.True(viewModel.AvailableTags.All(t => t.IsSelected));
         }
 
+        /// <summary>
+        /// Verifies that setting the SearchQuery triggers course filtering.
+        /// </summary>
         [Fact]
         public void SearchQuery_WhenSet_ShouldTriggerFiltering()
         {
@@ -81,6 +103,9 @@
             Assert.True(wasCalled);
         }
 
+        /// <summary>
+        /// Verifies that setting FilterByPremium to true triggers course filtering.
+        /// </summary>
         [Fact]
         public void FilterByPremium_WhenSet_ShouldTriggerFiltering()
         {
@@ -98,6 +123,9 @@
             Assert.True(wasCalled);
         }
 
+        /// <summary>
+        /// Verifies that setting FilterByFree to true triggers course filtering.
+        /// </summary>
         [Fact]
         public void FilterByFree_WhenSet_ShouldTriggerFiltering()
         {
@@ -115,6 +143,9 @@
             Assert.True(wasCalled);
         }
 
+        /// <summary>
+        /// Verifies that setting FilterByEnrolled to true triggers course filtering.
+        /// </summary>
         [Fact]
         public void FilterByEnrolled_WhenSet_ShouldTriggerFiltering()
         {
@@ -132,6 +163,9 @@
             Assert.True(wasCalled);
         }
 
+        /// <summary>
+        /// Verifies that setting FilterByNotEnrolled to true triggers course filtering.
+        /// </summary>
         [Fact]
         public void FilterByNotEnrolled_WhenSet_ShouldTriggerFiltering()
         {
@@ -149,6 +183,9 @@
             Assert.True(wasCalled);
         }
 
+        /// <summary>
+        /// Verifies that the daily login reward increases the user's coin balance and notifies the property.
+        /// </summary>
         [Fact]
         public void TryDailyLoginReward_WhenSuccessful_ShouldUpdateUserCoinBalance()
         {
@@ -165,6 +202,9 @@
             Assert.Contains(nameof(this.viewModel.UserCoinBalance), notifiedProps);
         }
 
+        /// <summary>
+        /// Verifies that executing ResetAllFiltersCommand clears all filters and selections.
+        /// </summary>
         [Fact]
         public void ResetAllFiltersCommand_WhenExecuted_ShouldClearAllFilters()
         {
@@ -220,6 +260,9 @@
             Assert.All(this.viewModel.AvailableTags, tag => Assert.False(tag.IsSelected));
         }
 
+        /// <summary>
+        /// Verifies that setting the same SearchQuery value does not re-trigger filtering.
+        /// </summary>
         [Fact]
         public void SearchQuery_SetToSameValue_ShouldNotTriggerFilter()
         {
@@ -242,6 +285,9 @@
             Assert.False(wasCalled);
         }
 
+        /// <summary>
+        /// Verifies that setting a SearchQuery over the maximum allowed length does not update the property.
+        /// </summary>
         [Fact]
         public void SearchQuery_SetOverMaxLength_ShouldNotChangeProperty()
         {
@@ -256,6 +302,9 @@
             Assert.Equal(initialSearchQuery, this.viewModel.SearchQuery);
         }
 
+        /// <summary>
+        /// Verifies that UserCoinBalance correctly reflects the balance returned by the coins service.
+        /// </summary>
         [Fact]
         public void UserCoinBalance_ShouldReturnCorrectBalance_FromCoinsService()
         {
