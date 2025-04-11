@@ -1,12 +1,14 @@
 ﻿namespace Tests.ViewModelsTests
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using CourseApp.Models;
     using CourseApp.Services;
     using CourseApp.ViewModels;
     using Moq;
     using Xunit;
 
+    [ExcludeFromCodeCoverage]
     public class MainViewModelTests
     {
         private readonly Mock<ICourseService> mockCourseService;

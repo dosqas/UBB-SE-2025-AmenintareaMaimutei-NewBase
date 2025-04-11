@@ -8,7 +8,9 @@
     using CourseApp.ViewModels;
     using CourseApp.Repository;
     using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     public class ModuleViewModelTests
     {
         [Fact]

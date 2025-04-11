@@ -1,10 +1,12 @@
 ﻿namespace Tests.ViewModelsTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows.Input;
     using CourseApp.ViewModels;
     using Xunit;
 
+    [ExcludeFromCodeCoverage]
     public class RelayCommandTests
     {
         [Fact]

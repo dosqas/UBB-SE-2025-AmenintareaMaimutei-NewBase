@@ -6,6 +6,7 @@ namespace Tests.ConvertersTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace Tests.ConvertersTests
     /// <summary>
     /// Unit tests for the <see cref="TextTrimmerConverter"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class TextTrimmerConverterTests
     {
         private readonly TextTrimmerConverter testConverter;
