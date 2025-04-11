@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using CourseApp.Models;
 using CourseApp.Services;
+using Windows.System.Threading;
 
 namespace CourseApp.ViewModels
 {
@@ -99,8 +100,16 @@ namespace CourseApp.ViewModels
 
         public MainViewModel(ICourseService? courseService = null, ICoinsService? coinsService = null, ICourseService? courseService1 = null)
         {
-            this.courseService = courseService ?? new CourseService();
-            this.coinsService = coinsService ?? new CoinsService();
+            this.courseService = courseService;
+            this.coinsService = coinsService;
+            if (courseService == null)
+            {
+                courseService = new CourseService();
+            }
+            if (coinsService == null)
+            {
+                coinsService = new CoinsService();
+            }
 
             DisplayedCourses = new ObservableCollection<Course>(courseService.GetCourses());
             AvailableTags = new ObservableCollection<Tag>(courseService.GetTags());

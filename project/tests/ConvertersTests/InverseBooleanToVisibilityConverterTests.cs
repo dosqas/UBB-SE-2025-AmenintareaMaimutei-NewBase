@@ -1,4 +1,8 @@
-﻿namespace Tests.ConvertersTests
+// <copyright file="InverseBooleanToVisibilityConverterTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace Tests.ConvertersTests
 {
     using System;
     using System.Collections.Generic;
@@ -22,6 +26,68 @@
         {
             // Initialize the converter before each test
             this.testConverter = new InverseBooleanToVisibilityConverter();
+        }
+
+        /// <summary>
+        /// Tests that Convert method returns Visibility.Collapsed when input is true.
+        /// </summary>
+        [Fact]
+        public void ConvertSafeShouldReturnCollapsedWhenTrue()
+        {
+            // Arrange
+            var input = true;
+
+            // Act
+            var result = this.testConverter.ConvertSafe(input, typeof(Visibility), null!, null!);
+
+            // Assert
+            Assert.Equal(Visibility.Collapsed, result);
+        }
+
+        /// <summary>
+        /// Tests that Convert method returns Visibility.Visible when input is false.
+        /// </summary>
+        [Fact]
+        public void ConvertSafeShouldReturnVisibleWhenFalse()
+        {
+            // Arrange
+            var input = false;
+
+            // Act
+            var result = this.testConverter.ConvertSafe(input, typeof(Visibility), null!, null!);
+
+            // Assert
+            Assert.Equal(Visibility.Visible, result);
+        }
+
+        /// <summary>
+        /// Tests that Convert method returns Visibility.Collapsed when input is not a boolean.
+        /// </summary>
+        [Fact]
+        public void ConvertSafeShouldReturnCollapsedWhenInputIsNotBoolean()
+        {
+            // Arrange
+            var input = "Not a boolean";
+
+            // Act
+            var result = this.testConverter.ConvertSafe(input, typeof(Visibility), null!, null!);
+
+            // Assert
+            Assert.Equal(Visibility.Collapsed, result);
+        }
+
+        /// <summary>
+        /// Tests that ConvertBack method throws NotImplementedException.
+        /// </summary>
+        [Fact]
+        public void ConvertBackSafeShouldThrowNotImplementedException()
+        {
+            // Arrange
+            var input = Visibility.Visible;
+
+            // Act & Assert
+            var exception = Assert.Throws<NotImplementedException>(() => this.testConverter.ConvertBackSafe(input, typeof(bool), null!, null!));
+            Assert.Equal("Reverse conversion is not supported.", exception.Message);
         }
 
         /// <summary>
