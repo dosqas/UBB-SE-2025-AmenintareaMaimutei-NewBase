@@ -8,7 +8,7 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Platforms>AnyCPU;x64</Platforms>
-	<CodeAnalysisRuleSet>SE.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>../SE.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>

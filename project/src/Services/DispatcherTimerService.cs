@@ -3,7 +3,6 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
     using CourseApp.Services.Helpers;
-    using Microsoft.UI.Xaml;
 
     /// <summary>
     /// Service implementation for a dispatcher timer that raises events at specified intervals.

@@ -502,7 +502,7 @@ namespace CourseApp.ViewModels
         /// Attempts to purchase a bonus module
         /// </summary>
         /// <param name="module">The module to purchase</param>
-        public void AttemptBonusModulePurchase(Module module)
+        public void AttemptBonusModulePurchase(Module? module)
         {
             ArgumentNullException.ThrowIfNull(module);
 

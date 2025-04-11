@@ -68,15 +68,8 @@ namespace CourseApp.Services
         /// - Enables deterministic testing of timer-dependent logic without waiting for real-time intervals.
         /// - Useful for unit/integration tests to verify behavior when the timer elapses.
         ///
-        /// **Behavior:**
-        /// - Synchronously raises the <see cref="Tick"/> event, invoking all registered handlers.
-        /// - Does not affect the timer's running state (<see cref="Start"/>/<see cref="Stop"/>).
-        /// - Does not modify or depend on the <see cref="Interval"/> value.
-        ///
         /// **Testing Scenarios:**
         /// - Verify side effects of timer ticks (e.g., UI updates, state changes).
-        /// - Test idempotency or reentrancy of tick handlers.
-        /// - Simulate rapid successive ticks without real-time delays.
         /// </remarks>
         void SimulateTick();
         #endregion
