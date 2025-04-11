@@ -296,7 +296,7 @@ namespace CourseApp.ViewModels
         /// </summary>
         private void EnrollUserInCourse(object? parameter)
         {
-            if (!coinsService.TrySpendingCoins(CurrentCourse.CourseId, CurrentCourse.Cost))
+            if (!coinsService.TrySpendingCoins(0, CurrentCourse.Cost))
             {
                 return;
             }
@@ -504,7 +504,7 @@ namespace CourseApp.ViewModels
                 return;
             }
 
-            if (!coinsService.TrySpendingCoins(CurrentCourse.CourseId, module.Cost))
+            if (!coinsService.TrySpendingCoins(0, module.Cost))
             {
                 ShowPurchaseFailedNotification();
                 return;
