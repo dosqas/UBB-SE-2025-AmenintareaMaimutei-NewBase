@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace Tests.ViewModelsTests
+namespace Tests.ViewModelsTests.Helpers
 {
     using System;
     using CourseApp.Services;
@@ -26,9 +26,9 @@ namespace Tests.ViewModelsTests
         /// </summary>
         public NotificationHelperTests()
         {
-            this.mockParentViewModel = new Mock<CourseViewModel>();
-            this.mockTimerService = new Mock<IDispatcherTimerService>();
-            this.notificationHelper = new NotificationHelper(this.mockParentViewModel.Object, this.mockTimerService.Object);
+            mockParentViewModel = new Mock<CourseViewModel>();
+            mockTimerService = new Mock<IDispatcherTimerService>();
+            notificationHelper = new NotificationHelper(mockParentViewModel.Object, mockTimerService.Object);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Tests.ViewModelsTests
 
             // Act & Assert
             _ = Assert.Throws<ArgumentNullException>(
-                () => new NotificationHelper(nullParentViewModel!, this.mockTimerService.Object));
+                () => new NotificationHelper(nullParentViewModel!, mockTimerService.Object));
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Tests.ViewModelsTests
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(
-                () => new NotificationHelper(this.mockParentViewModel.Object, nullTimerService!));
+                () => new NotificationHelper(mockParentViewModel.Object, nullTimerService!));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Tests.ViewModelsTests
             var timerMock = new Mock<IDispatcherTimerService>();
 
             // Act
-            var helper = new NotificationHelper(this.mockParentViewModel.Object, timerMock.Object);
+            var helper = new NotificationHelper(mockParentViewModel.Object, timerMock.Object);
 
             // Assert
             timerMock.VerifyAdd(t => t.Tick += It.IsAny<EventHandler>(), Times.Once);
@@ -85,11 +85,11 @@ namespace Tests.ViewModelsTests
             const string testMessage = "Test notification";
 
             // Act
-            this.notificationHelper.ShowTemporaryNotification(testMessage);
+            notificationHelper.ShowTemporaryNotification(testMessage);
 
             // Assert
-            this.mockParentViewModel.VerifySet(vm => vm.NotificationMessage = testMessage, Times.Once);
-            this.mockParentViewModel.VerifySet(vm => vm.ShowNotification = true, Times.Once);
+            mockParentViewModel.VerifySet(vm => vm.NotificationMessage = testMessage, Times.Once);
+            mockParentViewModel.VerifySet(vm => vm.ShowNotification = true, Times.Once);
         }
 
         /// <summary>
@@ -103,11 +103,11 @@ namespace Tests.ViewModelsTests
             var expectedInterval = TimeSpan.FromSeconds(CourseViewModel.NotificationDisplayDurationInSeconds);
 
             // Act
-            this.notificationHelper.ShowTemporaryNotification(testMessage);
+            notificationHelper.ShowTemporaryNotification(testMessage);
 
             // Assert
-            this.mockTimerService.VerifySet(t => t.Interval = expectedInterval, Times.Once);
-            this.mockTimerService.Verify(t => t.Start(), Times.Once);
+            mockTimerService.VerifySet(t => t.Interval = expectedInterval, Times.Once);
+            mockTimerService.Verify(t => t.Start(), Times.Once);
         }
 
         /// <summary>
@@ -121,11 +121,11 @@ namespace Tests.ViewModelsTests
 
             // Act
             // Simulate timer tick by invoking the event handler directly
-            this.mockTimerService.Raise(t => t.Tick += null, this, eventArgs);
+            mockTimerService.Raise(t => t.Tick += null, this, eventArgs);
 
             // Assert
-            this.mockParentViewModel.VerifySet(vm => vm.ShowNotification = false, Times.Once);
-            this.mockTimerService.Verify(t => t.Stop(), Times.Once);
+            mockParentViewModel.VerifySet(vm => vm.ShowNotification = false, Times.Once);
+            mockTimerService.Verify(t => t.Stop(), Times.Once);
         }
 
         /// <summary>
@@ -137,11 +137,11 @@ namespace Tests.ViewModelsTests
             // Arrange
             var eventArgs = EventArgs.Empty;
             var timerMock = new Mock<IDispatcherTimerService>();
-            var helper = new NotificationHelper(this.mockParentViewModel.Object, timerMock.Object);
+            var helper = new NotificationHelper(mockParentViewModel.Object, timerMock.Object);
 
             // This test ensures we don't get NullReferenceException if parent is null
             // (though constructor prevents null parent in reality)
-            this.mockParentViewModel.SetupGet(vm => vm.ShowNotification).Throws<NullReferenceException>();
+            mockParentViewModel.SetupGet(vm => vm.ShowNotification).Throws<NullReferenceException>();
 
             // Act & Assert (should not throw)
             timerMock.Raise(t => t.Tick += null, this, eventArgs);
@@ -154,10 +154,10 @@ namespace Tests.ViewModelsTests
         public void ShowTemporaryNotification_DoesNotThrow_WhenTimerStartFails()
         {
             // Arrange
-            this.mockTimerService.Setup(t => t.Start()).Throws<InvalidOperationException>();
+            mockTimerService.Setup(t => t.Start()).Throws<InvalidOperationException>();
 
             // Act & Assert (should not throw)
-            this.notificationHelper.ShowTemporaryNotification("Test");
+            notificationHelper.ShowTemporaryNotification("Test");
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace Tests.ViewModelsTests
         {
             // Arrange
             var timerMock = new Mock<IDispatcherTimerService>();
-            var helper = new NotificationHelper(this.mockParentViewModel.Object, timerMock.Object);
+            var helper = new NotificationHelper(mockParentViewModel.Object, timerMock.Object);
 
             // Act
             if (helper is IDisposable disposable)
