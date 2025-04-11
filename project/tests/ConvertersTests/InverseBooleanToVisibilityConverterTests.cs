@@ -1,4 +1,8 @@
-﻿namespace Tests.ConvertersTests
+﻿// <copyright file="InverseBooleanToVisibilityConverterTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace Tests.ConvertersTests
 {
     using System;
     using System.Collections.Generic;
@@ -85,8 +89,6 @@
             var exception = Assert.Throws<NotImplementedException>(() => this.testConverter.ConvertBackSafe(input, typeof(bool), null!, null!));
             Assert.Equal("Reverse conversion is not supported.", exception.Message);
         }
-
-        //aici 
 
         /// <summary>
         /// Tests that Convert method returns Visibility.Collapsed when input is true.

@@ -1,4 +1,8 @@
-﻿namespace Tests.ConvertersTests
+﻿// <copyright file="TextTrimmerConverterTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace Tests.ConvertersTests
 {
     using System;
     using System.Collections.Generic;
@@ -218,8 +222,5 @@
             var exception = Assert.Throws<NotImplementedException>(() => this.testConverter.ConvertBack(input, typeof(string), null!, null!));
             Assert.Equal("Reverse conversion is not supported.", exception.Message);
         }
-
-        //aici
-
     }
 }

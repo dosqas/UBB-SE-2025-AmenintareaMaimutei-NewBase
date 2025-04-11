@@ -1,4 +1,8 @@
-﻿namespace CourseApp.Tests.Services
+﻿// <copyright file="CourseServiceTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace CourseApp.Tests.Services
 {
     using System;
     using System.Collections.Generic;
@@ -14,10 +18,10 @@
     /// </summary>
     public class CourseServiceTests
     {
+        private const int UserId = 0;
         private readonly Mock<ICourseRepository> mockRepository;
         private readonly Mock<ICoinsRepository> mockCoinsRepository;
         private readonly CourseService service;
-        private const int UserId = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CourseServiceTests"/> class.
@@ -503,7 +507,7 @@
             var module = this.CreateTestModule(1, 1, true, 100);
             this.mockRepository.Setup(r => r.GetModule(1)).Returns(module);
             this.mockRepository.Setup(r => r.IsModuleOpen(UserId, 1)).Returns(false);
-            this.mockRepository.Setup(r => r.GetCourse(1)).Returns((Course)null);
+            this.mockRepository.Setup(r => r.GetCourse(1)).Returns((Course?)null);
 
             // Act
             var result = this.service.BuyBonusModule(1, 1);
@@ -601,7 +605,7 @@
         {
             // Arrange
             this.mockRepository.Setup(r => r.IsUserEnrolled(UserId, 1)).Returns(false);
-            this.mockRepository.Setup(r => r.GetCourse(1)).Returns((Course)null);
+            this.mockRepository.Setup(r => r.GetCourse(1)).Returns((Course?)null);
 
             // Act
             var result = this.service.EnrollInCourse(1);

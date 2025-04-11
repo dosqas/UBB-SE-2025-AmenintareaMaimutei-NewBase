@@ -1,4 +1,8 @@
-﻿namespace Tests.ConvertersTests
+﻿// <copyright file="AvailabilityColorConverterTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace Tests.ConvertersTests
 {
     using System;
     using CourseApp.Converters;
