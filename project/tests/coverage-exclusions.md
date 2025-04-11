@@ -43,6 +43,7 @@ Method-level exclusion is supported and used, and it follows the same rationale.
 | `RewardModelView`					   | This class tightly couples SQL logic and database connections, making it unsuitable for unit testing. |
 | `TagModelView`					   | This class tightly couples SQL logic and database connections, making it unsuitable for unit testing. |
 | `UserWalletModelView` 			   | This class tightly couples SQL logic and database connections, making it unsuitable for unit testing. |
+| `FakeCoinsRepository`				   | This class is a mock implementation of a repository for testing purposes. Is not intended for production use. |
 ## List of Excluded Methods
 
 | Method Name                             | Reason for Exclusion                                                                                   |
