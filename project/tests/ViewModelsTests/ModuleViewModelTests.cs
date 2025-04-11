@@ -8,7 +8,9 @@
     using CourseApp.ViewModels;
     using CourseApp.Repository;
     using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     public class ModuleViewModelTests
     {
         [Fact]
@@ -231,5 +233,59 @@
             Assert.False(canComplete);
         }
 
+        [Fact]
+        public void ChangingFormattedTimeRemaining_RaisesTimeSpentPropertyChanged()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "Test Description",
+                ImageUrl = "test_image.jpg"
+            };
+            var mockCourseService = new Mock<ICourseService>();
+            mockCourseService.Setup(cs => cs.IsModuleCompleted(It.IsAny<int>())).Returns(false);
+
+            var mockCoinsService = new Mock<ICoinsService>();
+
+            var mockCourseVM = new Mock<ICourseViewModel>();
+            mockCourseVM.Setup(vm => vm.FormattedTimeRemaining).Returns("10 min");
+
+            var viewModel = new ModuleViewModel(module, mockCourseVM.Object,
+                                                mockCourseService.Object, mockCoinsService.Object);
+
+            bool timeSpentChanged = false;
+            viewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(viewModel.TimeSpent))
+                    timeSpentChanged = true;
+            };
+
+            // Act: raise PropertyChanged for FormattedTimeRemaining on the mock
+            mockCourseVM.Raise(vm => vm.PropertyChanged += null, new PropertyChangedEventArgs(nameof(mockCourseVM.Object.FormattedTimeRemaining)));
+
+            // Assert
+            Assert.True(timeSpentChanged);
+        }
+
+        [Fact]
+        public void ShortDescription_ShouldReturnShortenedDescription_WhenDescriptionIsLongerThan23Characters()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "This is a longer description for the module.",
+                ImageUrl = "test_image.jpg"
+            };
+
+            // Act
+            var result = module.ShortDescription;
+
+            // Assert
+            Assert.Equal("This is a longer descri...", result);
+        }
     }
 }

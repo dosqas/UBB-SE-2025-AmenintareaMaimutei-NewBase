@@ -2,9 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace CourseApp.CoinsServiceTests
+namespace Tests.ServiceTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using CourseApp.Repository;
     using CourseApp.Services;
     using Moq;
@@ -13,6 +14,7 @@ namespace CourseApp.CoinsServiceTests
     /// <summary>
     /// Contains unit tests for the <see cref="CoinsService"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class CoinsServiceTests
     {
         private readonly FakeCoinsRepository _fakeRepo;

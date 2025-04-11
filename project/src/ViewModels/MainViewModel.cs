@@ -100,16 +100,8 @@ namespace CourseApp.ViewModels
 
         public MainViewModel(ICourseService? courseService = null, ICoinsService? coinsService = null, ICourseService? courseService1 = null)
         {
-            this.courseService = courseService;
-            this.coinsService = coinsService;
-            if (courseService == null)
-            {
-                courseService = new CourseService();
-            }
-            if (coinsService == null)
-            {
-                coinsService = new CoinsService();
-            }
+            this.courseService = new CourseService();
+            this.coinsService = new CoinsService();
 
             DisplayedCourses = new ObservableCollection<Course>(courseService.GetCourses());
             AvailableTags = new ObservableCollection<Tag>(courseService.GetTags());
@@ -120,6 +112,9 @@ namespace CourseApp.ViewModels
             }
 
             ResetAllFiltersCommand = new RelayCommand(ResetAllFilters);
+
+            this.courseService = courseService;
+            this.coinsService = coinsService;
         }
 
         public bool TryDailyLoginReward()

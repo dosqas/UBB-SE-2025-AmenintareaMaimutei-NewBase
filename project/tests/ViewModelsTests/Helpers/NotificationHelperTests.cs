@@ -2,9 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace Tests.ViewModelsTests
+namespace Tests.ViewModelsTests.Helpers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using CourseApp.Services;
     using CourseApp.ViewModels;
     using CourseApp.ViewModels.Helpers;
@@ -14,6 +15,7 @@ namespace Tests.ViewModelsTests
     /// <summary>
     /// Contains unit tests for the <see cref="NotificationHelper"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class NotificationHelperTests
     {
         private readonly Mock<CourseViewModel> mockParentViewModel;

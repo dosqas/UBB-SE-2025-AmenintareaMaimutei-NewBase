@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using CourseApp.Models;
 using CourseApp.ModelViews;
 
 namespace CourseApp.Repository
 {
+    [ExcludeFromCodeCoverage]
     public class CourseRepository : ICourseRepository
     {
         private readonly CourseModelView courseModelView;

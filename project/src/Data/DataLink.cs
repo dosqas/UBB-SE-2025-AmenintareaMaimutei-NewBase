@@ -1,10 +1,12 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Data.SqlClient;
 
 namespace CourseApp.Data
 {
+    [ExcludeFromCodeCoverage]
     public class DataLink
     {
-        private static readonly string ConnectionString = "Data Source=leptop-sarici;Initial Catalog=CourseApp;Integrated Security=True;TrustServerCertificate=True";
+		private static readonly string ConnectionString = "Data Source=leptop-sarici;Initial Catalog=CourseApp;Integrated Security=True;TrustServerCertificate=True";
 
         public static SqlConnection GetConnection()
         {

@@ -2,10 +2,11 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace CourseApp.Tests.Services
+namespace Tests.ServiceTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using CourseApp.Models;
     using CourseApp.Repository;
@@ -16,6 +17,7 @@ namespace CourseApp.Tests.Services
     /// <summary>
     /// <see cref="CourseServiceTests"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class CourseServiceTests
     {
         private const int UserId = 0;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Input;
 using CourseApp.Models;
@@ -35,16 +36,16 @@ namespace CourseApp.ViewModels
         #endregion
 
         #region Fields
-        private readonly IDispatcherTimerService? courseProgressTimer;
+        private IDispatcherTimerService? courseProgressTimer;
         private int totalSecondsSpentOnCourse;
         private int courseCompletionTimeLimitInSeconds;
         private string? formattedTimeRemaining;
-        private bool isCourseTimerRunning;
+        internal bool IsCourseTimerRunning;
         private int lastSavedTimeInSeconds = 0;
 
         private readonly ICourseService courseService;
         private readonly ICoinsService coinsService;
-        private readonly NotificationHelper? notificationHelper;
+        private INotificationHelper? notificationHelper;
 
         private string notificationMessageText = string.Empty;
         private bool shouldShowNotification = false;
@@ -62,7 +63,7 @@ namespace CourseApp.ViewModels
         public ICommand? EnrollCommand { get; private set; }
 
         /// <summary>Gets a value indicating whether the user is enrolled in this course</summary>
-        public bool IsEnrolled { get; private set; }
+        public bool IsEnrolled { get; set; }
 
         /// <summary>Gets whether coin information should be visible</summary>
         public bool CoinVisibility => CurrentCourse.IsPremium && !IsEnrolled;
@@ -71,7 +72,7 @@ namespace CourseApp.ViewModels
         public int CoinBalance => coinsService.GetCoinBalance(0);
 
         /// <summary>Gets the tags associated with this course</summary>
-        public ObservableCollection<Tag> Tags => new (courseService.GetCourseTags(CurrentCourse.CourseId));
+        public ObservableCollection<Tag> Tags => [.. courseService.GetCourseTags(CurrentCourse.CourseId)];
 
         /// <summary>
         /// Gets or sets the formatted string representing time remaining in course
@@ -179,22 +180,29 @@ namespace CourseApp.ViewModels
         /// <exception cref="ArgumentNullException">Thrown when course is null</exception>
         public CourseViewModel(Course course, ICourseService? courseService = null,
             ICoinsService? coinsService = null, IDispatcherTimerService? timerService = null,
-            IDispatcherTimerService? notificationTimerService = null)
+            IDispatcherTimerService? notificationTimerService = null, INotificationHelper? notificationHelper = null)
         {
             CurrentCourse = course ?? throw new ArgumentNullException(nameof(course));
             this.courseService = courseService ?? new CourseService();
             this.coinsService = coinsService ?? new CoinsService();
 
+            InitializeTimersAndNotificationHelper(timerService, notificationTimerService, notificationHelper);
+
+            InitializeProperties();
+            LoadInitialData();
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void InitializeTimersAndNotificationHelper(IDispatcherTimerService? timerService,
+            IDispatcherTimerService? notificationTimerService, INotificationHelper? notificationHelper)
+        {
             // Use separate timers for course progress and notifications
             courseProgressTimer = timerService ?? new DispatcherTimerService();
             var notificationTimer = notificationTimerService ?? new DispatcherTimerService();
 
-            notificationHelper = new NotificationHelper(this, notificationTimer);
+            this.notificationHelper = notificationHelper ?? new NotificationHelper(this, notificationTimer);
 
             courseProgressTimer.Tick += OnCourseTimerTick;
-
-            InitializeProperties();
-            LoadInitialData();
         }
 
         private void InitializeProperties()
@@ -306,7 +314,6 @@ namespace CourseApp.ViewModels
                 return;
             }
 
-            // 3. Update UI state
             IsEnrolled = true;
             ResetCourseProgressTracking();
             OnPropertyChanged(nameof(IsEnrolled));
@@ -332,9 +339,9 @@ namespace CourseApp.ViewModels
         /// </summary>
         public void StartCourseProgressTimer()
         {
-            if (!isCourseTimerRunning && IsEnrolled)
+            if (!IsCourseTimerRunning && IsEnrolled)
             {
-                isCourseTimerRunning = true;
+                IsCourseTimerRunning = true;
                 courseProgressTimer!.Start();
             }
         }
@@ -344,11 +351,11 @@ namespace CourseApp.ViewModels
         /// </summary>
         public void PauseCourseProgressTimer()
         {
-            if (isCourseTimerRunning)
+            if (IsCourseTimerRunning)
             {
                 courseProgressTimer!.Stop();
                 SaveCourseProgressTime();
-                isCourseTimerRunning = false;
+                IsCourseTimerRunning = false;
             }
         }
 
@@ -495,7 +502,7 @@ namespace CourseApp.ViewModels
         /// Attempts to purchase a bonus module
         /// </summary>
         /// <param name="module">The module to purchase</param>
-        public void AttemptBonusModulePurchase(Module module)
+        public void AttemptBonusModulePurchase(Module? module)
         {
             ArgumentNullException.ThrowIfNull(module);
 

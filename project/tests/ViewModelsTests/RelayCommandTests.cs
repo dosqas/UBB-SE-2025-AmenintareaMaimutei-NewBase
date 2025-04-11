@@ -1,12 +1,26 @@
-﻿namespace Tests.ViewModelsTests
+﻿// <copyright file="RelayCommandTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace Tests.ViewModelsTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows.Input;
     using CourseApp.ViewModels;
     using Xunit;
 
+    /// <summary>
+    /// Unit tests for the <see cref="RelayCommand"/> class.
+    /// Validates construction, execution behavior, and event invocation logic.
+    /// </summary>
+    [ExcludeFromCodeCoverage]
     public class RelayCommandTests
     {
+        /// <summary>
+        /// Tests that the constructor throws an <see cref="ArgumentNullException"/>
+        /// if the execute delegate is null.
+        /// </summary>
         [Fact]
         public void Constructor_ShouldThrowArgumentNullException_WhenExecuteIsNull()
         {
@@ -14,6 +28,10 @@
             Assert.Throws<ArgumentNullException>(() => new RelayCommand(null));
         }
 
+        /// <summary>
+        /// Tests that <see cref="RelayCommand.CanExecute"/> returns true
+        /// if no canExecute predicate is provided.
+        /// </summary>
         [Fact]
         public void CanExecute_ShouldReturnTrue_WhenNoPredicateProvided()
         {
@@ -27,6 +45,10 @@
             Assert.True(result);
         }
 
+        /// <summary>
+        /// Tests that <see cref="RelayCommand.CanExecute"/> returns false
+        /// when a predicate is provided that returns false.
+        /// </summary>
         [Fact]
         public void CanExecute_ShouldReturnPredicateResult_WhenPredicateProvided()
         {
@@ -40,6 +62,10 @@
             Assert.False(result);
         }
 
+        /// <summary>
+        /// Tests that the <see cref="RelayCommand.Execute"/> method
+        /// invokes the provided execute action.
+        /// </summary>
         [Fact]
         public void Execute_ShouldInvokeExecuteAction()
         {
@@ -54,6 +80,10 @@
             Assert.True(executed);
         }
 
+        /// <summary>
+        /// Tests that calling <see cref="RelayCommand.RaiseCanExecuteChanged"/>
+        /// raises the <see cref="ICommand.CanExecuteChanged"/> event.
+        /// </summary>
         [Fact]
         public void RaiseCanExecuteChanged_ShouldTriggerCanExecuteChangedEvent()
         {
@@ -70,6 +100,10 @@
             Assert.True(eventRaised);
         }
 
+        /// <summary>
+        /// Tests that calling <see cref="RelayCommand.RaiseCanExecuteChanged"/>
+        /// does not throw an exception when there are no subscribers.
+        /// </summary>
         [Fact]
         public void RaiseCanExecuteChanged_ShouldNotThrow_WhenNoSubscribers()
         {
@@ -81,6 +115,5 @@
 
             Assert.Null(exception);
         }
-
     }
 }

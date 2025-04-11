@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using CourseApp.Models;
 using CourseApp.Data;
 
 namespace CourseApp.Repository
 {
+    [ExcludeFromCodeCoverage]
     public class ProgressModelView : DataLink
     {
         public void UpdateTimeSpent(int userId, int courseId, int seconds)

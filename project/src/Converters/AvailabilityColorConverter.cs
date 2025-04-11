@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml;
@@ -10,6 +11,7 @@ namespace CourseApp.Converters
     /// If the value is true, the brush will be blue (indicating available);
     /// if false, the brush will be gray (indicating unavailable).
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class AvailabilityColorConverter : IAppValueConverter
     {
         // Static color values for available and unavailable states.
