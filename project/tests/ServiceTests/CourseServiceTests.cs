@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace CourseApp.Tests.Services
+namespace Tests.ServiceTests
 {
     using System;
     using System.Collections.Generic;

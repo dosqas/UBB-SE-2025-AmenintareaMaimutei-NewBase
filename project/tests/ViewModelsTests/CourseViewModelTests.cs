@@ -1,4 +1,4 @@
-﻿namespace CourseApp.Tests.ViewModelsTests
+﻿namespace Tests.ViewModelsTests
 {
     using System;
     using System.Collections.Generic;
