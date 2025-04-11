@@ -2,7 +2,7 @@
 
 namespace CourseApp.Services
 {
-    public interface ITimerService
+    public interface IDispatcherTimerService
     {
         void Start();
         void Stop();
