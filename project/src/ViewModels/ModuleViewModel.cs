@@ -4,24 +4,24 @@ using CourseApp.Services;
 
 namespace CourseApp.ViewModels
 {
-    public partial class ModuleViewModel : BaseViewModel
+    public partial class ModuleViewModel : BaseViewModel, IModuleViewModel
     {
-        private readonly CourseService courseService;
-        private readonly CoinsService coinsService;
-        private readonly CourseViewModel courseViewModel;
+        private readonly ICourseService courseService;
+        private readonly ICoinsService coinsService;
+        private readonly ICourseViewModel courseViewModel;
         public Module CurrentModule { get; set; }
         public bool IsCompleted { get; set; }
         public ICommand CompleteModuleCommand { get; set; }
 
         public ICommand ModuleImageClickCommand { get; set; }
 
-        public ModuleViewModel(Models.Module module, CourseViewModel courseVM,
-            CourseService? courseServiceOverride = null,
-            CoinsService? coinsServiceOverride = null)
+        public ModuleViewModel(Models.Module module, ICourseViewModel courseVM,
+            ICourseService? courseServiceOverride = null,
+            ICoinsService? coinsServiceOverride = null)
         {
             // Corrected initialization: Use the proper concrete service classes
-            courseService = courseService ?? new CourseService();
-            coinsService = coinsService ?? new CoinsService();
+            courseService = courseServiceOverride ?? new CourseService();
+            coinsService = coinsServiceOverride ?? new CoinsService();
 
             CurrentModule = module;
             IsCompleted = courseService.IsModuleCompleted(module.ModuleId);

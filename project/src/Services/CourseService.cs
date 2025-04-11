@@ -15,9 +15,9 @@ namespace CourseApp.Services
         private readonly ICourseRepository repository;
         private readonly ICoinsRepository coinsRepository = new CoinsRepository();
         private const int UserId = 0;
-        public CourseService()
+        public CourseService(ICourseRepository courseRepository = null)
         {
-            repository = new CourseRepository();
+            repository = courseRepository ?? new CourseRepository();
         }
 
         public CourseService(ICourseRepository repository, ICoinsRepository coinsRepository)

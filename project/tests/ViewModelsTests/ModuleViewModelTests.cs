@@ -1,91 +1,235 @@
-﻿//using Xunit;
-//using CourseApp.ViewModels;
-//using CourseApp.Models;
-//using CourseApp.Services;
-//using Moq;
-//using System.ComponentModel;
+﻿namespace Tests.ModuleViewTests
+{
 
-//namespace Tests.moduleViewModelTests
-//{
-//    public class ModuleViewModelTests
-//    {
-//        private readonly Mock<ICourseService> mockCourseService = new();
-//        private readonly Mock<ICoinsService> mockCoinsService = new();
-//        private readonly Mock<ICourseViewModel> mockCourseVM = new();
+    using Xunit;
+    using Moq;
+    using CourseApp.Models;
+    using CourseApp.Services;
+    using CourseApp.ViewModels;
+    using CourseApp.Repository;
+    using System.ComponentModel;
 
-//        private readonly Module testModule = new()
-//        {
-//            ModuleId = 1,
-//            Title = "Test Module",
-//            Description = "Description",
-//            ImageUrl = "http://example.com/image.png",
-//        };
+    public class ModuleViewModelTests
+    {
+        [Fact]
+        public void Constructor_OpensModuleAndSetsIsCompleted()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "Test Description",
+                ImageUrl = "test_image.jpg"
+            };
+            var mockCourseService = new Mock<ICourseService>();
+            var mockCoinsService = new Mock<ICoinsService>();
+            var mockCourseVM = new Mock<CourseViewModel>();
 
-//        public ModuleViewModelTests()
-//        {
-//            mockCourseVM.Setup(vm => vm.FormattedTimeRemaining).Returns("00:10:00");
-//            mockCourseVM.Raise(vm => vm.PropertyChanged += null,
-//                new PropertyChangedEventArgs(nameof(ICourseViewModel.FormattedTimeRemaining)));
-//        }
+            mockCourseService.Setup(cs => cs.IsModuleCompleted(1)).Returns(true);
 
-//        [Fact]
-//        public void Constructor_InitializesPropertiesCorrectly()
-//        {
-//            mockCourseService.Setup(s => s.IsModuleCompleted(1)).Returns(false);
+            // Act
+            var viewModel = new ModuleViewModel(module, mockCourseVM.Object,
+                                                mockCourseService.Object,
+                                                mockCoinsService.Object);
 
-//            var vm = new ModuleViewModel(testModule, mockCourseVM.Object,
-//                                         mockCourseService.Object, mockCoinsService.Object);
+            // Assert
+            Assert.True(viewModel.IsCompleted);
+            mockCourseService.Verify(cs => cs.OpenModule(1), Times.Exactly(2)); // called twice in ctor
+        }
 
-//            Assert.Equal(testModule, vm.CurrentModule);
-//            Assert.True(vm.IsCompleted);
-//            Assert.Equal("00:10:00", vm.TimeSpent);
-//        }
+        [Fact]
+        public void HandleModuleImageClick_AddsCoinsAndRaisesCoinBalanceChanged()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "Test Description",
+                ImageUrl = "test_image.jpg"
+            };
+            var mockCourseService = new Mock<ICourseService>();
+            var mockCoinsService = new Mock<ICoinsService>();
+            var mockCourseVM = new Mock<CourseViewModel>();
 
-//        [Fact]
-//        public void ExecuteCompleteModule_SetsIsCompletedToTrue()
-//        {
-//            mockCourseService.Setup(s => s.IsModuleCompleted(1)).Returns(false);
+            mockCourseService.Setup(cs => cs.IsModuleCompleted(It.IsAny<int>())).Returns(false);
+            mockCourseService.Setup(cs => cs.ClickModuleImage(1)).Returns(true);
+            var viewModel = new ModuleViewModel(module, mockCourseVM.Object,
+                                                mockCourseService.Object,
+                                                mockCoinsService.Object);
 
-//            var vm = new ModuleViewModel(testModule, mockCourseVM.Object,
-//                                         mockCourseService.Object, mockCoinsService.Object);
+            bool coinChanged = false;
+            viewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(viewModel.CoinBalance))
+                    coinChanged = true;
+            };
 
-//            mockCourseVM.Setup(vm => vm.MarkModuleAsCompletedAndCheckRewards(1));
+            // Act
+            viewModel.HandleModuleImageClick(null);
 
-//            vm.CompleteModuleCommand.Execute(null);
+            // Assert
+            Assert.True(coinChanged);
+        }
 
-//            Assert.True(vm.IsCompleted);
-//        }
+        [Fact]
+        public void ExecuteCompleteModule_SetsIsCompleted_AndNotifies()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "Test Description",
+                ImageUrl = "test_image.jpg"
+            };
 
-//        [Fact]
-//        public void HandleModuleImageClick_UpdatesCoinBalance()
-//        {
-//            mockCourseService.Setup(s => s.ClickModuleImage(1)).Returns(true);
-//            mockCoinsService.Setup(c => c.GetCoinBalance(It.IsAny<int>())).Returns(100);
+            var mockCourseService = new Mock<ICourseService>();
+            var mockCoinsService = new Mock<ICoinsService>();
+            var mockCourseVM = new Mock<ICourseViewModel>();
 
-//            var vm = new ModuleViewModel(testModule, mockCourseVM.Object,
-//                                         mockCourseService.Object, mockCoinsService.Object);
+            mockCourseService.Setup(cs => cs.IsModuleCompleted(It.IsAny<int>())).Returns(false);
 
-//            bool coinBalanceChanged = false;
-//            vm.PropertyChanged += (s, e) =>
-//            {
-//                if (e.PropertyName == nameof(vm.CoinBalance))
-//                    coinBalanceChanged = true;
-//            };
+            var viewModel = new ModuleViewModel(module, mockCourseVM.Object,
+                                                mockCourseService.Object,
+                                                mockCoinsService.Object);
 
-//            vm.HandleModuleImageClick(null);
+            bool isCompletedChanged = false;
+            viewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(viewModel.IsCompleted))
+                    isCompletedChanged = true;
+            };
 
-//            Assert.False(coinBalanceChanged);
-//        }
+            // Act
+            viewModel.CompleteModuleCommand.Execute(null);
 
-//        [Fact]
-//        public void CoinBalance_ReturnsCorrectValue()
-//        {
-//            mockCoinsService.Setup(c => c.GetCoinBalance(0)).Returns(42);
+            // Assert
+            Assert.True(viewModel.IsCompleted);
+            Assert.True(isCompletedChanged);
+            mockCourseVM.Verify(vm => vm.MarkModuleAsCompletedAndCheckRewards(1), Times.Once);
+            mockCourseVM.Verify(vm => vm.RefreshCourseModulesDisplay(), Times.Once);
+        }
 
-//            var vm = new ModuleViewModel(testModule, mockCourseVM.Object,
-//                                         mockCourseService.Object, mockCoinsService.Object);
+        [Fact]
+        public void CoinBalance_GetsValueFromCoinsService()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "Test Description",
+                ImageUrl = "test_image.jpg"
+            };
 
-//            Assert.Equal(562, vm.CoinBalance);
-//        }
-//    }
-//}
+            var mockCourseService = new Mock<ICourseService>();
+            var mockCoinsService = new Mock<ICoinsService>();
+            var mockCourseVM = new Mock<CourseViewModel>();
+
+            // Setup the mock correctly - use the interface method that will actually be called
+            mockCoinsService.Setup(cs => cs.GetCoinBalance(0)).Returns(123);
+            var mockService = mockCoinsService.Object;
+            var viewModel = new ModuleViewModel(
+                module,
+                mockCourseVM.Object,
+                mockCourseService.Object,  // Use the interface, don't cast
+                mockCoinsService.Object   // Use the interface, don't cast
+            );
+
+            // Act
+            var balance = viewModel.CoinBalance;
+            Console.WriteLine($"Actual balance: {balance}");
+
+            // Assert
+            Assert.Equal(123, balance);
+            mockCoinsService.Verify(cs => cs.GetCoinBalance(0), Times.Once);
+        }
+
+        [Fact]
+        public void TimeSpent_ReturnsFormattedTimeFromCourseViewModel()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "Test Description",
+                ImageUrl = "test_image.jpg"
+            };
+            var mockCourseService = new Mock<ICourseService>();
+            var mockCoinsService = new Mock<ICoinsService>();
+            var mockCourseVM = new Mock<ICourseViewModel>();
+            mockCourseVM.Setup(vm => vm.FormattedTimeRemaining).Returns("58 min 23s");
+
+            var viewModel = new ModuleViewModel(module, mockCourseVM.Object,
+                mockCourseService.Object, mockCoinsService.Object);
+
+            // Act
+            var timeSpent = viewModel.TimeSpent;
+
+            // Assert
+            Assert.Equal("58 min 23s", timeSpent);
+        }
+        [Fact]
+        public void ExecuteModuleImageClick_TriggersCoinBalanceAndRefresh()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "Test Description",
+                ImageUrl = "test_image.jpg"
+            };
+            var mockCourseService = new Mock<ICourseService>();
+            var mockCoinsService = new Mock<ICoinsService>();
+            var mockCourseVM = new Mock<ICourseViewModel>();
+
+            mockCourseService.Setup(cs => cs.IsModuleCompleted(It.IsAny<int>())).Returns(false);
+            mockCourseService.Setup(cs => cs.ClickModuleImage(module.ModuleId)).Returns(true);
+
+            var viewModel = new ModuleViewModel(module, mockCourseVM.Object,
+                mockCourseService.Object, mockCoinsService.Object);
+
+            bool coinChanged = false;
+            viewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(viewModel.CoinBalance))
+                    coinChanged = true;
+            };
+
+            // Act
+            viewModel.ExecuteModuleImageClick(null);
+
+            // Assert
+            Assert.True(coinChanged);
+            mockCourseVM.Verify(vm => vm.RefreshCourseModulesDisplay(), Times.Once);
+        }
+        [Fact]
+        public void CanCompleteModule_ReturnsFalse_WhenIsCompletedIsTrue()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "Test Description",
+                ImageUrl = "test_image.jpg"
+            };
+            var mockCourseService = new Mock<ICourseService>();
+            mockCourseService.Setup(cs => cs.IsModuleCompleted(1)).Returns(true);
+
+            var viewModel = new ModuleViewModel(module, new Mock<CourseViewModel>().Object,
+                mockCourseService.Object, new Mock<ICoinsService>().Object);
+
+            // Act
+            var canComplete = viewModel.CompleteModuleCommand.CanExecute(null);
+
+            // Assert
+            Assert.False(canComplete);
+        }
+
+    }
+}
