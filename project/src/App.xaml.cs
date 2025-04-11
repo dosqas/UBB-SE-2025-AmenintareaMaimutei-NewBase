@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace CourseApp
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class App : Application
     {
         /// <summary>

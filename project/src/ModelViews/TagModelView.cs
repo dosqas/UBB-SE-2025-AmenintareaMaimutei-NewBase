@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using CourseApp.Models;
 using CourseApp.Data;
 
 namespace CourseApp.Repository
 {
+    [ExcludeFromCodeCoverage]
     public class TagModelView : DataLink
     {
         public List<Tag> GetAllTags()

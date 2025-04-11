@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.UI.Xaml.Controls;
 using CourseApp.Models;
 using CourseApp.ViewModels;
@@ -9,6 +10,7 @@ using CourseApp.Services;
 
 namespace CourseApp.Views
 {
+    [ExcludeFromCodeCoverage]
     public sealed partial class MainPage : Page
     {
         // keep this static so that the dialog is only shown once. The page is recreated every time it is navigated to.

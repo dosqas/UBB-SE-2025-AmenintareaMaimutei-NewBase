@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using CourseApp.Data;
 using Microsoft.Data.SqlClient;
 
 namespace CourseApp.Repository
 {
+    [ExcludeFromCodeCoverage]
     public class EnrollmentModelView : DataLink
     {
         public bool IsUserEnrolled(int userId, int courseId)

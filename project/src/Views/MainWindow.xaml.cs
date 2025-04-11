@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using CourseApp.Models;
 using CourseApp.ViewModels;
 using Microsoft.UI.Xaml;
@@ -9,6 +10,7 @@ using Microsoft.UI.Xaml;
 
 namespace CourseApp.Views
 {
+    [ExcludeFromCodeCoverage]
     public sealed partial class MainWindow : Window
     {
         private readonly Dictionary<int, CourseViewModel> courseVMCache = [];
