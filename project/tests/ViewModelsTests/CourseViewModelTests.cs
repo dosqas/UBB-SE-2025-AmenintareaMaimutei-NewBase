@@ -8,6 +8,7 @@
     using CourseApp.Services;
     using CourseApp.Services.Helpers;
     using CourseApp.ViewModels;
+    using CourseApp.ViewModels.Helpers;
     using Moq;
     using Xunit;
 
@@ -23,6 +24,7 @@
         private readonly Mock<ICoinsService> mockCoinsService;
         private readonly DispatcherTimerService mockCourseTimer;
         private readonly DispatcherTimerService mockNotificationTimer;
+        private readonly Mock<INotificationHelper> mockNotificationHelper;
         private readonly Course testCourse;
         private readonly CourseViewModel viewModel;
 
@@ -41,7 +43,6 @@
 
             mockCourseTimer = new DispatcherTimerService(mockCourseTimerInterface.Object);
             mockNotificationTimer = new DispatcherTimerService(mockNotificationTimerInterface.Object);
-
 
             testCourse = new Course
             {
@@ -64,6 +65,8 @@
                 mockCoinsService.Object,
                 mockCourseTimer,
                 mockNotificationTimer);
+
+            mockNotificationHelper = new Mock<INotificationHelper>();
         }
 
         private void ConfigureDefaultMocks()
@@ -142,14 +145,14 @@
         public void EnrollCommand_ExecutesSuccessfully()
         {
             // Arrange
-            mockCoinsService.Setup(x => x.TrySpendingCoins(1, 100)).Returns(true);
+            mockCoinsService.Setup(x => x.TrySpendingCoins(0, 100)).Returns(true);
             mockCourseService.Setup(x => x.EnrollInCourse(1)).Returns(true);
 
             // Act
             viewModel.EnrollCommand.Execute(null);
 
             // Assert
-            mockCoinsService.Verify(x => x.TrySpendingCoins(1, 100), Times.Once);
+            mockCoinsService.Verify(x => x.TrySpendingCoins(0, 100), Times.Once);
             mockCourseService.Verify(x => x.EnrollInCourse(1), Times.Once);
             Assert.True(viewModel.IsEnrolled);
         }
@@ -207,7 +210,7 @@
                 ImageUrl = "bonus-module.jpg",
             };
 
-            mockCoinsService.Setup(x => x.TrySpendingCoins(1, 50)).Returns(true);
+            mockCoinsService.Setup(x => x.TrySpendingCoins(0, 50)).Returns(true);
             mockCourseService.Setup(x => x.BuyBonusModule(1, 1)).Returns(true);
 
             // Act
@@ -269,6 +272,121 @@
             typeof(CourseViewModel)
                 .GetField(fieldName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 .SetValue(viewModel, value);
+        }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_ThrowsArgumentNullException_WhenModuleIsNull()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => viewModel.AttemptBonusModulePurchase(null));
+        }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_ReturnsEarly_WhenModuleIsCompleted()
+        {
+            // Arrange
+            var completedModule = new CourseApp.Models.Module
+            {
+                ModuleId = 1,
+                IsBonus = true,
+                Cost = 50,
+                Title = "Module Title",
+                Description = "Module Description",
+                ImageUrl = "module.jpg",
+            };
+            mockCourseService.Setup(service => service.IsModuleCompleted(completedModule.ModuleId)).Returns(true);
+            mockNotificationHelper.Setup(helper => helper.ShowTemporaryNotification(It.IsAny<string>())).Verifiable();
+
+            // Act
+            viewModel.AttemptBonusModulePurchase(completedModule);
+
+            // Assert
+            mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+            mockCourseService.Verify(service => service.BuyBonusModule(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+            mockNotificationHelper.Verify(helper => helper.ShowTemporaryNotification("You do not have enough coins to buy this module."), Times.Never);
+        }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_ShowsPurchaseFailedNotification_WhenNotEnoughCoins()
+        {
+            // Arrange
+            var module = new CourseApp.Models.Module
+            {
+                ModuleId = 3,
+                IsBonus = true,
+                Cost = 200,
+                Title = "Module Title",
+                Description = "Module Description",
+                ImageUrl = "module.jpg",
+            };
+
+            // Mock dependencies
+            mockCoinsService.Setup(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost)).Returns(false); // Simulate insufficient coins
+            mockCourseService.Setup(service => service.IsModuleCompleted(It.IsAny<int>())).Returns(false); // Simulate module not completed
+            mockNotificationHelper.Setup(helper => helper.ShowTemporaryNotification(It.IsAny<string>())).Verifiable(); // Setup mock for ShowTemporaryNotification
+
+            // Act
+            viewModel.AttemptBonusModulePurchase(module);
+
+            // Debugging: Add assertions to make sure the method is actually executing as expected
+            mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost), Times.Once);
+
+            // Assert
+            mockNotificationHelper.Verify(helper => helper.ShowTemporaryNotification("You do not have enough coins to buy this module."), Times.Once);
+        }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_SuccessfulPurchase_UpdatesStatusAndShowsNotification()
+        {
+            // Arrange
+            var module = new CourseApp.Models.Module
+            {
+                ModuleId = 3,
+                IsBonus = true,
+                Cost = 200,
+                Title = "Module Title",
+                Description = "Module Description",
+                ImageUrl = "module.jpg",
+            };
+            mockCoinsService.Setup(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost)).Returns(true);
+            mockCourseService.Setup(service => service.BuyBonusModule(module.ModuleId, testCourse.CourseId)).Returns(true);
+            mockNotificationHelper.Setup(helper => helper.ShowTemporaryNotification(It.IsAny<string>())).Verifiable();
+
+            // Act
+            viewModel.AttemptBonusModulePurchase(module);
+
+            // Assert
+            mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost), Times.Once);
+            mockCourseService.Verify(service => service.BuyBonusModule(module.ModuleId, testCourse.CourseId), Times.Once);
+            mockCourseService.Verify(service => service.OpenModule(module.ModuleId), Times.Once);
+            mockNotificationHelper.Verify(helper => 
+            helper.ShowTemporaryNotification($"Congratulations! You have purchased bonus module {module.Title}, {module.Cost} coins have been deducted from your balance."), Times.Once);
+        }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_FailedPurchase_ShowsPurchaseFailedNotification()
+        {
+            // Arrange
+            var module = new CourseApp.Models.Module
+            {
+                ModuleId = 3,
+                IsBonus = true,
+                Cost = 50,
+                Title = "Module Title",
+                Description = "Module Description",
+                ImageUrl = "module.jpg",
+            };
+            mockCoinsService.Setup(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost)).Returns(true);
+            mockCourseService.Setup(service => service.BuyBonusModule(module.ModuleId, testCourse.CourseId)).Returns(false);
+            mockNotificationHelper.Setup(helper => helper.ShowTemporaryNotification(It.IsAny<string>())).Verifiable();
+
+            // Act
+            viewModel.AttemptBonusModulePurchase(module);
+
+            // Assert
+            mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost), Times.Once);
+            mockCourseService.Verify(service => service.BuyBonusModule(module.ModuleId, testCourse.CourseId), Times.Once);
+            mockNotificationHelper.Verify(helper => helper.ShowTemporaryNotification("You do not have enough coins to buy this module."), Times.Once);
         }
     }
 }

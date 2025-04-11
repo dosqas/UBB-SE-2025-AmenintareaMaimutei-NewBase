@@ -9,10 +9,10 @@
     /// Handles displaying notifications for a specified duration and automatically hiding them.
     /// </summary>
     /// <remarks>
-    /// This class implements IDisposable to properly clean up timer event subscriptions.
+    /// This class implements INotificationHelper to aid testing and IDisposable to properly clean up timer event subscriptions.
     /// Notifications are displayed for the duration specified in <see cref="CourseViewModel.NotificationDisplayDurationInSeconds"/>.
     /// </remarks>
-    internal partial class NotificationHelper : IDisposable
+    internal partial class NotificationHelper : INotificationHelper, IDisposable
     {
         #region Fields
 
