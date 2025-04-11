@@ -50,7 +50,7 @@ Method-level exclusion is supported and used, and it follows the same rationale.
 | `Enrollment`                         | The Enrollment class is a simple data model representing user course enrollments and doesn't contain business logic, so it doesn't require unit tests at this stage.|
 | `CourseCompletion` 				   | The CourseCompletion class is a simple data model representing course completion status and doesn't contain business logic, so it doesn't require unit tests at this stage.|
 | `User`							   | The User class is a simple data model representing user information and doesn't contain business logic, so it doesn't require unit tests at this stage.|
-## List of Excluded 
+## List of Excluded Methods
 
 | Method Name                             | Reason for Exclusion                                                                                   |
 |-----------------------------------------|--------------------------------------------------------------------------------------------------------|

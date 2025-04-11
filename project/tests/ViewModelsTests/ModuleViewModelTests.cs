@@ -268,6 +268,7 @@
             // Assert
             Assert.True(timeSpentChanged);
         }
+
         [Fact]
         public void ShortDescription_ShouldReturnShortenedDescription_WhenDescriptionIsLongerThan23Characters()
         {
