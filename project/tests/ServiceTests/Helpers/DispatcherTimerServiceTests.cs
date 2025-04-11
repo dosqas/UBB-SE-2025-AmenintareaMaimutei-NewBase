@@ -112,5 +112,22 @@
             // Assert - Verify timer stop
             this.mockTimer.Verify(t => t.Stop(), Times.Once);
         }
+
+        /// <summary>
+        /// Verifies that SimulateTick correctly triggers the Tick event.
+        /// </summary>
+        [Fact]
+        public void SimulateTick_ShouldTriggerTickEvent()
+        {
+            // Arrange
+            var eventTriggered = false;
+            this.timerService.Tick += (sender, args) => eventTriggered = true;
+
+            // Act
+            this.timerService.SimulateTick();  // Simulate the Tick event
+
+            // Assert
+            Assert.True(eventTriggered, "Tick event was not triggered by SimulateTick.");
+        }
     }
 }

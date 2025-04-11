@@ -59,6 +59,19 @@ namespace CourseApp.Services
         /// - Does not reset the <see cref="Interval"/> value.
         /// </remarks>
         void Stop();
+
+        /// <summary>
+        /// Manually triggers a timer tick event for testing purposes, bypassing the actual timer interval.
+        /// </summary>
+        /// <remarks>
+        /// **Purpose:**
+        /// - Enables deterministic testing of timer-dependent logic without waiting for real-time intervals.
+        /// - Useful for unit/integration tests to verify behavior when the timer elapses.
+        ///
+        /// **Testing Scenarios:**
+        /// - Verify side effects of timer ticks (e.g., UI updates, state changes).
+        /// </remarks>
+        void SimulateTick();
         #endregion
     }
 }

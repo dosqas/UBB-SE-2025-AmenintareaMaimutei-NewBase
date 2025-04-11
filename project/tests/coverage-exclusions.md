@@ -27,7 +27,7 @@ Method-level exclusion is supported and used, and it follows the same rationale.
 
 ## List of Excluded Classes
 
-| Class Name                            | Reason for Exclusion                                                                                   |
+| Class Name                           | Reason for Exclusion                                                                                   |
 |--------------------------------------|--------------------------------------------------------------------------------------------------------|
 | `RealDispatcherTimer`                | Wrapper around `DispatcherTimer` from UWP/WinUI which cannot be properly mocked or tested. This class is tightly coupled to the Windows Runtime (WinRT), and leads to COM exceptions during testing. It provides no additional logic beyond forwarding calls. |
 | `App`								   | The main entry point for the application. It is auto-generated and contains no logic that can be tested. |
@@ -52,9 +52,10 @@ Method-level exclusion is supported and used, and it follows the same rationale.
 | `User`							   | The User class is a simple data model representing user information and doesn't contain business logic, so it doesn't require unit tests at this stage.|
 ## List of Excluded Methods
 
-| Method Name                             | Reason for Exclusion                                                                                   |
-|-----------------------------------------|--------------------------------------------------------------------------------------------------------|
+| Method Name                              | Reason for Exclusion                                                                                   |
+|------------------------------------------|--------------------------------------------------------------------------------------------------------|
 | `InitializeTimersAndNotificationHelper`  | **Cannot test when timers are null in the constructor.** The method creates new instances of `DispatcherTimerService`, which contains a `RealDispatcherTimer`. Since `RealDispatcherTimer` wraps around a platform-specific `DispatcherTimer`, which we cannot mock due to its reliance on the Windows Runtime (WinRT), it leads to COM exceptions during testing. |
+| `DispatcherTimerService.InitializeTimer` | This method creates a `RealDispatcherTimer`, which contains a `DispatcherTimer` from UWP/WinUI. This timer cannot be mocked in tests due to its dependency on WinRT, making the null branch untestable. It contains no business logic.          |
 
 ---
 

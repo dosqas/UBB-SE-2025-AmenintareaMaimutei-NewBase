@@ -11,7 +11,7 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <Nullable>enable</Nullable>
-	<CodeAnalysisRuleSet>SE.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>../SE.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Views\CoursePage.xaml" />

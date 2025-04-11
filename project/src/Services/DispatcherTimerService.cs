@@ -1,6 +1,7 @@
 ﻿namespace CourseApp.Services
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using CourseApp.Services.Helpers;
 
     /// <summary>
@@ -22,7 +23,7 @@
         #region Fields
 
         /// <summary>The underlying timer implementation</summary>
-        private readonly IDispatcherTimer timer;
+        private IDispatcherTimer timer;
         #endregion
 
         #region Events
@@ -44,12 +45,18 @@
         /// </param>
         public DispatcherTimerService(IDispatcherTimer? timer = null)
         {
+            InitializeTimer(timer);
+
+            this.timer!.Tick += OnTimerTick!;
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void InitializeTimer(IDispatcherTimer? timer)
+        {
             this.timer = timer ?? new RealDispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(DefaultIntervalMilliseconds)
             };
-
-            this.timer.Tick += OnTimerTick!;
         }
         #endregion
 
@@ -88,6 +95,15 @@
         /// No more ticks will occur until Start is called again.
         /// </remarks>
         public void Stop() => timer.Stop();
+
+        /// <summary>
+        /// Simulates a tick. Used for testing purposes.
+        /// </summary>
+        public void SimulateTick()
+        {
+            // Manually raise the Tick event as if the timer fired
+            OnTimerTick(this, EventArgs.Empty);
+        }
         #endregion
 
         #region Private Methods
