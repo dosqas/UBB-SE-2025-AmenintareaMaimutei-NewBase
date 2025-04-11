@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Input;
 using CourseApp.Models;
@@ -35,7 +36,7 @@ namespace CourseApp.ViewModels
         #endregion
 
         #region Fields
-        private readonly IDispatcherTimerService? courseProgressTimer;
+        private IDispatcherTimerService? courseProgressTimer;
         private int totalSecondsSpentOnCourse;
         private int courseCompletionTimeLimitInSeconds;
         private string? formattedTimeRemaining;
@@ -44,7 +45,7 @@ namespace CourseApp.ViewModels
 
         private readonly ICourseService courseService;
         private readonly ICoinsService coinsService;
-        private readonly NotificationHelper? notificationHelper;
+        private INotificationHelper? notificationHelper;
 
         private string notificationMessageText = string.Empty;
         private bool shouldShowNotification = false;
@@ -179,22 +180,29 @@ namespace CourseApp.ViewModels
         /// <exception cref="ArgumentNullException">Thrown when course is null</exception>
         public CourseViewModel(Course course, ICourseService? courseService = null,
             ICoinsService? coinsService = null, IDispatcherTimerService? timerService = null,
-            IDispatcherTimerService? notificationTimerService = null)
+            IDispatcherTimerService? notificationTimerService = null, INotificationHelper? notificationHelper = null)
         {
             CurrentCourse = course ?? throw new ArgumentNullException(nameof(course));
             this.courseService = courseService ?? new CourseService();
             this.coinsService = coinsService ?? new CoinsService();
 
+            InitializeTimersAndNotificationHelper(timerService, notificationTimerService, notificationHelper);
+
+            InitializeProperties();
+            LoadInitialData();
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void InitializeTimersAndNotificationHelper(IDispatcherTimerService? timerService,
+            IDispatcherTimerService? notificationTimerService, INotificationHelper? notificationHelper)
+        {
             // Use separate timers for course progress and notifications
             courseProgressTimer = timerService ?? new DispatcherTimerService();
             var notificationTimer = notificationTimerService ?? new DispatcherTimerService();
 
-            notificationHelper = new NotificationHelper(this, notificationTimer);
+            this.notificationHelper = notificationHelper ?? new NotificationHelper(this, notificationTimer);
 
             courseProgressTimer.Tick += OnCourseTimerTick;
-
-            InitializeProperties();
-            LoadInitialData();
         }
 
         private void InitializeProperties()

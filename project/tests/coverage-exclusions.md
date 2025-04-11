@@ -45,7 +45,9 @@ Method-level exclusion is supported and used, and it follows the same rationale.
 | `UserWalletModelView` 			   | This class tightly couples SQL logic and database connections, making it unsuitable for unit testing. |
 ## List of Excluded Methods
 
-> *None listed individually at this time. All exclusions are at the class level.*
+| Method Name                             | Reason for Exclusion                                                                                   |
+|-----------------------------------------|--------------------------------------------------------------------------------------------------------|
+| `InitializeTimersAndNotificationHelper`  | **Cannot test when timers are null in the constructor.** The method creates new instances of `DispatcherTimerService`, which contains a `RealDispatcherTimer`. Since `RealDispatcherTimer` wraps around a platform-specific `DispatcherTimer`, which we cannot mock due to its reliance on the Windows Runtime (WinRT), it leads to COM exceptions during testing. |
 
 ---
 
