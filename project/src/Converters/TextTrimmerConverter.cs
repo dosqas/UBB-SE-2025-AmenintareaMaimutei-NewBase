@@ -11,10 +11,16 @@ namespace CourseApp.Converters
     /// A converter that trims a string to a specified length and adds ellipsis ("...") at the end.
     /// If no custom length is provided, the string is trimmed to a default length of 23 characters.
     /// </summary>
-    public partial class TextTrimmerConverter : IValueConverter
+    public partial class TextTrimmerConverter : IAppValueConverter
     {
         private const int DefaultTrimLength = 23;
         private const string Ellipsis = "...";
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+            => ConvertSafe(value, targetType, parameter, language);
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+            => ConvertBackSafe(value, targetType, parameter, language);
 
         /// <summary>
         /// Converts a string by trimming it to a specified length and adding an ellipsis ("...") if the string is too long.
@@ -24,7 +30,7 @@ namespace CourseApp.Converters
         /// <param name="parameter">Optional parameter specifying a custom trim length as a string (can be null).</param>
         /// <param name="language">The language for localization.</param>
         /// <returns>A trimmed string with ellipsis if it exceeds the trim length; otherwise, the original string.</returns>
-        public object Convert(object value, Type targetType, object parameter, string language)
+        public object ConvertSafe(object value, Type targetType, object parameter, string language)
         {
             // Ensure the value is a string before processing
             if (value is string inputText)
@@ -53,7 +59,7 @@ namespace CourseApp.Converters
         /// <param name="parameter">Any optional parameters passed (not used in this case).</param>
         /// <param name="language">The language for localization (not used in this case).</param>
         /// <returns>Throws NotImplementedException because reverse conversion is not needed.</returns>
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        public object ConvertBackSafe(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException("Reverse conversion is not supported.");
         }

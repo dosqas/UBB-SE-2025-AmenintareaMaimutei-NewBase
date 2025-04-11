@@ -24,7 +24,105 @@
         }
 
         /// <summary>
-        /// Tests that the Convert method trims the string when its length exceeds the default length.
+        /// Tests that the ConvertSafe method trims the string when its length exceeds the default length.
+        /// </summary>
+        [Fact]
+        public void ConvertSafeShouldTrimStringWhenLengthExceedsDefault()
+        {
+            // Arrange
+            var input = "This is a test string that is too long.";
+            var expected = "This is a test string t...";
+
+            // Act
+            var result = this.testConverter.ConvertSafe(input, typeof(string), null!, null!);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        /// <summary>
+        /// Tests that the ConvertSafe method does not trim the string when its length is within the default length.
+        /// </summary>
+        [Fact]
+        public void ConvertSafeShouldNotTrimStringWhenLengthIsWithinDefault()
+        {
+            // Arrange
+            var input = "Short string";
+            var expected = "Short string";
+
+            // Act
+            var result = this.testConverter.ConvertSafe(input, typeof(string), null!, null!);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        /// <summary>
+        /// Tests that the ConvertSafe method trims the string when its length exceeds a custom length.
+        /// </summary>
+        [Fact]
+        public void ConvertSafeShouldTrimStringWhenLengthExceedsCustomLength()
+        {
+            // Arrange
+            var input = "This is a test string that is too long.";
+            var expected = "This is a test st...";
+
+            // Act
+            var result = this.testConverter.ConvertSafe(input, typeof(string), "17", null!);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        /// <summary>
+        /// Tests that the ConvertSafe method does not trim the string when its length is within a custom length.
+        /// </summary>
+        [Fact]
+        public void ConvertSafeShouldNotTrimStringWhenLengthIsWithinCustomLength()
+        {
+            // Arrange
+            var input = "Short string";
+            var expected = "Short string";
+
+            // Act
+            var result = this.testConverter.ConvertSafe(input, typeof(string), "20", null!);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        /// <summary>
+        /// Tests that the ConvertSafe method returns the original value when the input is not a string.
+        /// </summary>
+        [Fact]
+        public void ConvertSafeShouldReturnOriginalValueWhenInputIsNotString()
+        {
+            // Arrange
+            var input = 12345;
+
+            // Act
+            var result = this.testConverter.ConvertSafe(input, typeof(string), null!, null!);
+
+            // Assert
+            Assert.Equal(input, result);
+        }
+
+        /// <summary>
+        /// Tests that the ConvertBackSafe method throws a NotImplementedException.
+        /// </summary>
+        [Fact]
+        public void ConvertBackSafeShouldThrowNotImplementedException()
+        {
+            // Arrange
+            var input = "Any string";
+
+            // Act & Assert
+            var exception = Assert.Throws<NotImplementedException>(() => this.testConverter.ConvertBackSafe(input, typeof(string), null!, null!));
+            Assert.Equal("Reverse conversion is not supported.", exception.Message);
+        }
+
+        /// <summary>
+        /// Tests that the ConvertSafe method trims the string when its length exceeds the default length.
         /// </summary>
         [Fact]
         public void ConvertShouldTrimStringWhenLengthExceedsDefault()
@@ -41,7 +139,7 @@
         }
 
         /// <summary>
-        /// Tests that the Convert method does not trim the string when its length is within the default length.
+        /// Tests that the ConvertSafe method does not trim the string when its length is within the default length.
         /// </summary>
         [Fact]
         public void ConvertShouldNotTrimStringWhenLengthIsWithinDefault()
@@ -58,7 +156,7 @@
         }
 
         /// <summary>
-        /// Tests that the Convert method trims the string when its length exceeds a custom length.
+        /// Tests that the ConvertSafe method trims the string when its length exceeds a custom length.
         /// </summary>
         [Fact]
         public void ConvertShouldTrimStringWhenLengthExceedsCustomLength()
@@ -75,7 +173,7 @@
         }
 
         /// <summary>
-        /// Tests that the Convert method does not trim the string when its length is within a custom length.
+        /// Tests that the ConvertSafe method does not trim the string when its length is within a custom length.
         /// </summary>
         [Fact]
         public void ConvertShouldNotTrimStringWhenLengthIsWithinCustomLength()
@@ -92,7 +190,7 @@
         }
 
         /// <summary>
-        /// Tests that the Convert method returns the original value when the input is not a string.
+        /// Tests that the ConvertSafe method returns the original value when the input is not a string.
         /// </summary>
         [Fact]
         public void ConvertShouldReturnOriginalValueWhenInputIsNotString()
@@ -108,7 +206,7 @@
         }
 
         /// <summary>
-        /// Tests that the ConvertBack method throws a NotImplementedException.
+        /// Tests that the ConvertBackSafe method throws a NotImplementedException.
         /// </summary>
         [Fact]
         public void ConvertBackShouldThrowNotImplementedException()
@@ -120,5 +218,8 @@
             var exception = Assert.Throws<NotImplementedException>(() => this.testConverter.ConvertBack(input, typeof(string), null!, null!));
             Assert.Equal("Reverse conversion is not supported.", exception.Message);
         }
+
+        //aici
+
     }
 }

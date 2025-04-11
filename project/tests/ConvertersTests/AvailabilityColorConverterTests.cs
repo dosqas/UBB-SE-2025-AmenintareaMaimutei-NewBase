@@ -6,13 +6,34 @@
     using Windows.UI;
     using Xunit;
 
+    /// <summary>
+    /// Unit tests for the <see cref="AvailabilityColorConverter"/> class.
+    /// </summary>
     public class AvailabilityColorConverterTests
     {
         private readonly AvailabilityColorConverter testConverter;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AvailabilityColorConverterTests"/> class.
+        /// </summary>
         public AvailabilityColorConverterTests()
         {
             this.testConverter = new AvailabilityColorConverter();
+        }
+
+        /// <summary>
+        /// Tests that the ConvertBackSafe method throws a NotImplementedException.
+        /// </summary>
+        [Fact]
+        public void ConvertBackSafeShouldThrowNotImplementedException()
+        {
+            // Arrange
+            var input = true;
+
+            // Act & Assert
+            var exception = Assert.Throws<NotImplementedException>(() =>
+                this.testConverter.ConvertBackSafe(input, typeof(bool), null!, null!));
+            Assert.Equal("Reverse conversion is not supported", exception.Message);
         }
 
         /// <summary>
