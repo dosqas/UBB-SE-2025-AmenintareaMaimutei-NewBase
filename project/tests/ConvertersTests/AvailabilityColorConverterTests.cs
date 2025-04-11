@@ -5,6 +5,7 @@
 namespace Tests.ConvertersTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using CourseApp.Converters;
     using Microsoft.UI.Xaml.Media;
     using Windows.UI;
@@ -13,6 +14,7 @@ namespace Tests.ConvertersTests
     /// <summary>
     /// Unit tests for the <see cref="AvailabilityColorConverter"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class AvailabilityColorConverterTests
     {
         private readonly AvailabilityColorConverter testConverter;

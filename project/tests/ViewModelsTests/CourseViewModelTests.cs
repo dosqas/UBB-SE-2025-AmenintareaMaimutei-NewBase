@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using CourseApp.Models;
     using CourseApp.Services;
@@ -15,6 +16,7 @@
     /// Verifies course enrollment, module completion, timer functionality,
     /// and reward claiming behavior.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class CourseViewModelTests
     {
         private readonly Mock<ICourseService> mockCourseService;

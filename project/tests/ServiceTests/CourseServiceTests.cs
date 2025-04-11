@@ -6,6 +6,7 @@ namespace Tests.ServiceTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using CourseApp.Models;
     using CourseApp.Repository;
@@ -16,6 +17,7 @@ namespace Tests.ServiceTests
     /// <summary>
     /// <see cref="CourseServiceTests"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class CourseServiceTests
     {
         private const int UserId = 0;

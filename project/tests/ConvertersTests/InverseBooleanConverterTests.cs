@@ -9,12 +9,14 @@ namespace Tests.ConvertersTests
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Data;
     using Microsoft.UI.Xaml.Media;
+    using System.Diagnostics.CodeAnalysis;
     using Windows.UI;
     using Xunit;
 
     /// <summary>
     /// Unit tests for the <see cref="InverseBooleanConverter"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class InverseBooleanConverterTests
     {
         private readonly InverseBooleanConverter testConverter;

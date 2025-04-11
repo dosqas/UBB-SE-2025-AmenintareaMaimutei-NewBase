@@ -1,6 +1,7 @@
 ﻿namespace Tests.ServiceTests.Helpers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using CourseApp.Services;
     using CourseApp.Services.Helpers;
     using Moq;
@@ -11,6 +12,7 @@
     /// Verifies timer functionality including start/stop operations, interval setting,
     /// event propagation, and proper cleanup.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class DispatcherTimerServiceTests
     {
         private readonly Mock<IDispatcherTimer> mockTimer;

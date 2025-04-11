@@ -5,6 +5,7 @@
 namespace Tests.ViewModelsTests.Helpers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using CourseApp.Services;
     using CourseApp.ViewModels;
     using CourseApp.ViewModels.Helpers;
@@ -14,6 +15,7 @@ namespace Tests.ViewModelsTests.Helpers
     /// <summary>
     /// Contains unit tests for the <see cref="NotificationHelper"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class NotificationHelperTests
     {
         private readonly Mock<CourseViewModel> mockParentViewModel;

@@ -5,6 +5,7 @@
 namespace Tests.ServiceTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using CourseApp.Repository;
     using CourseApp.Services;
     using Moq;
@@ -13,6 +14,7 @@ namespace Tests.ServiceTests
     /// <summary>
     /// Contains unit tests for the <see cref="CoinsService"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class CoinsServiceTests
     {
         private readonly FakeCoinsRepository _fakeRepo;
