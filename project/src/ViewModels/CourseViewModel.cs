@@ -71,7 +71,7 @@ namespace CourseApp.ViewModels
         public int CoinBalance => coinsService.GetCoinBalance(0);
 
         /// <summary>Gets the tags associated with this course</summary>
-        public ObservableCollection<Tag> Tags => new (courseService.GetCourseTags(CurrentCourse.CourseId));
+        public ObservableCollection<Tag> Tags => [.. courseService.GetCourseTags(CurrentCourse.CourseId)];
 
         /// <summary>
         /// Gets or sets the formatted string representing time remaining in course

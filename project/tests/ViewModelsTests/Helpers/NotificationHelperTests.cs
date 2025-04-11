@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace Tests.ViewModelsTests
+namespace Tests.ViewModelsTests.Helpers
 {
     using System;
     using CourseApp.Services;

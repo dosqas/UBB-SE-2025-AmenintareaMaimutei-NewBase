@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace CourseApp.CoinsServiceTests
+namespace Tests.ServiceTests
 {
     using System;
     using CourseApp.Repository;
