@@ -8,6 +8,7 @@
     using CourseApp.Services;
     using CourseApp.Services.Helpers;
     using CourseApp.ViewModels;
+    using CourseApp.ViewModels.Helpers;
     using Moq;
     using Xunit;
 
@@ -23,6 +24,7 @@
         private readonly Mock<ICoinsService> mockCoinsService;
         private readonly DispatcherTimerService mockCourseTimer;
         private readonly DispatcherTimerService mockNotificationTimer;
+        private readonly Mock<INotificationHelper> mockNotificationHelper;
         private readonly Course testCourse;
         private readonly CourseViewModel viewModel;
 
@@ -42,6 +44,7 @@
             mockCourseTimer = new DispatcherTimerService(mockCourseTimerInterface.Object);
             mockNotificationTimer = new DispatcherTimerService(mockNotificationTimerInterface.Object);
 
+            mockNotificationHelper = new Mock<INotificationHelper>();
 
             testCourse = new Course
             {
@@ -63,7 +66,8 @@
                 mockCourseService.Object,
                 mockCoinsService.Object,
                 mockCourseTimer,
-                mockNotificationTimer);
+                mockNotificationTimer,
+                mockNotificationHelper.Object);
         }
 
         private void ConfigureDefaultMocks()
@@ -142,14 +146,14 @@
         public void EnrollCommand_ExecutesSuccessfully()
         {
             // Arrange
-            mockCoinsService.Setup(x => x.TrySpendingCoins(1, 100)).Returns(true);
+            mockCoinsService.Setup(x => x.TrySpendingCoins(0, 100)).Returns(true);
             mockCourseService.Setup(x => x.EnrollInCourse(1)).Returns(true);
 
             // Act
             viewModel.EnrollCommand.Execute(null);
 
             // Assert
-            mockCoinsService.Verify(x => x.TrySpendingCoins(1, 100), Times.Once);
+            mockCoinsService.Verify(x => x.TrySpendingCoins(0, 100), Times.Once);
             mockCourseService.Verify(x => x.EnrollInCourse(1), Times.Once);
             Assert.True(viewModel.IsEnrolled);
         }
@@ -207,15 +211,15 @@
                 ImageUrl = "bonus-module.jpg",
             };
 
-            mockCoinsService.Setup(x => x.TrySpendingCoins(1, 50)).Returns(true);
+            mockCoinsService.Setup(x => x.TrySpendingCoins(0, 50)).Returns(true);
             mockCourseService.Setup(x => x.BuyBonusModule(1, 1)).Returns(true);
+            mockNotificationHelper.Setup(helper => helper.ShowTemporaryNotification(It.IsAny<string>())).Verifiable();
 
             // Act
             viewModel.AttemptBonusModulePurchase(testModule);
 
             // Assert
-            Assert.Contains(testModule.Title, viewModel.NotificationMessage);
-            Assert.True(viewModel.ShowNotification);
+            mockNotificationHelper.Verify(helper => helper.ShowTemporaryNotification(It.Is<string>(msg => msg.Contains("Congratulations! You have purchased bonus module"))), Times.Once);  // Check if the correct message was passed
         }
 
         /// <summary>
@@ -270,5 +274,302 @@
                 .GetField(fieldName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 .SetValue(viewModel, value);
         }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_ThrowsArgumentNullException_WhenModuleIsNull()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => viewModel.AttemptBonusModulePurchase(null));
+        }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_ReturnsEarly_WhenModuleIsCompleted()
+        {
+            // Arrange
+            var completedModule = new CourseApp.Models.Module
+            {
+                ModuleId = 1,
+                IsBonus = true,
+                Cost = 50,
+                Title = "Module Title",
+                Description = "Module Description",
+                ImageUrl = "module.jpg",
+            };
+            mockCourseService.Setup(service => service.IsModuleCompleted(completedModule.ModuleId)).Returns(true);
+            mockNotificationHelper.Setup(helper => helper.ShowTemporaryNotification(It.IsAny<string>())).Verifiable();
+
+            // Act
+            viewModel.AttemptBonusModulePurchase(completedModule);
+
+            // Assert
+            mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+            mockCourseService.Verify(service => service.BuyBonusModule(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+            mockNotificationHelper.Verify(helper => helper.ShowTemporaryNotification("You do not have enough coins to buy this module."), Times.Never);
+        }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_ShowsPurchaseFailedNotification_WhenNotEnoughCoins()
+        {
+            // Arrange
+            var module = new CourseApp.Models.Module
+            {
+                ModuleId = 3,
+                IsBonus = true,
+                Cost = 200,
+                Title = "Module Title",
+                Description = "Module Description",
+                ImageUrl = "module.jpg",
+            };
+
+            // Mock dependencies
+            mockCoinsService.Setup(service => service.TrySpendingCoins(0, module.Cost)).Returns(false); // Simulate insufficient coins
+            mockCourseService.Setup(service => service.IsModuleCompleted(It.IsAny<int>())).Returns(false); // Simulate module not completed
+            mockNotificationHelper.Setup(helper => helper.ShowTemporaryNotification(It.IsAny<string>())).Verifiable(); // Setup mock for ShowTemporaryNotification
+
+            // Act
+            viewModel.AttemptBonusModulePurchase(module);
+
+            // Verify that the method is invoked once
+            mockCoinsService.Verify(service => service.TrySpendingCoins(0, module.Cost), Times.Once);
+
+            // Assert: Verify the notification helper is called with the expected message
+            mockNotificationHelper.Verify(helper => helper.ShowTemporaryNotification("You do not have enough coins to buy this module."), Times.Once);
+        }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_SuccessfulPurchase_UpdatesStatusAndShowsNotification()
+        {
+            // Arrange
+            var module = new CourseApp.Models.Module
+            {
+                ModuleId = 3,
+                IsBonus = true,
+                Cost = 200,
+                Title = "Module Title",
+                Description = "Module Description",
+                ImageUrl = "module.jpg",
+            };
+            mockCoinsService.Setup(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost)).Returns(true);
+            mockCourseService.Setup(service => service.BuyBonusModule(module.ModuleId, testCourse.CourseId)).Returns(true);
+            mockNotificationHelper.Setup(helper => helper.ShowTemporaryNotification(It.IsAny<string>())).Verifiable();
+
+            // Act
+            viewModel.AttemptBonusModulePurchase(module);
+
+            // Assert
+            mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost), Times.Once);
+            mockCourseService.Verify(service => service.BuyBonusModule(module.ModuleId, testCourse.CourseId), Times.Once);
+            mockCourseService.Verify(service => service.OpenModule(module.ModuleId), Times.Once);
+            mockNotificationHelper.Verify(helper =>
+            helper.ShowTemporaryNotification($"Congratulations! You have purchased bonus module {module.Title}, {module.Cost} coins have been deducted from your balance."), Times.Once);
+        }
+
+        [Fact]
+        public void AttemptBonusModulePurchase_FailedPurchase_ShowsPurchaseFailedNotification()
+        {
+            // Arrange
+            var module = new CourseApp.Models.Module
+            {
+                ModuleId = 3,
+                IsBonus = true,
+                Cost = 50,
+                Title = "Module Title",
+                Description = "Module Description",
+                ImageUrl = "module.jpg",
+            };
+            mockCoinsService.Setup(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost)).Returns(true);
+            mockCourseService.Setup(service => service.BuyBonusModule(module.ModuleId, testCourse.CourseId)).Returns(false);
+            mockNotificationHelper.Setup(helper => helper.ShowTemporaryNotification(It.IsAny<string>())).Verifiable();
+
+            // Act
+            viewModel.AttemptBonusModulePurchase(module);
+
+            // Assert
+            mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost), Times.Once);
+            mockCourseService.Verify(service => service.BuyBonusModule(module.ModuleId, testCourse.CourseId), Times.Once);
+            mockNotificationHelper.Verify(helper => helper.ShowTemporaryNotification("You do not have enough coins to buy this module."), Times.Once);
+        }
+
+        private void SetPrivateProperty(object obj, string propertyName, object value)
+        {
+            var propertyInfo = obj.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
+            if (propertyInfo != null)
+            {
+                propertyInfo.SetValue(obj, value);
+            }
+            else
+            {
+                var fieldInfo = obj.GetType().GetField(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
+                fieldInfo?.SetValue(obj, value);
+            }
+        }
+
+        [Fact]
+        public void NotificationMessage_SetValue_RaisesPropertyChanged()
+        {
+            // Arrange
+            var wasCalled = false;
+            viewModel.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(viewModel.NotificationMessage))
+                    wasCalled = true;
+            };
+
+            // Act
+            viewModel.NotificationMessage = "Test Message";
+
+            // Assert
+            Assert.Equal("Test Message", viewModel.NotificationMessage);
+            Assert.True(wasCalled);
+        }
+
+        [Fact]
+        public void ShowNotification_SetValue_RaisesPropertyChanged()
+        {
+            // Arrange
+            var wasCalled = false;
+            viewModel.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(viewModel.ShowNotification))
+                    wasCalled = true;
+            };
+
+            // Act
+            viewModel.ShowNotification = true;
+
+            // Assert
+            Assert.True(viewModel.ShowNotification);
+            Assert.True(wasCalled);
+        }
+
+        [Fact]
+        public void Tags_ReturnsTagsFromService()
+        {
+            // Arrange
+            var expectedTags = new List<Tag>
+            {
+                new Tag { Name = "Tag1" },
+                new Tag { Name = "Tag2" }
+            };
+            mockCourseService.Setup(s => s.GetCourseTags(testCourse.CourseId)).Returns(expectedTags);
+
+            // Act
+            var tags = viewModel.Tags;
+
+            // Assert
+            Assert.Equal(2, tags.Count);
+            Assert.Equal("Tag1", tags[0].Name);
+            Assert.Equal("Tag2", tags[1].Name);
+        }
+
+        [Fact]
+        public void CoinVisibility_ReturnsTrue_WhenCourseIsPremiumAndUserNotEnrolled()
+        {
+            // Arrange
+            testCourse.IsPremium = true;
+            mockCourseService.Setup(s => s.IsUserEnrolled(testCourse.CourseId)).Returns(false);
+
+            var vm = new CourseViewModel(
+                testCourse,
+                mockCourseService.Object,
+                mockCoinsService.Object,
+                mockCourseTimer,
+                mockNotificationTimer,
+                mockNotificationHelper.Object);
+
+            // Act
+            var visible = vm.CoinVisibility;
+
+            // Assert
+            Assert.True(visible);
+        }
+
+        [Fact]
+        public void CoinVisibility_ReturnsFalse_WhenUserIsEnrolled()
+        {
+            // Arrange
+            testCourse.IsPremium = true;
+            mockCourseService.Setup(s => s.IsUserEnrolled(testCourse.CourseId)).Returns(true);
+
+            var vm = new CourseViewModel(
+                testCourse,
+                mockCourseService.Object,
+                mockCoinsService.Object,
+                mockCourseTimer,
+                mockNotificationTimer,
+                mockNotificationHelper.Object);
+
+            // Act
+            var visible = vm.CoinVisibility;
+
+            // Assert
+            Assert.False(visible);
+        }
+
+        [Fact]
+        public void CoinVisibility_ReturnsFalse_WhenCourseIsNotPremium()
+        {
+            // Arrange
+            testCourse.IsPremium = false;
+            mockCourseService.Setup(s => s.IsUserEnrolled(testCourse.CourseId)).Returns(false);
+
+            var vm = new CourseViewModel(
+                testCourse,
+                mockCourseService.Object,
+                mockCoinsService.Object,
+                mockCourseTimer,
+                mockNotificationTimer,
+                mockNotificationHelper.Object);
+
+            // Act
+            var visible = vm.CoinVisibility;
+
+            // Assert
+            Assert.False(visible);
+        }
+
+
+        [Fact]
+        public void Constructor_WithNullServices_InitializesDefaults()
+        {
+            // Arrange
+            var course = new Course
+            {
+                CourseId = 42,
+                Title = "Sample Course",
+                Description = "Sample Description",
+                ImageUrl = "sample.jpg",
+                Difficulty = "Intermediate",
+                IsPremium = false,
+                TimeToComplete = 1800
+            };
+
+            // Act
+            var exception = Record.Exception(() =>
+            {
+                var vm = new CourseViewModel(
+                    course,
+                    null, // courseService
+                    null, // coinsService
+                    mockCourseTimer, // can't be null since we cannot mock a DispatcherTimer (which it default to if null)
+                    mockNotificationTimer, // can't be null since we cannot mock a DispatcherTimer (which it default to if null)
+                    null // notificationHelper
+                );
+            });
+
+            // Assert
+            Assert.Null(exception); // Constructor should not throw
+        }
+
+        [Fact]
+        public void Constructor_ThrowsArgumentNullException_WhenCourseIsNull()
+        {
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentNullException>(() =>
+                new CourseViewModel(null!)); // using null-forgiving operator to suppress warning
+
+            Assert.Equal("course", exception.ParamName);
+        }
+
     }
 }
