@@ -192,6 +192,13 @@ namespace CourseApp.ViewModels
             LoadInitialData();
         }
 
+        /// <summary>
+        /// Initializes the timers and notification helper for the course progress and notifications.
+        /// If any of the parameters are null, default implementations are used.
+        /// </summary>
+        /// <param name="timerService">Optional dispatcher timer service for course progress tracking.</param>
+        /// <param name="notificationTimerService">Optional dispatcher timer service for notifications.</param>
+        /// <param name="notificationHelper">Optional notification helper instance.</param>
         [ExcludeFromCodeCoverage]
         private void InitializeTimersAndNotificationHelper(IDispatcherTimerService? timerService,
             IDispatcherTimerService? notificationTimerService, INotificationHelper? notificationHelper)
@@ -205,12 +212,19 @@ namespace CourseApp.ViewModels
             courseProgressTimer.Tick += OnCourseTimerTick;
         }
 
+        /// <summary>
+        /// Initializes key ViewModel properties such as enrollment status and enrollment command.
+        /// </summary>
         private void InitializeProperties()
         {
             IsEnrolled = courseService.IsUserEnrolled(CurrentCourse.CourseId);
             EnrollCommand = new RelayCommand(EnrollUserInCourse, CanUserEnrollInCourse);
         }
 
+        /// <summary>
+        /// Loads the initial course-related data such as time spent, modules completed,
+        /// time remaining, and initializes the course module structure.
+        /// </summary>
         private void LoadInitialData()
         {
             totalSecondsSpentOnCourse = courseService.GetTimeSpent(CurrentCourse.CourseId);
@@ -227,6 +241,13 @@ namespace CourseApp.ViewModels
         #endregion
 
         #region Timer Methods
+
+        /// <summary>
+        /// Handles the Tick event of the course progress timer, updating the total time spent
+        /// and refreshing the time display.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">An <see cref="EventArgs"/> object that contains no event data.</param>
         private void OnCourseTimerTick(object? sender, EventArgs e)
         {
             totalSecondsSpentOnCourse++;

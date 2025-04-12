@@ -17,13 +17,13 @@ namespace Tests.ServiceTests
     [ExcludeFromCodeCoverage]
     public class CoinsServiceTests
     {
-        private readonly FakeCoinsRepository _fakeRepo;
-        private readonly CoinsService _coinsService;
+        private readonly FakeCoinsRepository fakeRepo;
+        private readonly CoinsService coinsService;
 
         public CoinsServiceTests()
         {
-            _fakeRepo = new FakeCoinsRepository();
-            _coinsService = new CoinsService(_fakeRepo);
+            fakeRepo = new FakeCoinsRepository();
+            coinsService = new CoinsService(fakeRepo);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Tests.ServiceTests
         [Fact]
         public void GetCoinBalance_ReturnsCorrectBalance()
         {
-            int balance = _coinsService.GetCoinBalance(0);
+            int balance = coinsService.GetCoinBalance(0);
             Assert.Equal(100, balance);
         }
 
@@ -42,24 +42,24 @@ namespace Tests.ServiceTests
         [Fact]
         public void TrySpendingCoins_DeductsCoinsSuccessfully()
         {
-            bool result = _coinsService.TrySpendingCoins(0, 50);
+            bool result = coinsService.TrySpendingCoins(0, 50);
             Assert.True(result);
-            Assert.Equal(50, _coinsService.GetCoinBalance(0));
+            Assert.Equal(50, coinsService.GetCoinBalance(0));
         }
 
         [Fact]
         public void TrySpendingCoins_FailsWhenInsufficientFunds()
         {
-            bool result = _coinsService.TrySpendingCoins(0, 150);
+            bool result = coinsService.TrySpendingCoins(0, 150);
             Assert.False(result);
-            Assert.Equal(100, _coinsService.GetCoinBalance(0));
+            Assert.Equal(100, coinsService.GetCoinBalance(0));
         }
 
         [Fact]
         public void AddCoins_IncreasesBalanceCorrectly()
         {
-            _coinsService.AddCoins(0, 50);
-            Assert.Equal(150, _coinsService.GetCoinBalance(0));
+            coinsService.AddCoins(0, 50);
+            Assert.Equal(150, coinsService.GetCoinBalance(0));
         }
 
         /// <summary>
@@ -68,34 +68,34 @@ namespace Tests.ServiceTests
         [Fact]
         public void ApplyDailyLoginBonus_AddsCoinsWhenLoginIsNewDay()
         {
-            bool result = _coinsService.ApplyDailyLoginBonus(0);
+            bool result = coinsService.ApplyDailyLoginBonus(0);
             Assert.True(result);
-            Assert.Equal(200, _coinsService.GetCoinBalance(0));
+            Assert.Equal(200, coinsService.GetCoinBalance(0));
         }
 
         [Fact]
         public void ApplyDailyLoginBonus_DoesNotAddCoinsWhenSameDay()
         {
-            _coinsService.ApplyDailyLoginBonus(0);
+            coinsService.ApplyDailyLoginBonus(0);
 
-            bool result = _coinsService.ApplyDailyLoginBonus(0);
+            bool result = coinsService.ApplyDailyLoginBonus(0);
 
             Assert.False(result);
-            Assert.Equal(200, _coinsService.GetCoinBalance(0));
+            Assert.Equal(200, coinsService.GetCoinBalance(0));
         }
 
         [Fact]
         public void Constructor_UsesDefaultRepositoryWhenNoneProvided()
         {
             var service = new CoinsService();
-            Assert.NotNull(service); 
+            Assert.NotNull(service);
         }
 
         [Fact]
         public void GetCoinBalance_ReturnsZeroForNewUser()
         {
-            _fakeRepo.SetUserCoinBalance(1, 0); 
-            int balance = _coinsService.GetCoinBalance(1);
+            fakeRepo.SetUserCoinBalance(1, 0);
+            int balance = coinsService.GetCoinBalance(1);
             Assert.Equal(0, balance);
         }
     }

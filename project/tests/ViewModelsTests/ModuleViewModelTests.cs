@@ -1,15 +1,13 @@
-﻿namespace Tests.ModuleViewTests
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using CourseApp.Models;
+using CourseApp.Services;
+using CourseApp.ViewModels;
+using Moq;
+
+namespace Tests.ViewModelsTests
 {
-
-    using Xunit;
-    using Moq;
-    using CourseApp.Models;
-    using CourseApp.Services;
-    using CourseApp.ViewModels;
-    using CourseApp.Repository;
-    using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
-
     [ExcludeFromCodeCoverage]
     public class ModuleViewModelTests
     {
@@ -17,7 +15,7 @@
         public void Constructor_OpensModuleAndSetsIsCompleted()
         {
             // Arrange
-            var module = new Module
+            var module = new CourseApp.Models.Module
             {
                 ModuleId = 1,
                 Title = "Test Module",
@@ -40,11 +38,47 @@
             mockCourseService.Verify(cs => cs.OpenModule(1), Times.Exactly(2)); // called twice in ctor
         }
 
+        /// <summary>
+        /// Tests that the CourseService and CoinsService are correctly instantiated
+        /// when they are passed as null in the constructor, using reflection to access private fields.
+        /// </summary>
+        [Fact]
+        public void Constructor_WhenServicesAreNull_InitializesDefaultServices()
+        {
+            // Arrange
+            var module = new CourseApp.Models.Module
+            {
+                ModuleId = 1,
+                Title = "Test Module",
+                Description = "This is a test module",
+                ImageUrl = "test_image.jpg"
+            };
+            var courseVM = new Mock<ICourseViewModel>().Object;
+
+            // Act
+            var viewModel = new ModuleViewModel(module, courseVM, courseServiceOverride: null, coinsServiceOverride: null);
+
+            // Use reflection to access the private fields courseService and coinsService
+            var courseServiceField = typeof(ModuleViewModel).GetField("courseService", BindingFlags.NonPublic | BindingFlags.Instance);
+            var coinsServiceField = typeof(ModuleViewModel).GetField("coinsService", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            // Retrieve the values of the private fields
+            var courseServiceValue = courseServiceField.GetValue(viewModel);
+            var coinsServiceValue = coinsServiceField.GetValue(viewModel);
+
+            // Assert
+            Assert.NotNull(courseServiceValue); // Ensure CourseService is instantiated
+            Assert.IsType<CourseService>(courseServiceValue); // Ensure it is of type CourseService
+
+            Assert.NotNull(coinsServiceValue); // Ensure CoinsService is instantiated
+            Assert.IsType<CoinsService>(coinsServiceValue); // Ensure it is of type CoinsService
+        }
+
         [Fact]
         public void HandleModuleImageClick_AddsCoinsAndRaisesCoinBalanceChanged()
         {
             // Arrange
-            var module = new Module
+            var module = new CourseApp.Models.Module
             {
                 ModuleId = 1,
                 Title = "Test Module",
@@ -65,7 +99,9 @@
             viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(viewModel.CoinBalance))
+                {
                     coinChanged = true;
+                }
             };
 
             // Act
@@ -79,7 +115,7 @@
         public void ExecuteCompleteModule_SetsIsCompleted_AndNotifies()
         {
             // Arrange
-            var module = new Module
+            var module = new CourseApp.Models.Module
             {
                 ModuleId = 1,
                 Title = "Test Module",
@@ -101,7 +137,9 @@
             viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(viewModel.IsCompleted))
+                {
                     isCompletedChanged = true;
+                }
             };
 
             // Act
@@ -118,7 +156,7 @@
         public void CoinBalance_GetsValueFromCoinsService()
         {
             // Arrange
-            var module = new Module
+            var module = new CourseApp.Models.Module
             {
                 ModuleId = 1,
                 Title = "Test Module",
@@ -137,8 +175,7 @@
                 module,
                 mockCourseVM.Object,
                 mockCourseService.Object,  // Use the interface, don't cast
-                mockCoinsService.Object   // Use the interface, don't cast
-            );
+                mockCoinsService.Object); // Use the interface, don't cast
 
             // Act
             var balance = viewModel.CoinBalance;
@@ -153,7 +190,7 @@
         public void TimeSpent_ReturnsFormattedTimeFromCourseViewModel()
         {
             // Arrange
-            var module = new Module
+            var module = new CourseApp.Models.Module
             {
                 ModuleId = 1,
                 Title = "Test Module",
@@ -178,7 +215,7 @@
         public void ExecuteModuleImageClick_TriggersCoinBalanceAndRefresh()
         {
             // Arrange
-            var module = new Module
+            var module = new CourseApp.Models.Module
             {
                 ModuleId = 1,
                 Title = "Test Module",
@@ -199,7 +236,9 @@
             viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(viewModel.CoinBalance))
+                {
                     coinChanged = true;
+                }
             };
 
             // Act
@@ -213,7 +252,7 @@
         public void CanCompleteModule_ReturnsFalse_WhenIsCompletedIsTrue()
         {
             // Arrange
-            var module = new Module
+            var module = new CourseApp.Models.Module
             {
                 ModuleId = 1,
                 Title = "Test Module",
@@ -237,7 +276,7 @@
         public void ChangingFormattedTimeRemaining_RaisesTimeSpentPropertyChanged()
         {
             // Arrange
-            var module = new Module
+            var module = new CourseApp.Models.Module
             {
                 ModuleId = 1,
                 Title = "Test Module",
@@ -259,7 +298,9 @@
             viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(viewModel.TimeSpent))
+                {
                     timeSpentChanged = true;
+                }
             };
 
             // Act: raise PropertyChanged for FormattedTimeRemaining on the mock
@@ -273,7 +314,7 @@
         public void ShortDescription_ShouldReturnShortenedDescription_WhenDescriptionIsLongerThan23Characters()
         {
             // Arrange
-            var module = new Module
+            var module = new CourseApp.Models.Module
             {
                 ModuleId = 1,
                 Title = "Test Module",
@@ -286,6 +327,25 @@
 
             // Assert
             Assert.Equal("This is a longer descri...", result);
+        }
+
+        [Fact]
+        public void ShortDescription_ShouldReturnFullDescription_WhenDescriptionIs23CharactersOrLess()
+        {
+            // Arrange
+            var module = new CourseApp.Models.Module
+            {
+                ModuleId = 2,
+                Title = "Short Module",
+                Description = "Short desc.",
+                ImageUrl = "test_image2.jpg"
+            };
+
+            // Act
+            var result = module.ShortDescription;
+
+            // Assert
+            Assert.Equal("Short desc.", result);
         }
     }
 }

@@ -4,6 +4,9 @@ using System.Linq;
 using CourseApp.Models;
 using CourseApp.Repository;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable SA1010 // Opening square brackets should be spaced correctly
+
 namespace CourseApp.Services
 {
     public class CourseService : ICourseService
@@ -13,9 +16,9 @@ namespace CourseApp.Services
             return repository.GetTagsForCourse(courseId);
         }
         private readonly ICourseRepository repository;
-        private readonly ICoinsRepository coinsRepository = new CoinsRepository();
+        private readonly ICoinsRepository coinsRepository = new CoinsRepository(new UserWalletModelView());
         private const int UserId = 0;
-        public CourseService(ICourseRepository courseRepository = null)
+        public CourseService(ICourseRepository? courseRepository = null)
         {
             repository = courseRepository ?? new CourseRepository();
         }
@@ -69,7 +72,7 @@ namespace CourseApp.Services
 
         public List<Module> GetNormalModules(int courseId)
         {
-            return repository.GetModulesByCourseId(courseId).Where(m => !m.IsBonus).ToList();
+            return [.. repository.GetModulesByCourseId(courseId).Where(m => !m.IsBonus)];
         }
 
         public List<Module> GetModules(int courseId)
@@ -131,51 +134,49 @@ namespace CourseApp.Services
             // Filter by search text (course title)
             if (!string.IsNullOrWhiteSpace(searchText))
             {
-                courses = courses
-                    .Where(c => c.Title.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-                    .ToList();
+                courses = [.. courses.Where(c => c.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))];
             }
 
             // Filter by course type.
             if (filterPremium && filterFree)
             {
                 // No course can be both premium and free.
-                courses = new List<Course>();
+                courses = [];
             }
             else if (filterPremium)
             {
-                courses = courses.Where(c => c.IsPremium).ToList();
+                courses = [.. courses.Where(c => c.IsPremium)];
             }
             else if (filterFree)
             {
-                courses = courses.Where(c => !c.IsPremium).ToList();
+                courses = [.. courses.Where(c => !c.IsPremium)];
             }
 
             // Filter by enrollment status.
             if (filterEnrolled && filterNotEnrolled)
             {
                 // No course can be both enrolled and not enrolled.
-                courses = new List<Course>();
+                courses = [];
             }
             else if (filterEnrolled)
             {
-                courses = courses.Where(c => repository.IsUserEnrolled(UserId, c.CourseId)).ToList();
+                courses = [.. courses.Where(c => repository.IsUserEnrolled(UserId, c.CourseId))];
             }
             else if (filterNotEnrolled)
             {
-                courses = courses.Where(c => !repository.IsUserEnrolled(UserId, c.CourseId)).ToList();
+                courses = [.. courses.Where(c => !repository.IsUserEnrolled(UserId, c.CourseId))];
             }
 
             // Filter by tags: Only courses having all selected tags will be kept.
-            if (selectedTagIds.Any())
+            if (selectedTagIds.Count != 0)
             {
-                courses = courses.Where(c =>
+                courses = [.. courses.Where(c =>
                 {
                     var courseTagIds = repository.GetTagsForCourse(c.CourseId)
                                         .Select(t => t.TagId)
                                         .ToList();
                     return selectedTagIds.All(id => courseTagIds.Contains(id));
-                }).ToList();
+                })];
             }
 
             return courses;
