@@ -20,6 +20,10 @@ namespace Tests.ServiceTests
         private readonly FakeCoinsRepository fakeRepo;
         private readonly CoinsService coinsService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoinsServiceTests"/> class.
+        /// Sets up the mock repository and the <see cref="CoinsService"/> instance for testing.
+        /// </summary>
         public CoinsServiceTests()
         {
             fakeRepo = new FakeCoinsRepository();
@@ -47,6 +51,9 @@ namespace Tests.ServiceTests
             Assert.Equal(50, coinsService.GetCoinBalance(0));
         }
 
+        /// <summary>
+        /// Tests that <see cref="CoinsService.TrySpendingCoins"/> fails when there are insufficient funds.
+        /// </summary>
         [Fact]
         public void TrySpendingCoins_FailsWhenInsufficientFunds()
         {
@@ -55,6 +62,9 @@ namespace Tests.ServiceTests
             Assert.Equal(100, coinsService.GetCoinBalance(0));
         }
 
+        /// <summary>
+        /// Tests that <see cref="CoinsService.AddCoins"/> increases the coin balance correctly.
+        /// </summary>
         [Fact]
         public void AddCoins_IncreasesBalanceCorrectly()
         {
@@ -73,6 +83,9 @@ namespace Tests.ServiceTests
             Assert.Equal(200, coinsService.GetCoinBalance(0));
         }
 
+        /// <summary>
+        /// Tests that <see cref="CoinsService.ApplyDailyLoginBonus"/> does not add coins when the login is on the same day.
+        /// </summary>
         [Fact]
         public void ApplyDailyLoginBonus_DoesNotAddCoinsWhenSameDay()
         {
@@ -84,6 +97,9 @@ namespace Tests.ServiceTests
             Assert.Equal(200, coinsService.GetCoinBalance(0));
         }
 
+        /// <summary>
+        /// Tests that the constructor of <see cref="CoinsService"/> uses the default repository when none is provided.
+        /// </summary>
         [Fact]
         public void Constructor_UsesDefaultRepositoryWhenNoneProvided()
         {
@@ -91,6 +107,9 @@ namespace Tests.ServiceTests
             Assert.NotNull(service);
         }
 
+        /// <summary>
+        /// Tests that <see cref="CoinsService.GetCoinBalance"/> returns zero for a new user.
+        /// </summary>
         [Fact]
         public void GetCoinBalance_ReturnsZeroForNewUser()
         {

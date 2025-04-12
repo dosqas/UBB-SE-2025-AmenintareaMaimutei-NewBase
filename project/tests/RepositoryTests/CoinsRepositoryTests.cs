@@ -6,6 +6,7 @@ namespace Tests.RepositoryTests
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using CourseApp.ModelViews;
     using CourseApp.Repository;
     using Moq;
     using Xunit;

@@ -8,7 +8,10 @@ using Windows.System.Threading;
 
 namespace CourseApp.ViewModels
 {
-    public class MainViewModel : BaseViewModel, IMainViewModel
+    /// <summary>
+    /// ViewModel responsible for managing the main application logic, including course display, filtering, and user coin balance.
+    /// </summary>
+    public partial class MainViewModel : BaseViewModel, IMainViewModel
     {
         private const int CurrentUserId = 0;
 
@@ -21,11 +24,24 @@ namespace CourseApp.ViewModels
         private bool filterByEnrolled;
         private bool filterByNotEnrolled;
 
+        /// <summary>
+        /// Observable collection of courses to be displayed.
+        /// </summary>
         public ObservableCollection<Course> DisplayedCourses { get; private set; }
+
+        /// <summary>
+        /// Observable collection of available tags.
+        /// </summary>
         public ObservableCollection<Tag> AvailableTags { get; private set; }
 
+        /// <summary>
+        /// User's current coin balance.
+        /// </summary>
         public int UserCoinBalance => coinsService.GetCoinBalance(CurrentUserId);
 
+        /// <summary>
+        /// The search query used to filter courses.
+        /// </summary>
         public string SearchQuery
         {
             get => searchQuery;
@@ -40,6 +56,9 @@ namespace CourseApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Filter flag for premium courses.
+        /// </summary>
         public bool FilterByPremium
         {
             get => filterByPremium;
@@ -54,6 +73,9 @@ namespace CourseApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Filter flag for free courses.
+        /// </summary>
         public bool FilterByFree
         {
             get => filterByFree;
@@ -68,6 +90,9 @@ namespace CourseApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Filter flag for enrolled courses.
+        /// </summary>
         public bool FilterByEnrolled
         {
             get => filterByEnrolled;
@@ -82,6 +107,9 @@ namespace CourseApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Filter flag for not enrolled courses.
+        /// </summary>
         public bool FilterByNotEnrolled
         {
             get => filterByNotEnrolled;
@@ -96,8 +124,14 @@ namespace CourseApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to reset all filters.
+        /// </summary>
         public ICommand ResetAllFiltersCommand { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainViewModel"/> class.
+        /// </summary>
         public MainViewModel(ICourseService? courseService = null, ICoinsService? coinsService = null, ICourseService? courseService1 = null)
         {
             this.courseService = new CourseService();
@@ -117,6 +151,9 @@ namespace CourseApp.ViewModels
             this.coinsService = coinsService;
         }
 
+        /// <summary>
+        /// Attempts to grant a daily login reward to the user.
+        /// </summary>
         public bool TryDailyLoginReward()
         {
             bool loginRewardGranted = coinsService.ApplyDailyLoginBonus();
@@ -132,6 +169,9 @@ namespace CourseApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Resets all the filters and clears the search query.
+        /// </summary>
         private void ResetAllFilters(object? parameter)
         {
             SearchQuery = string.Empty;
@@ -148,6 +188,9 @@ namespace CourseApp.ViewModels
             ApplyAllFilters();
         }
 
+        /// <summary>
+        /// Applies all filters based on search query, selected tags, and filter flags.
+        /// </summary>
         private void ApplyAllFilters()
         {
             var selectedTagIds = AvailableTags

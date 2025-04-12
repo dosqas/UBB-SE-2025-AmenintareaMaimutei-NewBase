@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml;
 
 namespace CourseApp.Converters

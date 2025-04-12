@@ -1,18 +1,23 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using CourseApp.Models;
 using CourseApp.Data;
 
-#pragma warning disable CA1822
-
-namespace CourseApp.Repository
+namespace CourseApp.ModelViews
 {
+    /// <summary>
+    /// Provides methods for retrieving course data from the database.
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public class CourseModelView : DataLink
     {
-        public Course? GetCourse(int courseId)
+        /// <summary>
+        /// Retrieves a course by its ID from the database.
+        /// </summary>
+        /// <param name="courseId">The ID of the course to retrieve.</param>
+        /// <returns>A <see cref="Course"/> object if found, otherwise <c>null</c>.</returns>
+        public static Course? GetCourse(int courseId)
         {
             using var connection = GetConnection();
             connection.Open();
@@ -37,7 +42,11 @@ namespace CourseApp.Repository
             return null;
         }
 
-        public List<Course> GetAllCourses()
+        /// <summary>
+        /// Retrieves all courses from the database.
+        /// </summary>
+        /// <returns>A list of <see cref="Course"/> objects representing all courses in the database.</returns>
+        public static List<Course> GetAllCourses()
         {
             var courses = new List<Course>();
             using var connection = GetConnection();

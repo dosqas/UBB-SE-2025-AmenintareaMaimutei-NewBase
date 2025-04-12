@@ -488,7 +488,7 @@ namespace Tests.ServiceTests
         public void BuyBonusModule_WhenModuleIsNull_ReturnsFalse()
         {
             // Arrange
-            this.mockRepository.Setup(r => r.GetModule(It.IsAny<int>())).Returns((Module)null);
+            this.mockRepository.Setup(r => r.GetModule(It.IsAny<int>())).Returns((Module?)null);
 
             // Act
             var result = this.service.BuyBonusModule(1, 1);

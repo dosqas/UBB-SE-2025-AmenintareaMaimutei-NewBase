@@ -192,7 +192,13 @@ namespace Tests.ViewModelsTests
             // Arrange
             this.mockCoinsService.Setup(s => s.ApplyDailyLoginBonus(It.IsAny<int>())).Returns(true);
             var notifiedProps = new List<string>();
-            this.viewModel.PropertyChanged += (s, e) => notifiedProps.Add(e.PropertyName);
+            this.viewModel.PropertyChanged += (s, e) =>
+            {
+                if (e?.PropertyName != null)
+                {
+                    notifiedProps.Add(e.PropertyName);
+                }
+            };
 
             // Act
             var result = this.viewModel.TryDailyLoginReward();
