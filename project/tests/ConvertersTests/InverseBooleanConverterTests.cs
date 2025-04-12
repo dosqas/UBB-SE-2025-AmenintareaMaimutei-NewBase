@@ -4,12 +4,12 @@
 
 namespace Tests.ConvertersTests
 {
+    using System.Diagnostics.CodeAnalysis;
     using CourseApp.Converters;
     using Microsoft.UI;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Data;
     using Microsoft.UI.Xaml.Media;
-    using System.Diagnostics.CodeAnalysis;
     using Windows.UI;
     using Xunit;
 
@@ -34,6 +34,102 @@ namespace Tests.ConvertersTests
         /// Tests that Convert returns false when the input is true.
         /// </summary>
         [Fact]
+        public void ConvertShouldReturnFalseWhenTrue()
+        {
+            // Arrange
+            var input = true;
+
+            // Act
+            var result = this.testConverter.Convert(input, typeof(bool), null!, string.Empty);
+
+            // Assert
+            Assert.False((bool)result);
+        }
+
+        /// <summary>
+        /// Tests that Convert returns true when the input is false.
+        /// </summary>
+        [Fact]
+        public void ConvertShouldReturnTrueWhenFalse()
+        {
+            // Arrange
+            var input = false;
+
+            // Act
+            var result = this.testConverter.Convert(input, typeof(bool), null!, string.Empty);
+
+            // Assert
+            Assert.True((bool)result);
+        }
+
+        /// <summary>
+        /// Tests that Convert returns the original value when the input is not a boolean.
+        /// </summary>
+        [Fact]
+        public void ConvertShouldReturnOriginalValueWhenInputIsNotBoolean()
+        {
+            // Arrange
+            var input = "string";
+
+            // Act
+            var result = this.testConverter.Convert(input, typeof(bool), null!, string.Empty);
+
+            // Assert
+            Assert.Equal(input, result);
+        }
+
+        /// <summary>
+        /// Tests that ConvertBack returns false when the input is true.
+        /// </summary>
+        [Fact]
+        public void ConvertBackShouldReturnFalseWhenTrue()
+        {
+            // Arrange
+            var input = true;
+
+            // Act
+            var result = this.testConverter.ConvertBack(input, typeof(bool), null!, string.Empty);
+
+            // Assert
+            Assert.False((bool)result);
+        }
+
+        /// <summary>
+        /// Tests that ConvertBack returns true when the input is false.
+        /// </summary>
+        [Fact]
+        public void ConvertBackShouldReturnTrueWhenFalse()
+        {
+            // Arrange
+            var input = false;
+
+            // Act
+            var result = this.testConverter.ConvertBack(input, typeof(bool), null!, string.Empty);
+
+            // Assert
+            Assert.True((bool)result);
+        }
+
+        /// <summary>
+        /// Tests that ConvertBack returns the original value when the input is not a boolean.
+        /// </summary>
+        [Fact]
+        public void ConvertBackShouldReturnOriginalValueWhenInputIsNotBoolean()
+        {
+            // Arrange
+            var input = "string";
+
+            // Act
+            var result = this.testConverter.ConvertBack(input, typeof(bool), null!, string.Empty);
+
+            // Assert
+            Assert.Equal(input, result);
+        }
+
+        /// <summary>
+        /// Tests that ConvertSafe returns false when the input is true.
+        /// </summary>
+        [Fact]
         public void ConvertSafeShouldReturnFalseWhenTrue()
         {
             // Arrange
@@ -47,7 +143,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that Convert returns true when the input is false.
+        /// Tests that ConvertSafe returns true when the input is false.
         /// </summary>
         [Fact]
         public void ConvertSafeShouldReturnTrueWhenFalse()
@@ -63,7 +159,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that Convert returns the original value when the input is not a boolean.
+        /// Tests that ConvertSafe returns the original value when the input is not a boolean.
         /// </summary>
         [Fact]
         public void ConvertSafeShouldReturnOriginalValueWhenInputIsNotBoolean()
@@ -79,7 +175,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that ConvertBack returns false when the input is true.
+        /// Tests that ConvertBackSafe returns false when the input is true.
         /// </summary>
         [Fact]
         public void ConvertBackSafeShouldReturnFalseWhenTrue()
@@ -95,7 +191,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that ConvertBack returns true when the input is false.
+        /// Tests that ConvertBackSafe returns true when the input is false.
         /// </summary>
         [Fact]
         public void ConvertBackSafeShouldReturnTrueWhenFalse()
@@ -111,7 +207,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that ConvertBack returns the original value when the input is not a boolean.
+        /// Tests that ConvertBackSafe returns the original value when the input is not a boolean.
         /// </summary>
         [Fact]
         public void ConvertBackSafeShouldReturnOriginalValueWhenInputIsNotBoolean()
