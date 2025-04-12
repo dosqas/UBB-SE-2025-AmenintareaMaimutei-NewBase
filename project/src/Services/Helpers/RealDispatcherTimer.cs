@@ -1,4 +1,6 @@
-﻿namespace CourseApp.Services.Helpers
+﻿#pragma warning disable IDE0290
+
+namespace CourseApp.Services.Helpers
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -12,10 +14,6 @@
     [ExcludeFromCodeCoverage]
     public class RealDispatcherTimer : IDispatcherTimer
     {
-        #region Fields
-        private readonly DispatcherTimer dispatcherTimer;
-        #endregion
-
         #region Constructor
 
         /// <summary>
@@ -25,10 +23,13 @@
         /// Optional DispatcherTimer instance to wrap. If null, creates a new instance.
         /// This parameter exists primarily to support testing scenarios.
         /// </param>
-        public RealDispatcherTimer(IDispatcherTimer? dispatcherTimer = null)
-        {
+        public RealDispatcherTimer(IDispatcherTimer? dispatcherTimer = null) =>
             this.dispatcherTimer = dispatcherTimer as DispatcherTimer ?? new DispatcherTimer();
-        }
+
+        #endregion
+
+        #region Fields
+        private readonly DispatcherTimer dispatcherTimer;
         #endregion
 
         #region Events

@@ -2,8 +2,8 @@
 using System.Windows.Input;
 using CourseApp.Models;
 
-#pragma warning disable CA1050
 #pragma warning disable IDE0079
+#pragma warning disable CA1050
 
 /// <summary>
 /// Represents the main view model for managing course display, filters, and user interactions.

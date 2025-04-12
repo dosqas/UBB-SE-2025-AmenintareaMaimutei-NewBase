@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Input;
 
+#pragma warning disable IDE0290
+
 namespace CourseApp.ViewModels
 {
     /// <summary>
