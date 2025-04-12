@@ -1,6 +1,6 @@
 # Coverage Exclusions
 
-This file documents the classes and/or methods that have been intentionally excluded from code coverage.
+This file documents the projects, classes and/or methods that have been intentionally excluded from code coverage.
 
 We are using the `[ExcludeFromCodeCoverage]` attribute to mark classes or methods that are either:
 
@@ -24,6 +24,12 @@ All such exclusions are annotated directly in the code with `[ExcludeFromCodeCov
 Method-level exclusion is supported and used, and it follows the same rationale.
 
 ---
+
+## List of Excluded Projects
+
+| Project Name | Reason for Exclusion                                                                   |
+|--------------|----------------------------------------------------------------------------------------|
+| `Tests`      | This project contains only unit tests and does not include any production code logic.  |
 
 ## List of Excluded Classes
 
@@ -50,11 +56,12 @@ Method-level exclusion is supported and used, and it follows the same rationale.
 | `Enrollment`                         | The Enrollment class is a simple data model representing user course enrollments and doesn't contain business logic, so it doesn't require unit tests at this stage.|
 | `CourseCompletion` 				   | The CourseCompletion class is a simple data model representing course completion status and doesn't contain business logic, so it doesn't require unit tests at this stage.|
 | `User`							   | The User class is a simple data model representing user information and doesn't contain business logic, so it doesn't require unit tests at this stage.|
+
 ## List of Excluded Methods
 
 | Method Name                              | Reason for Exclusion                                                                                   |
 |------------------------------------------|--------------------------------------------------------------------------------------------------------|
-| `InitializeTimersAndNotificationHelper`  | **Cannot test when timers are null in the constructor.** The method creates new instances of `DispatcherTimerService`, which contains a `RealDispatcherTimer`. Since `RealDispatcherTimer` wraps around a platform-specific `DispatcherTimer`, which we cannot mock due to its reliance on the Windows Runtime (WinRT), it leads to COM exceptions during testing. |
+| `CourseViewModel.InitializeTimersAndNotificationHelper`  | **Cannot test when timers are null in the constructor.** The method creates new instances of `DispatcherTimerService`, which contains a `RealDispatcherTimer`. Since `RealDispatcherTimer` wraps around a platform-specific `DispatcherTimer`, which we cannot mock due to its reliance on the Windows Runtime (WinRT), it leads to COM exceptions during testing. |
 | `DispatcherTimerService.InitializeTimer` | This method creates a `RealDispatcherTimer`, which contains a `DispatcherTimer` from UWP/WinUI. This timer cannot be mocked in tests due to its dependency on WinRT, making the null branch untestable. It contains no business logic.          |
 
 ---
