@@ -2,12 +2,13 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable SA1010 // Opening square brackets should be spaced correctly
+
 namespace Tests.ServiceTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using CourseApp.Models;
     using CourseApp.Repository;
     using CourseApp.Services;
@@ -73,7 +74,7 @@ namespace Tests.ServiceTests
             this.mockRepository.Setup(r => r.GetAllCourses()).Returns(courses);
 
             // Act
-            var result = this.service.GetFilteredCourses("C#", false, false, false, false, new List<int>());
+            var result = this.service.GetFilteredCourses("C#", false, false, false, false, []);
 
             // Assert
             Assert.Equal(2, result.Count);
@@ -96,7 +97,7 @@ namespace Tests.ServiceTests
             this.mockRepository.Setup(r => r.GetAllCourses()).Returns(courses);
 
             // Act
-            var result = this.service.GetFilteredCourses(string.Empty, false, true, false, false, new List<int>());
+            var result = this.service.GetFilteredCourses(string.Empty, false, true, false, false, []);
 
             // Assert
             Assert.Single(result);
@@ -121,7 +122,7 @@ namespace Tests.ServiceTests
             this.mockRepository.Setup(r => r.IsUserEnrolled(UserId, 2)).Returns(false);
 
             // Act
-            var result = this.service.GetFilteredCourses(string.Empty, false, false, false, true, new List<int>());
+            var result = this.service.GetFilteredCourses(string.Empty, false, false, false, true, []);
 
             // Assert
             Assert.Single(result);
@@ -471,6 +472,23 @@ namespace Tests.ServiceTests
             // Arrange
             var module = this.CreateTestModule(1, 1, false);
             this.mockRepository.Setup(r => r.GetModule(1)).Returns(module);
+
+            // Act
+            var result = this.service.BuyBonusModule(1, 1);
+
+            // Assert
+            Assert.False(result);
+            this.mockCoinsRepository.Verify(c => c.TryDeductCoinsFromUserWallet(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+        }
+
+        /// <summary>
+        /// Tests that BuyBonusModule returns false when module is null.
+        /// </summary>
+        [Fact]
+        public void BuyBonusModule_WhenModuleIsNull_ReturnsFalse()
+        {
+            // Arrange
+            this.mockRepository.Setup(r => r.GetModule(It.IsAny<int>())).Returns((Module)null);
 
             // Act
             var result = this.service.BuyBonusModule(1, 1);
