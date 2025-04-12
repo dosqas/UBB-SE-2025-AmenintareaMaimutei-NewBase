@@ -9,10 +9,7 @@ namespace CourseApp.Data
     [ExcludeFromCodeCoverage]
     public class DataLink
     {
-        /// <summary>
-        /// The connection string used to connect to the CourseApp database.
-        /// </summary>
-        private static readonly string ConnectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=CourseApp;Integrated Security=True;TrustServerCertificate=True";
+		private static readonly string ConnectionString = "Data Source=leptop-sarici;Initial Catalog=CourseApp;Integrated Security=True;TrustServerCertificate=True";
 
         /// <summary>
         /// Retrieves a new SQL connection using the predefined connection string.

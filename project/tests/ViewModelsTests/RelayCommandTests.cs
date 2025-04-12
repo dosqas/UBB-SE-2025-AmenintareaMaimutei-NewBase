@@ -25,7 +25,7 @@ namespace Tests.ViewModelsTests
         public void Constructor_ShouldThrowArgumentNullException_WhenExecuteIsNull()
         {
             // Arrange, Act & Assert
-            Assert.Throws<ArgumentNullException>(() => new RelayCommand(null));
+            Assert.Throws<ArgumentNullException>(() => new RelayCommand(null!));
         }
 
         /// <summary>

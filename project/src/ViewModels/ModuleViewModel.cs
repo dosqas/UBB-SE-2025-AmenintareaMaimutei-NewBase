@@ -58,12 +58,12 @@ namespace CourseApp.ViewModels
             get => coinsService.GetCoinBalance(0);
         }
 
-        private bool CanCompleteModule(object parameter)
+        private bool CanCompleteModule(object? parameter)
         {
             return !IsCompleted;
         }
 
-        private void ExecuteCompleteModule(object parameter)
+        private void ExecuteCompleteModule(object? parameter)
         {
             courseViewModel.MarkModuleAsCompletedAndCheckRewards(CurrentModule.ModuleId);
             IsCompleted = true;

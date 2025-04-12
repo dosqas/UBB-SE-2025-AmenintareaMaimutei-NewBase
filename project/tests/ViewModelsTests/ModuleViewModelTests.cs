@@ -63,8 +63,8 @@ namespace Tests.ViewModelsTests
             var coinsServiceField = typeof(ModuleViewModel).GetField("coinsService", BindingFlags.NonPublic | BindingFlags.Instance);
 
             // Retrieve the values of the private fields
-            var courseServiceValue = courseServiceField.GetValue(viewModel);
-            var coinsServiceValue = coinsServiceField.GetValue(viewModel);
+            var courseServiceValue = courseServiceField?.GetValue(viewModel);
+            var coinsServiceValue = coinsServiceField?.GetValue(viewModel);
 
             // Assert
             Assert.NotNull(courseServiceValue); // Ensure CourseService is instantiated

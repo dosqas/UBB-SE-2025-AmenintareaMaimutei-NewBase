@@ -10,26 +10,50 @@ using CourseApp.ModelViews;
 
 namespace CourseApp.Services
 {
+    /// <summary>
+    /// Provides core business logic for managing courses, modules, and user interactions.
+    /// </summary>
     public class CourseService : ICourseService
     {
-        public List<Tag> GetCourseTags(int courseId)
-        {
-            return repository.GetTagsForCourse(courseId);
-        }
         private readonly ICourseRepository repository;
         private readonly ICoinsRepository coinsRepository = new CoinsRepository(new UserWalletModelView());
         private const int UserId = 0;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CourseService"/> class with optional repository injection.
+        /// </summary>
         public CourseService(ICourseRepository? courseRepository = null)
         {
             repository = courseRepository ?? new CourseRepository();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CourseService"/> class with injected course and coins repositories.
+        /// </summary>
         public CourseService(ICourseRepository repository, ICoinsRepository coinsRepository)
         {
             this.repository = repository;
             this.coinsRepository = coinsRepository;
         }
 
+        /// <summary>
+        /// Retrieves all available courses.
+        /// </summary>
+        public List<Course> GetCourses() => repository.GetAllCourses();
+
+        /// <summary>
+        /// Retrieves all available tags.
+        /// </summary>
+        public List<Tag> GetTags() => repository.GetAllTags();
+
+        /// <summary>
+        /// Gets all tags associated with a specific course.
+        /// </summary>
+        public List<Tag> GetCourseTags(int courseId) => repository.GetTagsForCourse(courseId);
+
+        /// <summary>
+        /// Opens a module for the user if not already opened.
+        /// </summary>
         public void OpenModule(int moduleId)
         {
             if (!repository.IsModuleOpen(UserId, moduleId))
@@ -37,83 +61,72 @@ namespace CourseApp.Services
                 repository.OpenModule(UserId, moduleId);
             }
         }
-        public List<Course> GetCourses()
-        {
-            return repository.GetAllCourses();
-        }
 
-        public List<Tag> GetTags()
-        {
-            return repository.GetAllTags();
-        }
+        /// <summary>
+        /// Retrieves all modules for a specific course.
+        /// </summary>
+        public List<Module> GetModules(int courseId) => repository.GetModulesByCourseId(courseId);
 
+        /// <summary>
+        /// Retrieves all non-bonus modules for a course.
+        /// </summary>
+        public List<Module> GetNormalModules(int courseId) =>
+            [.. repository.GetModulesByCourseId(courseId).Where(m => !m.IsBonus)];
+
+        /// <summary>
+        /// Attempts to buy a bonus module if not yet opened and enough coins exist.
+        /// </summary>
         public bool BuyBonusModule(int moduleId, int courseId)
         {
             var module = repository.GetModule(moduleId);
-            if (module == null || !module.IsBonus)
+            if (module == null || !module.IsBonus || repository.IsModuleOpen(UserId, moduleId))
             {
                 return false;
             }
-            if (repository.IsModuleOpen(UserId, moduleId))
-            {
-                return false;
-            }
+
             var course = repository.GetCourse(courseId);
             if (course == null)
             {
                 return false;
             }
+
             if (!coinsRepository.TryDeductCoinsFromUserWallet(UserId, module.Cost))
             {
                 return false;
             }
+
             repository.OpenModule(UserId, moduleId);
             return true;
         }
 
-        public List<Module> GetNormalModules(int courseId)
-        {
-            return [.. repository.GetModulesByCourseId(courseId).Where(m => !m.IsBonus)];
-        }
-
-        public List<Module> GetModules(int courseId)
-        {
-            return repository.GetModulesByCourseId(courseId);
-        }
-
-        public bool IsUserEnrolled(int courseId)
-        {
-            return repository.IsUserEnrolled(UserId, courseId);
-        }
-
-        public bool IsModuleCompleted(int moduleId)
-        {
-            return repository.IsModuleCompleted(UserId, moduleId);
-        }
-
+        /// <summary>
+        /// Enrolls the user in a course if not already enrolled and deducts coins if premium.
+        /// </summary>
         public bool EnrollInCourse(int courseId)
         {
             if (repository.IsUserEnrolled(UserId, courseId))
             {
                 return false;
             }
+
             var course = repository.GetCourse(courseId);
             if (course == null)
             {
                 return false;
             }
-            if (course.IsPremium)
+
+            if (course.IsPremium && !coinsRepository.TryDeductCoinsFromUserWallet(UserId, course.Cost))
             {
-                int cost = course.Cost;
-                if (!coinsRepository.TryDeductCoinsFromUserWallet(UserId, cost))
-                {
-                    return false;
-                }
+                return false;
             }
+
             repository.EnrollUser(UserId, courseId);
             return true;
         }
 
+        /// <summary>
+        /// Completes a module and checks for course completion status.
+        /// </summary>
         public void CompleteModule(int moduleId, int courseId)
         {
             repository.CompleteModule(UserId, moduleId);
@@ -125,23 +138,29 @@ namespace CourseApp.Services
         }
 
         /// <summary>
-        /// Returns the courses filtered by search text, course type, enrollment status and selected tags.
+        /// Returns whether the user is enrolled in the specified course.
+        /// </summary>
+        public bool IsUserEnrolled(int courseId) => repository.IsUserEnrolled(UserId, courseId);
+
+        /// <summary>
+        /// Returns whether the user has completed the specified module.
+        /// </summary>
+        public bool IsModuleCompleted(int moduleId) => repository.IsModuleCompleted(UserId, moduleId);
+
+        /// <summary>
+        /// Filters courses based on search text, type, enrollment status, and tags.
         /// </summary>
         public List<Course> GetFilteredCourses(string searchText, bool filterPremium, bool filterFree, bool filterEnrolled, bool filterNotEnrolled, List<int> selectedTagIds)
         {
-            // Start with all courses.
             var courses = repository.GetAllCourses();
 
-            // Filter by search text (course title)
             if (!string.IsNullOrWhiteSpace(searchText))
             {
                 courses = [.. courses.Where(c => c.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))];
             }
 
-            // Filter by course type.
             if (filterPremium && filterFree)
             {
-                // No course can be both premium and free.
                 courses = [];
             }
             else if (filterPremium)
@@ -152,11 +171,8 @@ namespace CourseApp.Services
             {
                 courses = [.. courses.Where(c => !c.IsPremium)];
             }
-
-            // Filter by enrollment status.
             if (filterEnrolled && filterNotEnrolled)
             {
-                // No course can be both enrolled and not enrolled.
                 courses = [];
             }
             else if (filterEnrolled)
@@ -168,14 +184,11 @@ namespace CourseApp.Services
                 courses = [.. courses.Where(c => !repository.IsUserEnrolled(UserId, c.CourseId))];
             }
 
-            // Filter by tags: Only courses having all selected tags will be kept.
-            if (selectedTagIds.Count != 0)
+                if (selectedTagIds.Count > 0)
             {
                 courses = [.. courses.Where(c =>
                 {
-                    var courseTagIds = repository.GetTagsForCourse(c.CourseId)
-                                        .Select(t => t.TagId)
-                                        .ToList();
+                    var courseTagIds = repository.GetTagsForCourse(c.CourseId).Select(t => t.TagId).ToList();
                     return selectedTagIds.All(id => courseTagIds.Contains(id));
                 })];
             }
@@ -183,53 +196,58 @@ namespace CourseApp.Services
             return courses;
         }
 
-        public void UpdateTimeSpent(int courseId, int seconds)
-        {
-            repository.UpdateTimeSpent(UserId, courseId, seconds);
-        }
+        /// <summary>
+        /// Updates the time the user has spent on a course.
+        /// </summary>
+        public void UpdateTimeSpent(int courseId, int seconds) => repository.UpdateTimeSpent(UserId, courseId, seconds);
 
-        public int GetTimeSpent(int courseId)
-        {
-            return repository.GetTimeSpent(UserId, courseId);
-        }
+        /// <summary>
+        /// Retrieves the time the user has spent on a course.
+        /// </summary>
+        public int GetTimeSpent(int courseId) => repository.GetTimeSpent(UserId, courseId);
 
+        /// <summary>
+        /// Handles user interaction with module images and rewards coins if not previously clicked.
+        /// </summary>
         public bool ClickModuleImage(int moduleId)
         {
             if (repository.IsModuleImageClicked(UserId, moduleId))
             {
                 return false;
             }
-
-            repository.ClickModuleImage(UserId, moduleId);
+                repository.ClickModuleImage(UserId, moduleId);
             coinsRepository.AddCoinsToUserWallet(UserId, 10);
             return true;
         }
 
-        public bool IsModuleInProgress(int moduleId)
-        {
-            return repository.IsModuleInProgress(0, moduleId);
-        }
+        /// <summary>
+        /// Checks if a module is in progress.
+        /// </summary>
+        public bool IsModuleInProgress(int moduleId) => repository.IsModuleInProgress(UserId, moduleId);
 
-        public bool IsModuleAvailable(int moduleId)
-        {
-            return repository.IsModuleAvailable(UserId, moduleId);
-        }
+        /// <summary>
+        /// Checks if a module is available for the user.
+        /// </summary>
+        public bool IsModuleAvailable(int moduleId) => repository.IsModuleAvailable(UserId, moduleId);
 
-        public bool IsCourseCompleted(int courseId)
-        {
-            return repository.IsCourseCompleted(UserId, courseId);
-        }
+        /// <summary>
+        /// Checks if a course has been completed by the user.
+        /// </summary>
+        public bool IsCourseCompleted(int courseId) => repository.IsCourseCompleted(UserId, courseId);
 
-        public int GetCompletedModulesCount(int courseId)
-        {
-            return repository.GetCompletedModulesCount(UserId, courseId);
-        }
+        /// <summary>
+        /// Gets the number of completed modules in a course.
+        /// </summary>
+        public int GetCompletedModulesCount(int courseId) => repository.GetCompletedModulesCount(UserId, courseId);
 
-        public int GetRequiredModulesCount(int courseId)
-        {
-            return repository.GetRequiredModulesCount(courseId);
-        }
+        /// <summary>
+        /// Gets the number of required modules for a course.
+        /// </summary>
+        public int GetRequiredModulesCount(int courseId) => repository.GetRequiredModulesCount(courseId);
 
+        /// <summary>
+        /// Claims the course completion reward if eligible.
+        /// </summary>
         public bool ClaimCompletionReward(int courseId)
         {
             bool claimed = repository.ClaimCompletionReward(UserId, courseId);
@@ -240,23 +258,23 @@ namespace CourseApp.Services
             return claimed;
         }
 
+        /// <summary>
+        /// Claims a reward if the course was completed within a time limit.
+        /// </summary>
         public bool ClaimTimedReward(int courseId, int timeSpent)
         {
             int timeLimit = repository.GetCourseTimeLimit(courseId);
             bool claimed = repository.ClaimTimedReward(UserId, courseId, timeSpent, timeLimit);
-
             if (claimed)
             {
-                int rewardAmount = 300; // hardcoded reward for timed completion
-                coinsRepository.AddCoinsToUserWallet(UserId, rewardAmount);
+                coinsRepository.AddCoinsToUserWallet(UserId, 300); // Hardcoded reward
             }
-
             return claimed;
         }
 
-        public int GetCourseTimeLimit(int courseId)
-        {
-            return repository.GetCourseTimeLimit(courseId);
-        }
+        /// <summary>
+        /// Retrieves the time limit for completing a course.
+        /// </summary>
+        public int GetCourseTimeLimit(int courseId) => repository.GetCourseTimeLimit(courseId);
     }
 }
