@@ -8,7 +8,7 @@ using Microsoft.Data.SqlClient;
 namespace CourseApp.Repository
 {
     [ExcludeFromCodeCoverage]
-    public class UserWalletModelView : DataLink
+    public class UserWalletModelView : DataLink, IUserWalletModelView
     {
         private const int DefaultInitialCoinBalance = 0;
 

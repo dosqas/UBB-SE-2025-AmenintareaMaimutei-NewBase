@@ -11,7 +11,7 @@ namespace CourseApp.Services
 
         public CoinsService(ICoinsRepository coinsRepository = null)
         {
-            this.coinsRepository = coinsRepository ?? new CoinsRepository();
+            this.coinsRepository = coinsRepository ?? new CoinsRepository(new UserWalletModelView());
         }
 
         public int GetCoinBalance(int userId)
