@@ -31,7 +31,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that Convert method returns Visibility.Collapsed when input is true.
+        /// Tests that ConvertSafe method returns Visibility.Collapsed when input is true.
         /// </summary>
         [Fact]
         public void ConvertSafeShouldReturnCollapsedWhenTrue()
@@ -47,7 +47,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that Convert method returns Visibility.Visible when input is false.
+        /// Tests that ConvertSafe method returns Visibility.Visible when input is false.
         /// </summary>
         [Fact]
         public void ConvertSafeShouldReturnVisibleWhenFalse()
@@ -63,7 +63,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that Convert method returns Visibility.Collapsed when input is not a boolean.
+        /// Tests that ConvertSafe method returns Visibility.Collapsed when input is not a boolean.
         /// </summary>
         [Fact]
         public void ConvertSafeShouldReturnCollapsedWhenInputIsNotBoolean()
@@ -79,7 +79,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that ConvertBack method throws NotImplementedException.
+        /// Tests that ConvertBackSafe method throws NotImplementedException.
         /// </summary>
         [Fact]
         public void ConvertBackSafeShouldThrowNotImplementedException()

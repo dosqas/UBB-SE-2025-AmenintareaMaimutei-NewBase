@@ -128,7 +128,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that the ConvertSafe method trims the string when its length exceeds the default length.
+        /// Tests that the Convert method trims the string when its length exceeds the default length.
         /// </summary>
         [Fact]
         public void ConvertShouldTrimStringWhenLengthExceedsDefault()
@@ -145,7 +145,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that the ConvertSafe method does not trim the string when its length is within the default length.
+        /// Tests that the Convert method does not trim the string when its length is within the default length.
         /// </summary>
         [Fact]
         public void ConvertShouldNotTrimStringWhenLengthIsWithinDefault()
@@ -162,7 +162,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that the ConvertSafe method trims the string when its length exceeds a custom length.
+        /// Tests that the Convert method trims the string when its length exceeds a custom length.
         /// </summary>
         [Fact]
         public void ConvertShouldTrimStringWhenLengthExceedsCustomLength()
@@ -179,7 +179,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that the ConvertSafe method does not trim the string when its length is within a custom length.
+        /// Tests that the Convert method does not trim the string when its length is within a custom length.
         /// </summary>
         [Fact]
         public void ConvertShouldNotTrimStringWhenLengthIsWithinCustomLength()
@@ -196,7 +196,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that the ConvertSafe method returns the original value when the input is not a string.
+        /// Tests that the Convert method returns the original value when the input is not a string.
         /// </summary>
         [Fact]
         public void ConvertShouldReturnOriginalValueWhenInputIsNotString()
@@ -212,7 +212,7 @@ namespace Tests.ConvertersTests
         }
 
         /// <summary>
-        /// Tests that the ConvertBackSafe method throws a NotImplementedException.
+        /// Tests that the ConvertBack method throws a NotImplementedException.
         /// </summary>
         [Fact]
         public void ConvertBackShouldThrowNotImplementedException()
@@ -224,8 +224,5 @@ namespace Tests.ConvertersTests
             var exception = Assert.Throws<NotImplementedException>(() => this.testConverter.ConvertBack(input, typeof(string), null!, null!));
             Assert.Equal("Reverse conversion is not supported.", exception.Message);
         }
-
-        //aici
-
     }
 }
