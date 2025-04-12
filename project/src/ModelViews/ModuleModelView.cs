@@ -5,14 +5,20 @@ using Microsoft.Data.SqlClient;
 using CourseApp.Models;
 using CourseApp.Data;
 
-#pragma warning disable CA1822
-
-namespace CourseApp.Repository
+namespace CourseApp.ModelViews
 {
+    /// <summary>
+    /// Provides methods to manage modules and user progress, including retrieving, updating, and checking module status.
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public class ModuleModelView : DataLink
     {
-        public Module? GetModule(int moduleId)
+        /// <summary>
+        /// Retrieves a module by its ID.
+        /// </summary>
+        /// <param name="moduleId">The ID of the module to retrieve.</param>
+        /// <returns>The <see cref="Module"/> if found, otherwise <c>null</c>.</returns>
+        public static Module? GetModule(int moduleId)
         {
             using var connection = GetConnection();
             connection.Open();
@@ -37,7 +43,12 @@ namespace CourseApp.Repository
             return null;
         }
 
-        public List<Module> GetModulesByCourseId(int courseId)
+        /// <summary>
+        /// Retrieves a list of modules associated with a specific course.
+        /// </summary>
+        /// <param name="courseId">The ID of the course to retrieve modules for.</param>
+        /// <returns>A list of <see cref="Module"/> objects.</returns>
+        public static List<Module> GetModulesByCourseId(int courseId)
         {
             var modules = new List<Module>();
             using var connection = GetConnection();
@@ -63,9 +74,15 @@ namespace CourseApp.Repository
             return modules;
         }
 
-        public bool IsModuleOpen(int userId, int moduleId)
+        /// <summary>
+        /// Checks if a module is open for a user based on their progress.
+        /// </summary>
+        /// <param name="userId">The ID of the user to check.</param>
+        /// <param name="moduleId">The ID of the module to check.</param>
+        /// <returns><c>true</c> if the module is open for the user, otherwise <c>false</c>.</returns>
+        public static bool IsModuleOpen(int userId, int moduleId)
         {
-            using var connection = DataLink.GetConnection();
+            using var connection = GetConnection();
             connection.Open();
             string query = "SELECT COUNT(*) FROM UserProgress WHERE UserId = @userId AND ModuleId = @moduleId";
             using var command = new SqlCommand(query, connection);
@@ -74,20 +91,31 @@ namespace CourseApp.Repository
             return (int)command.ExecuteScalar() > 0;
         }
 
-        public void OpenModule(int userId, int moduleId)
+        /// <summary>
+        /// Opens a module for a user by adding it to their progress.
+        /// </summary>
+        /// <param name="userId">The ID of the user to open the module for.</param>
+        /// <param name="moduleId">The ID of the module to open.</param>
+        public static void OpenModule(int userId, int moduleId)
         {
-            using var connection = DataLink.GetConnection();
+            using var connection = GetConnection();
             connection.Open();
-            string query = @"INSERT INTO UserProgress (UserId, ModuleId, status,ImageClicked) VALUES (@userId, @moduleId, 'not_completed',0)";
+            string query = @"INSERT INTO UserProgress (UserId, ModuleId, status, ImageClicked) VALUES (@userId, @moduleId, 'not_completed', 0)";
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@userId", userId);
             command.Parameters.AddWithValue("@moduleId", moduleId);
             command.ExecuteNonQuery();
         }
 
-        public bool IsModuleImageClicked(int userId, int moduleId)
+        /// <summary>
+        /// Checks if the image for a module has been clicked by the user.
+        /// </summary>
+        /// <param name="userId">The ID of the user to check.</param>
+        /// <param name="moduleId">The ID of the module to check.</param>
+        /// <returns><c>true</c> if the image has been clicked, otherwise <c>false</c>.</returns>
+        public static bool IsModuleImageClicked(int userId, int moduleId)
         {
-            using var connection = DataLink.GetConnection();
+            using var connection = GetConnection();
             connection.Open();
             string query = "SELECT ImageClicked FROM UserProgress WHERE ModuleId = @moduleId AND UserId = @userId";
             using var command = new SqlCommand(query, connection);
@@ -97,9 +125,14 @@ namespace CourseApp.Repository
             return result != null && Convert.ToBoolean(result);
         }
 
-        public void ClickModuleImage(int userId, int moduleId)
+        /// <summary>
+        /// Marks the image of a module as clicked for a user.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <param name="moduleId">The ID of the module.</param>
+        public static void ClickModuleImage(int userId, int moduleId)
         {
-            using var connection = DataLink.GetConnection();
+            using var connection = GetConnection();
             connection.Open();
             string query = "UPDATE UserProgress SET ImageClicked = 1 WHERE ModuleId = @moduleId AND UserId = @userId";
             using var command = new SqlCommand(query, connection);
@@ -108,9 +141,15 @@ namespace CourseApp.Repository
             command.ExecuteNonQuery();
         }
 
-        public bool IsModuleCompleted(int userId, int moduleId)
+        /// <summary>
+        /// Checks if a module is marked as completed for a user.
+        /// </summary>
+        /// <param name="userId">The ID of the user to check.</param>
+        /// <param name="moduleId">The ID of the module to check.</param>
+        /// <returns><c>true</c> if the module is completed, otherwise <c>false</c>.</returns>
+        public static bool IsModuleCompleted(int userId, int moduleId)
         {
-            using var connection = DataLink.GetConnection();
+            using var connection = GetConnection();
             connection.Open();
             string query = "SELECT COUNT(*) FROM UserProgress WHERE UserId = @userId AND ModuleId = @moduleId AND status = 'completed'";
             using var command = new SqlCommand(query, connection);
@@ -119,53 +158,69 @@ namespace CourseApp.Repository
             return (int)command.ExecuteScalar() > 0;
         }
 
-        public void CompleteModule(int userId, int moduleId)
+        /// <summary>
+        /// Marks a module as completed for a user.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <param name="moduleId">The ID of the module.</param>
+        public static void CompleteModule(int userId, int moduleId)
         {
-            using var connection = DataLink.GetConnection();
+            using var connection = GetConnection();
             connection.Open();
             string query = @"IF EXISTS (SELECT 1 FROM UserProgress WHERE UserId=@userId AND ModuleId=@moduleId)
-                     UPDATE UserProgress SET status='completed' WHERE UserId=@userId AND ModuleId=@moduleId
-                     ELSE
-                     INSERT INTO UserProgress (UserId, ModuleId, status) VALUES (@userId, @moduleId, 'completed')";
+                             UPDATE UserProgress SET status='completed' WHERE UserId=@userId AND ModuleId=@moduleId
+                             ELSE
+                             INSERT INTO UserProgress (UserId, ModuleId, status) VALUES (@userId, @moduleId, 'completed')";
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@userId", userId);
             command.Parameters.AddWithValue("@moduleId", moduleId);
             command.ExecuteNonQuery();
         }
 
-        public bool IsModuleAvailable(int userId, int moduleId)
+        /// <summary>
+        /// Checks if a module is available for a user based on their progress and the module's prerequisites.
+        /// </summary>
+        /// <param name="userId">The ID of the user to check.</param>
+        /// <param name="moduleId">The ID of the module to check.</param>
+        /// <returns><c>true</c> if the module is available, otherwise <c>false</c>.</returns>
+        public static bool IsModuleAvailable(int userId, int moduleId)
         {
-            bool available = false;
-            using var connection = DataLink.GetConnection();
+            using var connection = GetConnection();
             connection.Open();
             string query = @"
-        SELECT 
-            CASE
-                WHEN m.Position = 1 THEN 1
-                WHEN m.IsBonus = 1 THEN 1
-                WHEN EXISTS (
-                    SELECT 1 FROM UserProgress up
-                    INNER JOIN Modules prev ON up.ModuleId = prev.ModuleId
-                    WHERE up.UserId = @userId
-                    AND prev.CourseId = m.CourseId
-                    AND prev.Position = m.Position - 1
-                    AND up.status = 'completed'
-                ) THEN 1
-                ELSE 0
-            END as IsAvailable
-        FROM Modules m
-        WHERE m.ModuleId = @moduleId";
+                SELECT 
+                    CASE
+                        WHEN m.Position = 1 THEN 1
+                        WHEN m.IsBonus = 1 THEN 1
+                        WHEN EXISTS (
+                            SELECT 1 FROM UserProgress up
+                            INNER JOIN Modules prev ON up.ModuleId = prev.ModuleId
+                            WHERE up.UserId = @userId
+                            AND prev.CourseId = m.CourseId
+                            AND prev.Position = m.Position - 1
+                            AND up.status = 'completed'
+                        ) THEN 1
+                        ELSE 0
+                    END as IsAvailable
+                FROM Modules m
+                WHERE m.ModuleId = @moduleId";
 
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@userId", userId);
             command.Parameters.AddWithValue("@moduleId", moduleId);
-            available = (int)command.ExecuteScalar() == 1;
+            bool available = (int)command.ExecuteScalar() == 1;
             return available;
         }
 
-        public bool IsModuleInProgress(int userId, int moduleId)
+        /// <summary>
+        /// Checks if a module is in progress for a user based on their progress records in the database.
+        /// </summary>
+        /// <param name="userId">The ID of the user to check.</param>
+        /// <param name="moduleId">The ID of the module to check.</param>
+        /// <returns><c>true</c> if the module is in progress, otherwise <c>false</c>.</returns>
+        public static bool IsModuleInProgress(int userId, int moduleId)
         {
-            using var connection = DataLink.GetConnection();
+            using var connection = GetConnection();
             connection.Open();
             string query = "SELECT COUNT(*) FROM UserProgress WHERE UserId = @userId AND ModuleId = @moduleId";
             using var command = new SqlCommand(query, connection);

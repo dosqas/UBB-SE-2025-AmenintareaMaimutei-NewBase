@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CourseApp.ModelViews;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace CourseApp.Repository

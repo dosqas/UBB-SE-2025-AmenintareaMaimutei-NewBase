@@ -27,74 +27,77 @@ namespace CourseApp.Repository
         }
 
         // Course operations
-        public Course? GetCourse(int courseId) => courseModelView.GetCourse(courseId);
-        public List<Course> GetAllCourses() => courseModelView.GetAllCourses();
+        public Course? GetCourse(int courseId) => CourseModelView.GetCourse(courseId);
+        public List<Course> GetAllCourses() => CourseModelView.GetAllCourses();
 
         // Module operations
-        public Module? GetModule(int moduleId) => moduleModelView.GetModule(moduleId);
-        public List<Module> GetModulesByCourseId(int courseId) => moduleModelView.GetModulesByCourseId(courseId);
+        public Module? GetModule(int moduleId) => ModuleModelView.GetModule(moduleId);
+        public List<Module> GetModulesByCourseId(int courseId)
+        {
+            return ModuleModelView.GetModulesByCourseId(courseId);
+        }
 
-        public bool IsModuleAvailable(int userId, int moduleId) => moduleModelView.IsModuleAvailable(userId, moduleId);
+        public bool IsModuleAvailable(int userId, int moduleId) => ModuleModelView.IsModuleAvailable(userId, moduleId);
 
         public bool IsModuleOpen(int userId, int moduleId) =>
-            moduleModelView.IsModuleOpen(userId, moduleId);
+            ModuleModelView.IsModuleOpen(userId, moduleId);
 
         public bool IsModuleCompleted(int userId, int moduleId) =>
-            moduleModelView.IsModuleCompleted(userId, moduleId);
+            ModuleModelView.IsModuleCompleted(userId, moduleId);
 
         public bool IsModuleInProgress(int userId, int moduleId) =>
-            moduleModelView.IsModuleInProgress(userId, moduleId);
+            ModuleModelView.IsModuleInProgress(userId, moduleId);
 
         public bool IsModuleImageClicked(int userId, int moduleId) =>
-            moduleModelView.IsModuleImageClicked(userId, moduleId);
+            ModuleModelView.IsModuleImageClicked(userId, moduleId);
 
         public void OpenModule(int userId, int moduleId) =>
-            moduleModelView.OpenModule(userId, moduleId);
+            ModuleModelView.OpenModule(userId, moduleId);
 
         public void CompleteModule(int userId, int moduleId) =>
-            moduleModelView.CompleteModule(userId, moduleId);
+            ModuleModelView.CompleteModule(userId, moduleId);
 
         public void ClickModuleImage(int userId, int moduleId) =>
-            moduleModelView.ClickModuleImage(userId, moduleId);
+            ModuleModelView.ClickModuleImage(userId, moduleId);
 
         // Enrollment operations
         public bool IsUserEnrolled(int userId, int courseId) =>
-            enrollmentModelView.IsUserEnrolled(userId, courseId);
+            EnrollmentModelView.IsUserEnrolled(userId, courseId);
 
         public void EnrollUser(int userId, int courseId) =>
-            enrollmentModelView.EnrollUser(userId, courseId);
+            EnrollmentModelView.EnrollUser(userId, courseId);
 
         // Progress tracking
         public void UpdateTimeSpent(int userId, int courseId, int seconds) =>
-            progressModelView.UpdateTimeSpent(userId, courseId, seconds);
+            ProgressModelView.UpdateTimeSpent(userId, courseId, seconds);
 
         public int GetTimeSpent(int userId, int courseId) =>
-            progressModelView.GetTimeSpent(userId, courseId);
+            ProgressModelView.GetTimeSpent(userId, courseId);
 
         public int GetRequiredModulesCount(int courseId) =>
-            progressModelView.GetRequiredModulesCount(courseId);
+            ProgressModelView.GetRequiredModulesCount(courseId);
 
         public int GetCompletedModulesCount(int userId, int courseId) =>
-            progressModelView.GetCompletedModulesCount(userId, courseId);
+            ProgressModelView.GetCompletedModulesCount(userId, courseId);
 
         public bool IsCourseCompleted(int userId, int courseId) =>
-            progressModelView.IsCourseCompleted(userId, courseId);
+            ProgressModelView.IsCourseCompleted(userId, courseId);
 
         public void MarkCourseAsCompleted(int userId, int courseId) =>
-            progressModelView.MarkCourseAsCompleted(userId, courseId);
+            ProgressModelView.MarkCourseAsCompleted(userId, courseId);
 
         // Reward operations
         public bool ClaimCompletionReward(int userId, int courseId) =>
-            rewardModelView.ClaimCompletionReward(userId, courseId);
+            RewardModelView.ClaimCompletionReward(userId, courseId);
 
         public bool ClaimTimedReward(int userId, int courseId, int timeSpent, int timeLimit) =>
-            rewardModelView.ClaimTimedReward(userId, courseId, timeSpent, timeLimit);
+            RewardModelView.ClaimTimedReward(userId, courseId, timeSpent, timeLimit);
 
         public int GetCourseTimeLimit(int courseId) =>
-            rewardModelView.GetCourseTimeLimit(courseId);
+            RewardModelView.GetCourseTimeLimit(courseId);
 
         // Tag operations
-        public List<Tag> GetAllTags() => tagModelView.GetAllTags();
-        public List<Tag> GetTagsForCourse(int courseId) => tagModelView.GetTagsForCourse(courseId);
+        public List<Tag> GetAllTags() => TagModelView.GetAllTags();
+        public List<Tag> GetTagsForCourse(int courseId) => TagModelView.GetTagsForCourse(courseId);
     }
 }

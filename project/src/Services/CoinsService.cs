@@ -1,5 +1,6 @@
 using System;
 using CourseApp.Repository;
+using CourseApp.ModelViews;
 
 namespace CourseApp.Services
 {

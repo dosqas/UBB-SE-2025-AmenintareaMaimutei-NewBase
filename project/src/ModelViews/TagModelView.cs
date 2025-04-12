@@ -4,14 +4,16 @@ using Microsoft.Data.SqlClient;
 using CourseApp.Models;
 using CourseApp.Data;
 
-#pragma warning disable CA1822
-
-namespace CourseApp.Repository
+namespace CourseApp.ModelViews
 {
     [ExcludeFromCodeCoverage]
     public class TagModelView : DataLink
     {
-        public List<Tag> GetAllTags()
+        /// <summary>
+        /// Retrieves all tags from the database.
+        /// </summary>
+        /// <returns>A list of all tags.</returns>
+        public static List<Tag> GetAllTags()
         {
             var tags = new List<Tag>();
             using var connection = GetConnection();
@@ -30,16 +32,21 @@ namespace CourseApp.Repository
             return tags;
         }
 
-        public List<Tag> GetTagsForCourse(int courseId)
+        /// <summary>
+        /// Retrieves the tags associated with a specific course.
+        /// </summary>
+        /// <param name="courseId">The ID of the course for which tags are to be fetched.</param>
+        /// <returns>A list of tags associated with the specified course.</returns>
+        public static List<Tag> GetTagsForCourse(int courseId)
         {
             var tags = new List<Tag>();
             using var connection = GetConnection();
             connection.Open();
             string query = @"
-        SELECT t.TagId, t.Name 
-        FROM Tags t
-        INNER JOIN CourseTags ct ON t.TagId = ct.TagId
-        WHERE ct.CourseId = @courseId";
+                SELECT t.TagId, t.Name 
+                FROM Tags t
+                INNER JOIN CourseTags ct ON t.TagId = ct.TagId
+                WHERE ct.CourseId = @courseId";
 
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@courseId", courseId);
