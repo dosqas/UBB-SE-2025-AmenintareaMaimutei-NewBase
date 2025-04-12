@@ -1,15 +1,12 @@
-﻿namespace Tests.ModuleViewTests
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using CourseApp.Models;
+using CourseApp.Services;
+using CourseApp.ViewModels;
+using Moq;
+
+namespace Tests.ViewModelsTests
 {
-
-    using Xunit;
-    using Moq;
-    using CourseApp.Models;
-    using CourseApp.Services;
-    using CourseApp.ViewModels;
-    using CourseApp.Repository;
-    using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
-
     [ExcludeFromCodeCoverage]
     public class ModuleViewModelTests
     {
@@ -65,7 +62,9 @@
             viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(viewModel.CoinBalance))
+                {
                     coinChanged = true;
+                }
             };
 
             // Act
@@ -101,7 +100,9 @@
             viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(viewModel.IsCompleted))
+                {
                     isCompletedChanged = true;
+                }
             };
 
             // Act
@@ -137,8 +138,7 @@
                 module,
                 mockCourseVM.Object,
                 mockCourseService.Object,  // Use the interface, don't cast
-                mockCoinsService.Object   // Use the interface, don't cast
-            );
+                mockCoinsService.Object); // Use the interface, don't cast
 
             // Act
             var balance = viewModel.CoinBalance;
@@ -199,7 +199,9 @@
             viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(viewModel.CoinBalance))
+                {
                     coinChanged = true;
+                }
             };
 
             // Act
@@ -259,7 +261,9 @@
             viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(viewModel.TimeSpent))
+                {
                     timeSpentChanged = true;
+                }
             };
 
             // Act: raise PropertyChanged for FormattedTimeRemaining on the mock
@@ -286,6 +290,25 @@
 
             // Assert
             Assert.Equal("This is a longer descri...", result);
+        }
+
+        [Fact]
+        public void ShortDescription_ShouldReturnFullDescription_WhenDescriptionIs23CharactersOrLess()
+        {
+            // Arrange
+            var module = new Module
+            {
+                ModuleId = 2,
+                Title = "Short Module",
+                Description = "Short desc.",
+                ImageUrl = "test_image2.jpg"
+            };
+
+            // Act
+            var result = module.ShortDescription;
+
+            // Assert
+            Assert.Equal("Short desc.", result);
         }
     }
 }
