@@ -4,6 +4,8 @@
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SA1010 // Opening square brackets should be spaced correctly
+#pragma warning disable IDE0028
+#pragma warning disable CA1822
 
 namespace Tests.ServiceTests
 {

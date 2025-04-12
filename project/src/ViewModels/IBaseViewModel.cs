@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-#pragma warning disable CA1050
 #pragma warning disable IDE0079
+#pragma warning disable CA1050
 
 /// <summary>
 /// Base interface for view models that includes property change notifications and utility methods.

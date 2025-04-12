@@ -6,6 +6,8 @@ using CourseApp.Models;
 using CourseApp.Services;
 using Windows.System.Threading;
 
+#pragma warning disable IDE0028, CS8618, CS8602, CS8601, IDE0060
+
 namespace CourseApp.ViewModels
 {
     /// <summary>

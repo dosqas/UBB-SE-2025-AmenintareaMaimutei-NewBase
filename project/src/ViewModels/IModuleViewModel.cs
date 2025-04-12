@@ -1,8 +1,8 @@
 ﻿using System.Windows.Input;
 using CourseApp.Models;
 
-#pragma warning disable CA1050
 #pragma warning disable IDE0079
+#pragma warning disable CA1050
 
 /// <summary>
 /// Interface for the view model that handles module-related operations and state.

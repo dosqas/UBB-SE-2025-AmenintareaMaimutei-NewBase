@@ -66,8 +66,10 @@ namespace Tests.ViewModelsTests
         public void SetProperty_WhenValueIsSame_ShouldReturnFalseAndNotRaisePropertyChanged()
         {
             // Arrange
-            var viewModel = new TestViewModel();
-            viewModel.Name = "SameValue";
+            var viewModel = new TestViewModel
+            {
+                Name = "SameValue"
+            };
 
             bool eventRaised = false;
             viewModel.PropertyChanged += (_, _) => eventRaised = true;
@@ -123,14 +125,13 @@ namespace Tests.ViewModelsTests
             {
                 iViewModel.SetProperty(ref testValue, "new", "SomeProp");
             });
-
             Assert.Equal("The method or operation is not implemented.", ex.Message);
         }
 
         /// <summary>
         /// A test subclass of BaseViewModel for testing purposes.
         /// </summary>
-        private class TestViewModel : BaseViewModel
+        private partial class TestViewModel : BaseViewModel
         {
             private string name = string.Empty;
 

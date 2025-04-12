@@ -2,6 +2,8 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+#pragma warning disable CA1859, IDE0028, IDE0090
+
 namespace Tests.ViewModelsTests
 {
     using System.Collections.Generic;

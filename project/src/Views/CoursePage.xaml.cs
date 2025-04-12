@@ -5,6 +5,9 @@ using CourseApp.Models;
 using CourseApp.ViewModels;
 using Microsoft.UI.Xaml.Navigation;
 
+#pragma warning disable CS8602
+#pragma warning disable IDE0059
+
 namespace CourseApp.Views
 {
     [ExcludeFromCodeCoverage]
