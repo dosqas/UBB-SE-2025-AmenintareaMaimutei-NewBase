@@ -3,14 +3,13 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CourseApp.Repository
 {
-    [ExcludeFromCodeCoverage]
     public class CoinsRepository : ICoinsRepository
     {
-        private readonly UserWalletModelView walletModelView;
+        private readonly IUserWalletModelView walletModelView;
 
-        public CoinsRepository()
+        public CoinsRepository(IUserWalletModelView walletModelView)
         {
-            walletModelView = new UserWalletModelView();
+            this.walletModelView = walletModelView;
         }
 
         public void InitializeUserWalletIfNotExists(int userId, int initialCoinBalance = 0) =>
