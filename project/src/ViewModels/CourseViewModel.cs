@@ -532,12 +532,6 @@ namespace CourseApp.ViewModels
                 return;
             }
 
-            if (!coinsService.TrySpendingCoins(0, module.Cost))
-            {
-                ShowPurchaseFailedNotification();
-                return;
-            }
-
             bool purchaseSuccessful = courseService.BuyBonusModule(module.ModuleId, CurrentCourse.CourseId);
 
             if (purchaseSuccessful)
