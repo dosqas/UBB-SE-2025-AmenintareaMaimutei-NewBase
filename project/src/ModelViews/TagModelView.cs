@@ -4,6 +4,8 @@ using Microsoft.Data.SqlClient;
 using CourseApp.Models;
 using CourseApp.Data;
 
+#pragma warning disable CA1822
+
 namespace CourseApp.Repository
 {
     [ExcludeFromCodeCoverage]
@@ -12,22 +14,18 @@ namespace CourseApp.Repository
         public List<Tag> GetAllTags()
         {
             var tags = new List<Tag>();
-            using (var connection = GetConnection())
+            using var connection = GetConnection();
+            connection.Open();
+            string query = "SELECT TagId, Name FROM Tags";
+            using var command = new SqlCommand(query, connection);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
             {
-                connection.Open();
-                string query = "SELECT TagId, Name FROM Tags";
-                using (var command = new SqlCommand(query, connection))
-                using (var reader = command.ExecuteReader())
+                tags.Add(new Tag
                 {
-                    while (reader.Read())
-                    {
-                        tags.Add(new Tag
-                        {
-                            TagId = reader.GetInt32(0),
-                            Name = reader.GetString(1)
-                        });
-                    }
-                }
+                    TagId = reader.GetInt32(0),
+                    Name = reader.GetString(1)
+                });
             }
             return tags;
         }
@@ -35,30 +33,24 @@ namespace CourseApp.Repository
         public List<Tag> GetTagsForCourse(int courseId)
         {
             var tags = new List<Tag>();
-            using (var connection = GetConnection())
-            {
-                connection.Open();
-                string query = @"
-                    SELECT t.TagId, t.Name 
-                    FROM Tags t
-                    INNER JOIN CourseTags ct ON t.TagId = ct.TagId
-                    WHERE ct.CourseId = @courseId";
+            using var connection = GetConnection();
+            connection.Open();
+            string query = @"
+        SELECT t.TagId, t.Name 
+        FROM Tags t
+        INNER JOIN CourseTags ct ON t.TagId = ct.TagId
+        WHERE ct.CourseId = @courseId";
 
-                using (var command = new SqlCommand(query, connection))
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@courseId", courseId);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                tags.Add(new Tag
                 {
-                    command.Parameters.AddWithValue("@courseId", courseId);
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            tags.Add(new Tag
-                            {
-                                TagId = reader.GetInt32(0),
-                                Name = reader.GetString(1)
-                            });
-                        }
-                    }
-                }
+                    TagId = reader.GetInt32(0),
+                    Name = reader.GetString(1)
+                });
             }
             return tags;
         }
