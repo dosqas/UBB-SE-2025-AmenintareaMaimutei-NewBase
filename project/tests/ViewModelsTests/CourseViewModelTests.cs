@@ -360,7 +360,7 @@ namespace Tests.ViewModelsTests
 
             // Assert
             // Verify that the TrySpendingCoins method was called once with the correct arguments (0 coins, cost of the module)
-            //this.mockCoinsService.Verify(service => service.TrySpendingCoins(0, module.Cost), Times.Once);
+            // this.mockCoinsService.Verify(service => service.TrySpendingCoins(0, module.Cost), Times.Once);
 
             // Verify that the notification helper displays the correct message regarding insufficient coins
             this.mockNotificationHelper.Verify(helper => helper.ShowTemporaryNotification("You do not have enough coins to buy this module."), Times.Once);
@@ -397,7 +397,7 @@ namespace Tests.ViewModelsTests
 
             // Assert
             // Verify that TrySpendingCoins was called once with the correct arguments (cost of the module)
-            //this.mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost), Times.Once);
+            // this.mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost), Times.Once);
 
             // Verify that BuyBonusModule was called once to complete the purchase
             this.mockCourseService.Verify(service => service.BuyBonusModule(module.ModuleId, this.testCourse.CourseId), Times.Once);
@@ -443,7 +443,7 @@ namespace Tests.ViewModelsTests
             this.viewModel.AttemptBonusModulePurchase(module);
 
             // Assert: Verify the interactions with the services and ensure the failure notification is shown
-            //this.mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost), Times.Once);
+            // this.mockCoinsService.Verify(service => service.TrySpendingCoins(It.IsAny<int>(), module.Cost), Times.Once);
             this.mockCourseService.Verify(service => service.BuyBonusModule(module.ModuleId, this.testCourse.CourseId), Times.Once);
             this.mockNotificationHelper.Verify(helper => helper.ShowTemporaryNotification("You do not have enough coins to buy this module."), Times.Once);
         }
