@@ -13,7 +13,7 @@ namespace CourseApp.Services
             return repository.GetTagsForCourse(courseId);
         }
         private readonly ICourseRepository repository;
-        private readonly ICoinsRepository coinsRepository = new CoinsRepository();
+        private readonly ICoinsRepository coinsRepository = new CoinsRepository(new UserWalletModelView());
         private const int UserId = 0;
         public CourseService(ICourseRepository courseRepository = null)
         {
